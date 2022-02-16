@@ -17,4 +17,4 @@ def url(origin, info):
 
 @origin.field("visits")
 def visits(origin, info):
-    return []
+    return [{"status": "success"}]
