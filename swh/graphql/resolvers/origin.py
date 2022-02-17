@@ -1,7 +1,7 @@
 from ariadne import ObjectType
 
 from . import query
-from ..backends import archive
+from swh.graphql.backends import archive
 
 origin = ObjectType("Origin")
 
@@ -10,14 +10,15 @@ origin = ObjectType("Origin")
 def resolve_origin(_, info, url):
     """
     """
-    origin = archive.get_origin()
-    return origin
+    origin = archive.get_origins()
+    return origin[0]
 
 
 @origin.field("url")
 def url(origin, info):
     """
     """
+    # return origin.url
     return origin["url"]
 
 
