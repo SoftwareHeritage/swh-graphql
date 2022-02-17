@@ -1,9 +1,5 @@
 type Query {
   origin(url: String!): Origin
-  snapshots: [Snapshot]!
-  revision: Revision
-  directory: Directory
-  content: Content
 }
 
 type Origin {
@@ -12,23 +8,5 @@ type Origin {
 }
 
 type Visit {
-  # date:
   status: String
-  snapshot: Snapshot
-}
-
-type Snapshot {
-  sha1: String
-}
-
-type Revision {
-  sha1: String
-}
-
-type Directory {
-  sha1: String
-}
-
-type Content {
-  sha1: String
 }

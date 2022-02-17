@@ -1,4 +1,4 @@
-from ariadne import ObjectType, load_schema_from_path, make_executable_schema
+from ariadne import load_schema_from_path, make_executable_schema
 from ariadne.asgi import GraphQL
 
 from .resolvers import origin, query
