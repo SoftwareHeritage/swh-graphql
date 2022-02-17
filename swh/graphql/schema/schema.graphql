@@ -1,7 +1,3 @@
-type Query {
-  origin(url: String!): Origin
-}
-
 type Origin {
   url: String!
   visits: [Visit]!
@@ -9,4 +5,8 @@ type Origin {
 
 type Visit {
   status: String
+}
+
+type Query {
+  origin(url: String!): Origin
 }
