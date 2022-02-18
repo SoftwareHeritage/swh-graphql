@@ -1,12 +1,39 @@
-type Origin {
-  url: String!
-  visits: [Visit]!
+interface Node {
+  id: String!
 }
 
-type Visit {
-  status: String
+type PageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type Origin implements Node {
+  url: String!
+  id: String!
+}
+
+type OriginConnection {
+  nodes: [Origin]!
+  # PageInfo: PageInfo!
 }
 
 type Query {
-  origin(url: String!): Origin
+  """
+  Get an origin with its url
+  """
+  origin(
+    url: String!
+  ): Origin
+
+  """
+  Get a list of origins
+  matching the given filters
+  """
+  originSearch(
+    after: String
+    before: String
+    first: Int
+  ): OriginConnection!
 }

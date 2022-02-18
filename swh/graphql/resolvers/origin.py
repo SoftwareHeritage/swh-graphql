@@ -4,26 +4,30 @@ from . import query
 from swh.graphql.backends import archive
 
 origin = ObjectType("Origin")
+originSearch = ObjectType("OriginConnection")
 
 
 @query.field("origin")
 def resolve_origin(_, info, url):
     """
+    Get the origin matching the URL
     """
     origin = archive.get_origins()
     return origin[0]
 
 
 @origin.field("url")
-def url(origin, info):
-    """
-    """
-    # return origin.url
-    return origin["url"]
+def origin_url(origin, info):
+    return origin.url
 
 
-@origin.field("visits")
-def visits(origin, info):
+@query.field("originSearch")
+def resolve_origin_search(_, info, **kw):
     """
     """
-    return [{"status": "success"}]
+    return archive.get_origins()
+
+
+@originSearch.field("nodes")
+def origin_nodes(origins, info, **kw):
+    return origins
