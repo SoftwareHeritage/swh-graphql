@@ -1,23 +1,36 @@
 interface Node {
-  id: String!
+  id: ID!
 }
+
+# interface SwhArtifact {
+#   swhid: String!
+# }
 
 type PageInfo {
   endCursor: String
-  startCursor: String
   hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
 }
+
+# Origin
 
 type Origin implements Node {
   url: String!
-  id: String!
+  id: ID!
 }
 
+# type OriginEdge {
+#   cursor: String!
+#   node: [Origin]
+# }
+
 type OriginConnection {
-  nodes: [Origin]!
-  # PageInfo: PageInfo!
+  # edges: [OriginEdge]
+  nodes: [Origin]
+  pageInfo: PageInfo!
+  totalCount: Int!
 }
+
+# Origin end
 
 type Query {
   """
@@ -31,9 +44,8 @@ type Query {
   Get a list of origins
   matching the given filters
   """
-  originSearch(
-    after: String
-    before: String
+  origins(
     first: Int
+    after: String
   ): OriginConnection!
 }
