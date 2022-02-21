@@ -1,15 +1,12 @@
-class Origin:
-    def __init__(self, url, id):
-        self.url = url
-        self.id = id
+from swh.storage import get_storage
 
 
-def get_origins():
-    return [
-        Origin("test1.example.com", "1"),
-        Origin("test2.example.com", "2"),
-        Origin("test3.example.com", "3"),
-        Origin("test4.example.com", "4"),
-        Origin("test5.example.com", "5"),
-        Origin("test6.example.com", "6"),
-    ]
+class Archive:
+    def __init__(self):
+        self.storage = get_storage(
+            cls="remote", url="http://moma.internal.softwareheritage.org:5002"
+        )
+
+    def get_origins(self, after=None, first=None):
+        # change page_token to base64 encode
+        return self.storage.origin_list(page_token=after, limit=first)

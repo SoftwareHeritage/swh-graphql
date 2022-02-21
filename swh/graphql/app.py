@@ -5,6 +5,6 @@ from .resolvers import origin, query
 
 type_defs = gql(load_schema_from_path("swh/graphql/schema/schema.graphql"))
 
-schema = make_executable_schema(type_defs, query, origin.origin, origin.originSearch)
+schema = make_executable_schema(type_defs, query, origin.origin, origin.origins)
 
 app = GraphQL(schema, debug=True)

@@ -2,9 +2,9 @@ interface Node {
   id: ID!
 }
 
-# interface SwhArtifact {
-#   swhid: String!
-# }
+interface SwhNode {
+  swhid: String!
+}
 
 type PageInfo {
   endCursor: String
@@ -18,16 +18,16 @@ type Origin implements Node {
   id: ID!
 }
 
-# type OriginEdge {
-#   cursor: String!
-#   node: [Origin]
-# }
+type OriginEdge {
+  cursor: String!
+  node: [Origin]
+}
 
 type OriginConnection {
-  # edges: [OriginEdge]
+  edges: [OriginEdge]
   nodes: [Origin]
   pageInfo: PageInfo!
-  totalCount: Int!
+  totalCount: Int
 }
 
 # Origin end
