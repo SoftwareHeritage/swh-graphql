@@ -1,3 +1,5 @@
-# To run
+# To run In dev mode
 
-* docker-compose up
+* uvicorn swh.graphql.app:app
+
+* http://127.0.0.1:8000/
