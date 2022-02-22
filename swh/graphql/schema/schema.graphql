@@ -2,20 +2,24 @@ interface Node {
   id: ID!
 }
 
-interface SwhNode {
-  swhid: String!
-}
+# interface SwhNode {
+#   swhid: String!
+# }
+
+scalar Date
 
 type PageInfo {
   endCursor: String
   hasNextPage: Boolean!
 }
 
-# Origin
-
 type Origin implements Node {
   url: String!
   id: ID!
+  visits(
+    first: Int
+    after: String
+  ): VisitConnection!
 }
 
 type OriginEdge {
@@ -30,7 +34,23 @@ type OriginConnection {
   totalCount: Int
 }
 
-# Origin end
+type Visit implements Node {
+  id: ID!
+  date: Date
+  status: String
+}
+
+type VisitEdge {
+  cursor: String!
+  node: [Visit]
+}
+
+type VisitConnection {
+  edges: [VisitEdge]
+  nodes: [Visit]
+  pageInfo: PageInfo!
+  totalCount: Int
+}
 
 type Query {
   """

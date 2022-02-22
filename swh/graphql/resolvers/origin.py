@@ -53,3 +53,19 @@ def origin_pageinfo(origins, info, **kw):
         "hasNextPage": bool(origins.next_page_token),
         "endCursor": origins.next_page_token,
     }
+
+
+@origin.field("visits")
+def resolve_origin_visits(origin, info, **kw):
+    return {
+        "nodes": [
+            {
+                "id": "1",
+                "status": "success"
+            },
+            {
+                "id": "2",
+                "status": "success"
+            }
+        ]
+    }
