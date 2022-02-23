@@ -2,10 +2,6 @@ interface Node {
   id: ID!
 }
 
-# interface SwhNode {
-#   swhid: String!
-# }
-
 scalar Date
 
 type PageInfo {
@@ -38,6 +34,7 @@ type Visit implements Node {
   id: ID!
   date: Date
   status: String
+  origin: Origin!
 }
 
 type VisitEdge {

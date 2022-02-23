@@ -17,10 +17,9 @@
 
 
 class BaseConnection:
-
-    # @property
-    # def edges(self):
-    #     pass
+    @property
+    def edges(self):
+        pass
 
     @property
     def nodes(self):
@@ -35,4 +34,4 @@ class BaseConnection:
 
     @property
     def total_count(self):
-        return None
+        return 0
