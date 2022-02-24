@@ -59,11 +59,16 @@ def resolve_origin_visits(origin, info, **kw):
     )
     return {
         "nodes": visits.results,
+        "origin": origin,
         "pageInfo": {
             "hasNextPage": bool(visits.next_page_token),
             "endCursor": visits.next_page_token,
         },
     }
+
+
+def resolve_visit(_, info, **kw):
+    pass
 
 
 @visit.field("status")
@@ -74,3 +79,8 @@ def visit_status(visit, info):
 @visit.field("date")
 def visit_date(visit, info):
     return visit.date.timestamp()
+
+
+@visit.field("id")
+def visit_id(visit, info):
+    return str(visit.visit)

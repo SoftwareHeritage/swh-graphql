@@ -32,9 +32,9 @@ type OriginConnection {
 
 type Visit implements Node {
   id: ID!
-  date: Date
-  status: String
-  origin: Origin!
+  date: Date!
+  status: VisitStatusConnection
+  origin: Origin
 }
 
 type VisitEdge {
@@ -48,6 +48,32 @@ type VisitConnection {
   pageInfo: PageInfo!
   totalCount: Int
 }
+
+type VisitStatus implements Node {
+  id: ID!
+  status: String!
+  date: Date!
+  snapshot: String
+  type: String
+}
+
+type VisitStatusEdge {
+  cursor: String!
+  node: [VisitStatus]
+}
+
+type VisitStatusConnection {
+  edges: [VisitStatusEdge]
+  nodes: [VisitStatus]
+  pageInfo: PageInfo!
+  totalCount: Int
+}
+
+type Snapshot implements Node {
+  id: ID!
+  # branches
+}
+
 
 type Query {
   """
@@ -65,4 +91,9 @@ type Query {
     first: Int
     after: String
   ): OriginConnection!
+
+  visit(
+    originUrl: String!
+    id: String!
+  ): Visit
 }
