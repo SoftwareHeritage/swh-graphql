@@ -20,7 +20,7 @@ type Origin implements Node {
 
 type OriginEdge {
   cursor: String!
-  node: [Origin]
+  node: Origin
 }
 
 type OriginConnection {
@@ -34,12 +34,12 @@ type Visit implements Node {
   id: ID!
   date: Date!
   status: VisitStatusConnection
-  origin: Origin
+  # origin: Origin
 }
 
 type VisitEdge {
   cursor: String!
-  node: [Visit]
+  node: Visit
 }
 
 type VisitConnection {
@@ -92,8 +92,8 @@ type Query {
     after: String
   ): OriginConnection!
 
-  visit(
-    originUrl: String!
-    id: String!
-  ): Visit
+  # visit(
+  #   originUrl: String!
+  #   id: String!
+  # ): Visit
 }
