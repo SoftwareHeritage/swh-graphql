@@ -9,32 +9,40 @@ origins = ObjectType("OriginConnection")
 visit = ObjectType("Visit")
 
 
-def node_resolver_factory(resolver_type, obj, info, **kw):
+def get_node_resolver(resolver_type):
+    # FIXME, replace with a proper factory method
     mapping = {
         "origin": OriginNode,
     }
-    return mapping[resolver_type](obj, info, **kw)
+    if resolver_type not in mapping:
+        raise AttributeError("Invalid type request")
+    return mapping[resolver_type]
 
 
-def connection_resolver_factory(resolver_type, obj, info, **kw):
-    mapping = {
-        "origins": OriginConnection,
-        "origin_visits": OriginVisitConnection
-    }
-    return mapping[resolver_type](obj, info, **kw)
+def get_connection_resolver(resolver_type):
+    # FIXME, replace with a proper factory method
+    mapping = {"origins": OriginConnection, "origin_visits": OriginVisitConnection}
+    if resolver_type not in mapping:
+        raise AttributeError("Invalid type request")
+    return mapping[resolver_type]
 
 
 # Nodes
 
-@query.field("origin")
-def resolve_origin(_, info, **kw):
-    """
-    Top level query
-    Get the origin matching the URL
-    """
 
-    # FIXME change to static factory in base class to avoid args
-    return node_resolver_factory("origin", None, info, **kw)()
+@query.field("origin")
+def node_resolver(obj, info, **kw):
+    """
+    Resolver for all the node types
+    """
+    # FIXME change to static factory in base class
+    resolver = get_node_resolver(info.field_name)
+    return resolver(obj, info, **kw)()
+
+
+# Resolvers for node fields
+# Safer to annotate them here than adding as
+# property in the node class
 
 
 @origin.field("id")
@@ -42,9 +50,6 @@ def origin_id(origin, info):
     # Using ariadne decorator to avoid infinite loop issue with id
     return origin.id.hex()
 
-
-# def resolve_visit(_, info, **kw):
-#     pass
 
 @visit.field("date")
 def visit_date(visit, info):
@@ -59,18 +64,12 @@ def visit_id(visit, info):
 # Connections
 
 
-@query.field("origins")
-def resolve_origins(_, info, **kw):
-    # FIXME change to static factory in base class
-    return connection_resolver_factory("origins", None, info, **kw)()
-
-
 @origin.field("visits")
-def origin_visits(origin, info, **kw):
-    return connection_resolver_factory("origin_visits", origin, info, **kw)()
+@query.field("origins")
+def connection_resolver(obj, info, **kw):
+    # FIXME change to static factory in base class
+    resolver = get_connection_resolver(info.field_name)
+    return resolver(obj, info, **kw)()
 
-@visit.field("status")
-def origin_visits(origin, info, **kw):
-    return connection_resolver_factory("origin_visits", origin, info, **kw)()
 
 # Other

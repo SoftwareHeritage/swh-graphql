@@ -1,5 +1,10 @@
 """
 """
+
+from abc import ABC, abstractmethod
+
+from swh.graphql.utils import utils
+
 # from dataclasses import dataclass
 
 # @dataclass
@@ -15,7 +20,7 @@
 #     first  # Returns the first n elements
 
 
-class BaseConnection:
+class BaseConnection(ABC):
     def __init__(self, obj, info, **kwargs):
         self.obj = obj
         self.info = info
@@ -39,10 +44,11 @@ class BaseConnection:
 
     @property
     def page_info(self):
+        # FIXME Replace with a dataclass
         # return PageInfo(self.page_data.next_page_token)
         return {
             "hasNextPage": bool(self.page_data.next_page_token),
-            "endCursor": self.page_data.next_page_token,
+            "endCursor": utils.get_encoded_cursor(self.page_data.next_page_token),
         }
 
     @property
@@ -61,10 +67,11 @@ class BaseConnection:
         """
 
         if self._page_data is None:
-            # FIXME, make this call async
+            # FIXME, make this call async (not for v1)
             self._page_data = self._get_page_results()
         return self._page_data
 
+    @abstractmethod
     def _get_page_results(self):
         """
         Override for desired behaviour
@@ -74,11 +81,3 @@ class BaseConnection:
 
     def _get_edges(self):
         return [{"cursor": "test", "node": each} for each in self.page_data.results]
-
-    def _encode_cursor(self):
-        # FIXME, move to utils
-        pass
-
-    def _decode_cursor(self):
-        # FIXME, move to utils
-        pass

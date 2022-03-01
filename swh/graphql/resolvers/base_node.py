@@ -1,8 +1,9 @@
 """
 """
+from abc import ABC, abstractmethod
 
 
-class BaseNode:
+class BaseNode(ABC):
     def __init__(self, obj, info, **kwargs):
         self.obj = obj
         self.info = info
@@ -15,10 +16,13 @@ class BaseNode:
 
     @property
     def node(self):
+        # This is a small cache to avoid multiple
+        # backend calls
         if self._node is None:
             self._node = self._get_node()
         return self._node
 
+    @abstractmethod
     def _get_node(self):
         """
         Override for desired behaviour
