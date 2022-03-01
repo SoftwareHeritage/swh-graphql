@@ -11,12 +11,7 @@ class BaseNode:
         self._node = None
 
     def __call__(self):
-        return self
-
-    def __getattr__(self, attr):
-        if attr in self.__dict__:
-            return getattr(self, attr)
-        return getattr(self.node, attr)
+        return self.node
 
     @property
     def node(self):

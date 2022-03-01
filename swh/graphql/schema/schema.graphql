@@ -97,3 +97,10 @@ type Query {
   #   id: String!
   # ): Visit
 }
+
+
+# Remove statusConnection
+# Make visit obj by making multiple calls
+# Make snapshot object
+# Make revisionconnection
+# Make contnetConnection

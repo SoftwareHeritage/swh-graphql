@@ -9,20 +9,22 @@ origins = ObjectType("OriginConnection")
 visit = ObjectType("Visit")
 
 
-def node_resolver_factory(resolver_type):
+def node_resolver_factory(resolver_type, obj, info, **kw):
     mapping = {
         "origin": OriginNode,
     }
-    return mapping[resolver_type]
+    return mapping[resolver_type](obj, info, **kw)
 
 
-def connection_resolver_factory(resolver_type):
-    mapping = {"origins": OriginConnection, "origin_visits": OriginVisitConnection}
-    return mapping[resolver_type]
+def connection_resolver_factory(resolver_type, obj, info, **kw):
+    mapping = {
+        "origins": OriginConnection,
+        "origin_visits": OriginVisitConnection
+    }
+    return mapping[resolver_type](obj, info, **kw)
 
 
 # Nodes
-
 
 @query.field("origin")
 def resolve_origin(_, info, **kw):
@@ -31,8 +33,8 @@ def resolve_origin(_, info, **kw):
     Get the origin matching the URL
     """
 
-    # FIXME change to static factory in base class
-    return node_resolver_factory("origin")(None, info, **kw)
+    # FIXME change to static factory in base class to avoid args
+    return node_resolver_factory("origin", None, info, **kw)()
 
 
 @origin.field("id")
@@ -43,7 +45,6 @@ def origin_id(origin, info):
 
 # def resolve_visit(_, info, **kw):
 #     pass
-
 
 @visit.field("date")
 def visit_date(visit, info):
@@ -61,12 +62,15 @@ def visit_id(visit, info):
 @query.field("origins")
 def resolve_origins(_, info, **kw):
     # FIXME change to static factory in base class
-    return connection_resolver_factory("origins")(None, info, **kw)
+    return connection_resolver_factory("origins", None, info, **kw)()
 
 
 @origin.field("visits")
 def origin_visits(origin, info, **kw):
-    return connection_resolver_factory("origin_visits")(origin, info, **kw)
+    return connection_resolver_factory("origin_visits", origin, info, **kw)()
 
+@visit.field("status")
+def origin_visits(origin, info, **kw):
+    return connection_resolver_factory("origin_visits", origin, info, **kw)()
 
 # Other
