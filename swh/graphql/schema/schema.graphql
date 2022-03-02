@@ -2,7 +2,9 @@ interface Node {
   id: ID!
 }
 
-scalar Date
+scalar SWHId
+
+scalar DateTime
 
 type PageInfo {
   endCursor: String
@@ -10,6 +12,7 @@ type PageInfo {
 }
 
 type Origin implements Node {
+  # FIXME, find an idea for a UNIQUE id
   url: String!
   id: ID!
   visits(
@@ -32,8 +35,8 @@ type OriginConnection {
 
 type Visit implements Node {
   id: ID!
-  date: Date!
-  status: VisitStatusConnection
+  date: DateTime!
+  # status: VisitStatusConnection
   # origin: Origin
 }
 
@@ -49,36 +52,38 @@ type VisitConnection {
   totalCount: Int
 }
 
-type VisitStatus implements Node {
-  id: ID!
-  status: String!
-  date: Date!
-  snapshot: String
-  type: String
-}
+# type VisitStatus implements Node {
+#   id: ID!
+#   status: String!
+#   date: DateTime!
+#   snapshot: String
+#   type: String
+# }
 
-type VisitStatusEdge {
-  cursor: String!
-  node: [VisitStatus]
-}
+# type VisitStatusEdge {
+#   cursor: String!
+#   node: [VisitStatus]
+# }
 
-type VisitStatusConnection {
-  edges: [VisitStatusEdge]
-  nodes: [VisitStatus]
-  pageInfo: PageInfo!
-  totalCount: Int
-}
+# type VisitStatusConnection {
+#   edges: [VisitStatusEdge]
+#   nodes: [VisitStatus]
+#   pageInfo: PageInfo!
+#   totalCount: Int
+# }
 
-type Snapshot implements Node {
-  id: ID!
-  # branches
-}
+# type Snapshot implements Node {
+#   id: ID!
+#   # branches
+# }
 
 
 type Query {
   """
   Get an origin with its url
   """
+  # FIXME, find some unique id to help cache
+  # maybe base64 encode the URL
   origin(
     url: String!
   ): Origin
@@ -86,16 +91,23 @@ type Query {
   """
   Get a list of origins
   matching the given filters
+  Can be used to search for an origin
   """
+  # FIMXE, use Input types to make this cleaner
   origins(
     first: Int
     after: String
   ): OriginConnection!
 
-  # visit(
-  #   originUrl: String!
-  #   id: String!
-  # ): Visit
+  """
+  Get a visit object with its id
+  and/or origin and visit id
+  """
+  # FIXME, find some unique id to help cache
+  visit(
+    originUrl: String!
+    id: String!
+  ): Visit
 }
 
 

@@ -77,7 +77,7 @@ class BaseConnection(ABC):
         """
         Override for desired behaviour
         """
-
+        # FIXME, make this call async (not for v1)
         return None
 
     def _get_edges(self):
@@ -86,6 +86,7 @@ class BaseConnection(ABC):
     def _get_after_arg(self):
         """
         Return the decoded next page token
+        override to use a specific token
         """
         return utils.get_decoded_cursor(self.kwargs.get("after"))
 
