@@ -3,6 +3,7 @@ from swh.storage import get_storage
 
 class Archive:
     def __init__(self):
+        # FIXME, setup config
         self.storage = get_storage(
             cls="remote", url="http://moma.internal.softwareheritage.org:5002"
         )
@@ -14,5 +15,8 @@ class Archive:
         # FIXME change page_token to base64 encode
         return self.storage.origin_list(page_token=after, limit=first)
 
-    def get_origin_visits(self, origin, after=None, first=50):
-        return self.storage.origin_visit_get(origin, page_token=after, limit=first)
+    def get_origin_visits(self, origin_url, after=None, first=50):
+        return self.storage.origin_visit_get(origin_url, page_token=after, limit=first)
+
+    def get_origin_visit(self, origin_url, visit_id):
+        return self.storage.origin_visit_get_by(origin_url, visit_id)

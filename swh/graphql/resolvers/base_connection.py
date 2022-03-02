@@ -40,6 +40,10 @@ class BaseConnection(ABC):
 
     @property
     def nodes(self):
+        """
+        Override if needed
+        return a list of objects
+        """
         return self.page_data.results
 
     @property
@@ -69,19 +73,20 @@ class BaseConnection(ABC):
 
         if self._page_data is None:
             # FIXME, make this call async (not for v1)
-            self._page_data = self._get_page_results()
+            self._page_data = self._get_page_result()
         return self._page_data
 
     @abstractmethod
-    def _get_page_results(self):
+    def _get_page_result(self):
         """
         Override for desired behaviour
+        return a PagedResult object
         """
         # FIXME, make this call async (not for v1)
         return None
 
     def _get_edges(self):
-        return [{"cursor": "test", "node": each} for each in self.page_data.results]
+        return [{"cursor": "test", "node": each} for each in self.nodes]
 
     def _get_after_arg(self):
         """

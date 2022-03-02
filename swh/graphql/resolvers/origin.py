@@ -1,11 +1,11 @@
+from swh.graphql.backends import archive
+
 from .base_connection import BaseConnection
 from .base_node import BaseNode
 
-from swh.graphql.backends import archive
-
 
 class OriginConnection(BaseConnection):
-    def _get_page_results(self):
+    def _get_page_result(self):
         # FIXME, make this call async (not for v1)
         return archive.Archive().get_origins(
             after=self._get_after_arg(), first=self._get_first_arg()

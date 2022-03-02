@@ -1,7 +1,9 @@
-from .origin import OriginConnection, OriginNode
-from .visit import OriginVisitConnection
-
 from ariadne import ObjectType
+
+from swh.graphql.utils import utils
+
+from .origin import OriginConnection, OriginNode
+from .visit import OriginVisit, OriginVisitConnection
 
 query = ObjectType("Query")
 origin = ObjectType("Origin")
@@ -21,10 +23,8 @@ def get_mapping_key(info):
 
 def get_node_resolver(info):
     # FIXME, replace with a proper factory method
-    mapping = {
-        "origin": OriginNode,
-    }
-    resolver_type = get_mapping_key(info)
+    mapping = {"origin": OriginNode, "visit": OriginVisit}
+    resolver_type = info.path.key  # get_mapping_key(info) # FIXME, get full name
     if resolver_type not in mapping:
         raise AttributeError(f"Invalid type request {resolver_type}")
     return mapping[resolver_type]
@@ -32,8 +32,8 @@ def get_node_resolver(info):
 
 def get_connection_resolver(info):
     # FIXME, replace with a proper factory method
-    mapping = {"origins": OriginConnection, "origin_visits": OriginVisitConnection}
-    resolver_type = get_mapping_key(info)
+    mapping = {"origins": OriginConnection, "visits": OriginVisitConnection}
+    resolver_type = info.path.key  # get_mapping_key(info)  # FIXME, get full name
     if resolver_type not in mapping:
         raise AttributeError(f"Invalid type request {resolver_type}")
     return mapping[resolver_type]
@@ -66,7 +66,8 @@ def origin_id(origin, info):
 
 @visit.field("id")
 def visit_id(visit, info):
-    return str(visit.visit)
+    # FIXME, find a better id for visit
+    return utils.encode(f"{visit.origin}-{str(visit.visit)}")
 
 
 # Connections

@@ -37,7 +37,7 @@ type Visit implements Node {
   id: ID!
   date: DateTime!
   # status: VisitStatusConnection
-  # origin: Origin
+  # origin: Origin # FIXME, this can be added later
 }
 
 type VisitEdge {

@@ -1,8 +1,7 @@
-from ariadne import load_schema_from_path, make_executable_schema, gql
+from ariadne import gql, load_schema_from_path, make_executable_schema
 from ariadne.asgi import GraphQL
 
-from .resolvers import resolvers
-from .resolvers import scalars
+from .resolvers import resolvers, scalars
 
 type_defs = gql(load_schema_from_path("swh/graphql/schema/schema.graphql"))
 
