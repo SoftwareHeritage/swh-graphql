@@ -55,6 +55,7 @@ class BaseConnection(ABC):
     def total_count(self):
         """
         Will be None for most of the connections
+        override if needed
         """
 
         return None
@@ -81,3 +82,15 @@ class BaseConnection(ABC):
 
     def _get_edges(self):
         return [{"cursor": "test", "node": each} for each in self.page_data.results]
+
+    def _get_after_arg(self):
+        """
+        Return the decoded next page token
+        """
+        return utils.get_decoded_cursor(self.kwargs.get("after"))
+
+    def _get_first_arg(self):
+        """
+        Override to set the default page size
+        """
+        return self.kwargs.get("first", 50)
