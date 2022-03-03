@@ -14,9 +14,19 @@ type PageInfo {
   endCursor: String
   hasNextPage: Boolean!
 }
+type OriginConnection {
+  edges: [OriginEdge]
+  nodes: [Origin]
+  pageInfo: PageInfo!
+  totalCount: Int
+}
+
+type OriginEdge {
+  cursor: String!
+  node: Origin
+}
 
 type Origin implements SWHNode {
-  # FIXME, find an idea for a UNIQUE id
   id: SWHId!
   url: String!
   visits(
@@ -25,24 +35,11 @@ type Origin implements SWHNode {
   ): VisitConnection!
 }
 
-type OriginEdge {
-  cursor: String!
-  node: Origin
-}
-
-type OriginConnection {
-  edges: [OriginEdge]
-  nodes: [Origin]
+type VisitConnection {
+  edges: [VisitEdge]
+  nodes: [Visit]
   pageInfo: PageInfo!
   totalCount: Int
-}
-
-type Visit implements Node {
-  id: ID!
-  date: DateTime!
-  type: String
-  status: VisitStatusConnection
-  # origin: Origin # FIXME, this can be added later
 }
 
 type VisitEdge {
@@ -50,11 +47,27 @@ type VisitEdge {
   node: Visit
 }
 
-type VisitConnection {
-  edges: [VisitEdge]
-  nodes: [Visit]
+type Visit implements Node {
+  id: ID!
+  date: DateTime!
+  type: String
+  status(
+    first: Int
+    after: String
+  ): VisitStatusConnection
+  # origin: Origin # FIXME, this can be added later
+}
+
+type VisitStatusConnection {
+  edges: [VisitStatusEdge]
+  nodes: [VisitStatus]
   pageInfo: PageInfo!
   totalCount: Int
+}
+
+type VisitStatusEdge {
+  cursor: String!
+  node: [VisitStatus]
 }
 
 type VisitStatus implements Node {
@@ -65,21 +78,34 @@ type VisitStatus implements Node {
   type: String
 }
 
-type VisitStatusEdge {
-  cursor: String!
-  node: [VisitStatus]
+# FIXME, add OriginSnapshotConnection
+
+type Snapshot implements SWHNode {
+  id: SWHId!
+  branches(
+    first: Int
+    after: String
+  ): BranchConnection
 }
 
-type VisitStatusConnection {
-  edges: [VisitStatusEdge]
-  nodes: [VisitStatus]
+type BranchConnection {
+  edges: [BranchConnectionEdge]
+  nodes: [Branch]
   pageInfo: PageInfo!
   totalCount: Int
 }
 
-type Snapshot implements SWHNode {
-  id: SWHId!
-  # branches
+type BranchConnectionEdge {
+  cursor: String!
+  node: [Branch]
+}
+
+type Branch implements Node {
+  # FIXME, maybe implement Node is not needed here
+  # This has no independent existence
+  id: ID!
+  name: String
+  type: String  # FIXME, change to an enum
 }
 
 type Query {
@@ -95,13 +121,13 @@ type Query {
   """
   Get a list of origins
   matching the given filters
-  Can be used to search for an origin
+  Can also be used to search for an origin
   """
   # FIMXE, use Input types to make this cleaner
   origins(
     first: Int
     after: String
-  ): OriginConnection!
+  ): OriginConnection
 
   """
   Get a visit object with its id
@@ -113,14 +139,23 @@ type Query {
     id: String!
   ): Visit
 
+  """
+  Get a snapshot with SWHId
+  """
   snapshot(
-    id: String!
+    SWHId: String!
   ): Snapshot
+
+  # """
+  # Get all the snapshot for the given origin
+  # """
+  # originSnapshot(
+  #   originUrl: String!
+  #   first: Int
+  #   after: String
+  # ): SnapshotConnection
 }
 
 
-# Remove statusConnection
-# Make visit obj by making multiple calls
-# Make snapshot object
 # Make revisionconnection
 # Make contnetConnection

@@ -15,3 +15,7 @@ def get_decoded_cursor(cursor):
     if cursor is None:
         return None
     return base64.b64decode(cursor).decode("utf-8")
+
+
+def str_to_swid(str_swid):
+    return bytearray.fromhex(str_swid)

@@ -1,4 +1,5 @@
 from swh.graphql.backends import archive
+from swh.graphql.utils import utils
 
 from .base_node import BaseNode
 from .base_connection import BaseConnection
@@ -14,13 +15,13 @@ class SnapshotNode(BaseNode):
         self.obj is visitstatus here
         snapshot swhid is avaialbe in the object
         """
-        snapshot_swhid = self.kwargs.get("snapshotId")
+        snapshot_swhid = utils.str_to_swid(self.kwargs.get("SWHId"))
         return archive.Archive().get_snapshot(snapshot_swhid)
 
 
 class VisitSnapshotNode(BaseNode):
     # FIXME, maybe it is a good idea to make a
-    # common function for both Node classes
+    # common function for both Node classes (for handling exceptions)
     """
     For accessing a snapshot through the visit type
     """
@@ -35,4 +36,6 @@ class VisitSnapshotNode(BaseNode):
 
 
 class SnapshotConnection(BaseConnection):
-    pass
+    """
+    To get all the snapshots under an origin
+    """

@@ -6,6 +6,7 @@ from swh.graphql.utils import utils
 from .origin import OriginConnection, OriginNode
 from .visit import OriginVisitNode, OriginVisitConnection, VisitStatusConnection
 from .snapshot import VisitSnapshotNode, SnapshotNode
+from .branch import SnapshotBranchConnection
 
 query = ObjectType("Query")
 origin = ObjectType("Origin")
@@ -44,6 +45,7 @@ def get_connection_resolver(resolver_type):
         "origins": OriginConnection,
         "origin-visits": OriginVisitConnection,
         "visit-status": VisitStatusConnection,
+        "snapshot-branches": SnapshotBranchConnection,
     }
     # resolver_type = get_mapping_key(info) # FIXME, get full name
     if resolver_type not in mapping:
@@ -99,6 +101,12 @@ def visit_status_id(_, info):
 @visitstatus.field("snapshot")
 def visit_snapshot(obj, info, **kw):
     resolver = get_node_resolver("visit-snapshot")
+    return resolver(obj, info, **kw)()
+
+
+@snapshot.field("branches")
+def snapshot_branches(obj, info, **kw):
+    resolver = get_connection_resolver("snapshot-branches")
     return resolver(obj, info, **kw)()
 
 
