@@ -1,4 +1,5 @@
 # from swh.graphql.backends import archive
+from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
 
@@ -9,9 +10,11 @@ class SnapshotBranchConnection(BaseConnection):
         Branches are avaialble in the snapshot object itself
         Not making a query
         """
-
-        return self.obj["branches"]
-
-        # return archive.Archive().get_snapshot_branches(
-        #     after=self._get_after_arg(), first=self._get_first_arg()
-        # )
+        # FIXME Mocking PagedResult to make base_connection work
+        # Fix this in swh-storage
+        results = [
+            {"name": key, "type": value["target_type"]}
+            for (key, value) in self.obj["branches"].items()
+        ]
+        # FIXME, this pagination is broken, fix it with swh-storage
+        return PagedResult(results=results, next_page_token=self.obj["next_branch"])

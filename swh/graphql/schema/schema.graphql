@@ -2,6 +2,8 @@ scalar SWHId
 
 scalar DateTime
 
+scalar BinaryText
+
 interface Node {
   id: ID!
 }
@@ -104,8 +106,9 @@ type Branch implements Node {
   # FIXME, maybe implement Node is not needed here
   # This has no independent existence
   id: ID!
-  name: String
+  name: BinaryText
   type: String  # FIXME, change to an enum
+  # target:
 }
 
 type Query {

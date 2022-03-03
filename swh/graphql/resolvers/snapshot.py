@@ -1,8 +1,8 @@
 from swh.graphql.backends import archive
 from swh.graphql.utils import utils
 
-from .base_node import BaseNode
 from .base_connection import BaseConnection
+from .base_node import BaseNode
 
 
 class SnapshotNode(BaseNode):

@@ -3,10 +3,10 @@ from ariadne import ObjectType
 
 from swh.graphql.utils import utils
 
-from .origin import OriginConnection, OriginNode
-from .visit import OriginVisitNode, OriginVisitConnection, VisitStatusConnection
-from .snapshot import VisitSnapshotNode, SnapshotNode
 from .branch import SnapshotBranchConnection
+from .origin import OriginConnection, OriginNode
+from .snapshot import SnapshotNode, VisitSnapshotNode
+from .visit import OriginVisitConnection, OriginVisitNode, VisitStatusConnection
 
 query = ObjectType("Query")
 origin = ObjectType("Origin")

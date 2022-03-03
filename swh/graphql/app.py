@@ -15,6 +15,7 @@ schema = make_executable_schema(
     resolvers.snapshot,
     scalars.datetime_scalar,
     scalars.swhid_scalar,
+    scalars.binary_text_scalar,
 )
 
 app = GraphQL(schema, debug=True)
