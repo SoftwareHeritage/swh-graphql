@@ -20,3 +20,8 @@ class Archive:
 
     def get_origin_visit(self, origin_url, visit_id):
         return self.storage.origin_visit_get_by(origin_url, visit_id)
+
+    def get_visit_status(self, origin_url, visit_id, after=None, first=50):
+        return self.storage.origin_visit_status_get(
+            origin_url, visit_id, page_token=after, limit=first
+        )

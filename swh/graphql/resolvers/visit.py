@@ -24,6 +24,12 @@ class OriginVisitConnection(BaseConnection):
         )
 
 
-class OriginVisitStatusConnection(BaseConnection):
+class VisitStatusConnection(BaseConnection):
     def _get_page_result(self):
-        pass
+        s = archive.Archive().get_visit_status(
+            self.obj.origin,
+            self.obj.visit,
+            after=self._get_after_arg(),
+            first=self._get_first_arg(),
+        )
+        return s

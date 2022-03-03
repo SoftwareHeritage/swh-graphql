@@ -1,20 +1,24 @@
+scalar SWHId
+
+scalar DateTime
+
 interface Node {
   id: ID!
 }
 
-scalar SWHId
-
-scalar DateTime
+interface SWHNode {
+  id: SWHId!
+}
 
 type PageInfo {
   endCursor: String
   hasNextPage: Boolean!
 }
 
-type Origin implements Node {
+type Origin implements SWHNode {
   # FIXME, find an idea for a UNIQUE id
+  id: SWHId!
   url: String!
-  id: ID!
   visits(
     first: Int
     after: String
@@ -36,7 +40,8 @@ type OriginConnection {
 type Visit implements Node {
   id: ID!
   date: DateTime!
-  # status: VisitStatusConnection
+  type: String
+  status: VisitStatusConnection
   # origin: Origin # FIXME, this can be added later
 }
 
@@ -52,31 +57,30 @@ type VisitConnection {
   totalCount: Int
 }
 
-# type VisitStatus implements Node {
-#   id: ID!
-#   status: String!
-#   date: DateTime!
-#   snapshot: String
-#   type: String
-# }
+type VisitStatus implements Node {
+  id: ID!
+  status: String!
+  date: DateTime!
+  snapshot: String
+  type: String
+}
 
-# type VisitStatusEdge {
-#   cursor: String!
-#   node: [VisitStatus]
-# }
+type VisitStatusEdge {
+  cursor: String!
+  node: [VisitStatus]
+}
 
-# type VisitStatusConnection {
-#   edges: [VisitStatusEdge]
-#   nodes: [VisitStatus]
-#   pageInfo: PageInfo!
-#   totalCount: Int
-# }
+type VisitStatusConnection {
+  edges: [VisitStatusEdge]
+  nodes: [VisitStatus]
+  pageInfo: PageInfo!
+  totalCount: Int
+}
 
-# type Snapshot implements Node {
-#   id: ID!
+# type Snapshot implements SWHNode {
+#   id: SWHId!
 #   # branches
 # }
-
 
 type Query {
   """
