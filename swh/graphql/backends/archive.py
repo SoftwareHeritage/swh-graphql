@@ -25,3 +25,6 @@ class Archive:
         return self.storage.origin_visit_status_get(
             origin_url, visit_id, page_token=after, limit=first
         )
+
+    def get_snapshot(self, snapshot_swhid):
+        return self.storage.snapshot_get(snapshot_swhid)

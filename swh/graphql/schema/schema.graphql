@@ -61,7 +61,7 @@ type VisitStatus implements Node {
   id: ID!
   status: String!
   date: DateTime!
-  snapshot: String
+  snapshot: Snapshot
   type: String
 }
 
@@ -77,10 +77,10 @@ type VisitStatusConnection {
   totalCount: Int
 }
 
-# type Snapshot implements SWHNode {
-#   id: SWHId!
-#   # branches
-# }
+type Snapshot implements SWHNode {
+  id: SWHId!
+  # branches
+}
 
 type Query {
   """
@@ -112,6 +112,10 @@ type Query {
     originUrl: String!
     id: String!
   ): Visit
+
+  snapshot(
+    id: String!
+  ): Snapshot
 }
 
 
