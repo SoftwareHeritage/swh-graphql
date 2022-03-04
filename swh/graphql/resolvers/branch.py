@@ -11,9 +11,10 @@ class SnapshotBranchConnection(BaseConnection):
         Not making a query
         """
         # FIXME Mocking PagedResult to make base_connection work
-        # Fix this in swh-storage
+        # FIX this in swh-storage
+        # FIX id
         results = [
-            {"name": key, "type": value["target_type"]}
+            {"name": key, "type": value["target_type"], "id": "temp-id"}
             for (key, value) in self.obj["branches"].items()
         ]
         # FIXME, this pagination is broken, fix it with swh-storage

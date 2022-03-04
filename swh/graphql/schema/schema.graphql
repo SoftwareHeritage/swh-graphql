@@ -29,7 +29,7 @@ type OriginEdge {
 }
 
 type Origin implements SWHNode {
-  id: SWHId!
+  id: SWHId!  # FIXME, this is not swhid
   url: String!
   visits(
     first: Int
@@ -84,10 +84,24 @@ type VisitStatus implements Node {
 
 type Snapshot implements SWHNode {
   id: SWHId!
+
+  """
+  This pagination is broken at the moment
+  """
   branches(
     first: Int
     after: String
   ): BranchConnection
+
+  # revisions(
+  #   first: Int
+  #   after: String
+  # ): RevisionConnection
+
+  # releases(
+  #   first: Int
+  #   after: String
+  # ): ReleaseConnection
 }
 
 type BranchConnection {
@@ -102,13 +116,33 @@ type BranchConnectionEdge {
   node: [Branch]
 }
 
+# QN: Not sure about this, maybe it is better to have
+# different lists for revisions, releases etc
+# instead of branches list in Snapshot
+# union BranchTarget = Revision | Release
+
 type Branch implements Node {
   # FIXME, maybe implement Node is not needed here
-  # This has no independent existence
+  # As this has no independent existence
   id: ID!
   name: BinaryText
   type: String  # FIXME, change to an enum
-  # target:
+}
+
+type Revision implements SWHNode {
+  id: SWHId!
+}
+
+type Release implements SWHNode {
+  id: SWHId!
+}
+
+type Directory implements SWHNode {
+  id: SWHId!
+}
+
+type Content implements SWHNode {
+  id: SWHId!
 }
 
 type Query {
@@ -157,8 +191,26 @@ type Query {
   #   first: Int
   #   after: String
   # ): SnapshotConnection
+
+  # """
+  # Get the revision with the given swhid
+  # """
+  # revision()
+
+  # """
+  # Get the directory with the given swhid
+  # """
+  # directory
+
+  # """
+  # Get the content with the given swhid
+  # """
+  # content(
+  #   SWHId: String!
+  # ): Content
+
+  # """
+  # Search with the given swhid
+  # """
+  # searchWithSwhid
 }
-
-
-# Make revisionconnection
-# Make contnetConnection
