@@ -21,6 +21,8 @@ from swh.graphql.utils import utils
 
 
 class BaseConnection(ABC):
+    _model_class = None
+
     def __init__(self, obj, info, **kwargs):
         self.obj = obj
         self.info = info
@@ -43,7 +45,14 @@ class BaseConnection(ABC):
         """
         Override if needed
         return a list of objects
+
+        If a model class is set,
+        return a list of its intance
+        else a list of nodes
         """
+
+        if self._model_class is not None:
+            return [self._model_class(obj) for obj in self.page_data.results]
         return self.page_data.results
 
     @property

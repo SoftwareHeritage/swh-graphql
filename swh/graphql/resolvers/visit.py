@@ -1,10 +1,20 @@
 from swh.graphql.backends import archive
+from swh.graphql.utils import utils
 
 from .base_connection import BaseConnection
+from .base_model import BaseModel
 from .base_node import BaseNode
 
 
+class VisitModel(BaseModel):
+    @property
+    def id(self):
+        return utils.encode(f"{self.origin}-{str(self.visit)}")
+
+
 class OriginVisitNode(BaseNode):
+    _model_class = VisitModel
+
     def _get_node(self):
         # FIXME, make this call async (not for v1)
         return archive.Archive().get_origin_visit(
@@ -13,6 +23,8 @@ class OriginVisitNode(BaseNode):
 
 
 class OriginVisitConnection(BaseConnection):
+    _model_class = VisitModel
+
     def _get_page_result(self):
         """
         Get the visits for the given origin
@@ -21,14 +33,4 @@ class OriginVisitConnection(BaseConnection):
         # FIXME, make this call async (not for v1)
         return archive.Archive().get_origin_visits(
             self.obj.url, after=self._get_after_arg(), first=self._get_first_arg()
-        )
-
-
-class VisitStatusConnection(BaseConnection):
-    def _get_page_result(self):
-        return archive.Archive().get_visit_status(
-            self.obj.origin,
-            self.obj.visit,
-            after=self._get_after_arg(),
-            first=self._get_first_arg(),
         )

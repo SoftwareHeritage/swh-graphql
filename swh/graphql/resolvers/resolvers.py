@@ -1,12 +1,8 @@
 # FIXME, get rid of this module by directly decorating node/connection classes
+# High level resolvers
 from ariadne import ObjectType
 
-from swh.graphql.utils import utils
-
-from .branch import SnapshotBranchConnection
-from .origin import OriginConnection, OriginNode
-from .snapshot import SnapshotNode, VisitSnapshotNode
-from .visit import OriginVisitConnection, OriginVisitNode, VisitStatusConnection
+from .resolver_factory import get_connection_resolver, get_node_resolver
 
 query = ObjectType("Query")
 origin = ObjectType("Origin")
@@ -24,36 +20,7 @@ snapshot = ObjectType("Snapshot")
 #         return f"{info.path.prev.key}_{info.path.key}"
 #     return info.path.key
 
-
-def get_node_resolver(resolver_type):
-    # FIXME, replace with a proper factory method
-    mapping = {
-        "origin": OriginNode,
-        "visit": OriginVisitNode,
-        "visit-snapshot": VisitSnapshotNode,
-        "snapshot": SnapshotNode,
-    }
-    # resolver_type = get_mapping_key(info) # FIXME, get full name
-    if resolver_type not in mapping:
-        raise AttributeError(f"Invalid type request {resolver_type}")
-    return mapping[resolver_type]
-
-
-def get_connection_resolver(resolver_type):
-    # FIXME, replace with a proper factory method
-    mapping = {
-        "origins": OriginConnection,
-        "origin-visits": OriginVisitConnection,
-        "visit-status": VisitStatusConnection,
-        "snapshot-branches": SnapshotBranchConnection,
-    }
-    # resolver_type = get_mapping_key(info) # FIXME, get full name
-    if resolver_type not in mapping:
-        raise AttributeError(f"Invalid type request {resolver_type}")
-    return mapping[resolver_type]
-
-
-# Nodes
+# Node resolvers
 
 
 @query.field("origin")
@@ -81,32 +48,9 @@ def snapshot_resolver(obj, info, **kw):
     return resolver(obj, info, **kw)()
 
 
-# Resolvers for node fields
-# Using ariadne resolution instead of adding properties in Node
-# That is to avoid looping in NodeConnection
-
-
-@visit.field("id")
-def visit_id(visit, info):
-    # FIXME, find a better id for visit
-    return utils.encode(f"{visit.origin}-{str(visit.visit)}")
-
-
-@visitstatus.field("id")
-def visit_status_id(_, info):
-    # FIXME, find a proper id
-    return utils.encode("temp-id")
-
-
 @visitstatus.field("snapshot")
 def visit_snapshot(obj, info, **kw):
     resolver = get_node_resolver("visit-snapshot")
-    return resolver(obj, info, **kw)()
-
-
-@snapshot.field("branches")
-def snapshot_branches(obj, info, **kw):
-    resolver = get_connection_resolver("snapshot-branches")
     return resolver(obj, info, **kw)()
 
 
@@ -129,6 +73,12 @@ def visits_resolver(obj, info, **kw):
 @visit.field("status")
 def visitstatus_resolver(obj, info, **kw):
     resolver = get_connection_resolver("visit-status")
+    return resolver(obj, info, **kw)()
+
+
+@snapshot.field("branches")
+def snapshot_branches(obj, info, **kw):
+    resolver = get_connection_resolver("snapshot-branches")
     return resolver(obj, info, **kw)()
 
 
