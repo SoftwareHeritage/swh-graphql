@@ -20,9 +20,6 @@ class SnapshotBranchConnection(BaseConnection):
         # FIXME Mocking PagedResult to make base_connection work
         # FIX this in swh-storage
         # FIX id
-        import pdb
-
-        pdb.set_trace()
         results = [
             {"name": key, "type": value["target_type"], "id": "temp-id"}
             for (key, value) in self.obj.branches.items()
