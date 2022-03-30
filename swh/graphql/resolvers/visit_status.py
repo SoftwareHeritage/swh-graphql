@@ -8,6 +8,7 @@ from .base_model import BaseModel
 class VisitStatusModel(BaseModel):
     @property
     def id(self):
+        # FIXME
         return utils.encode("temp-id")
 
 

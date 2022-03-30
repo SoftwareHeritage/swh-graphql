@@ -1,6 +1,6 @@
-from .branch import SnapshotBranchConnection
 from .origin import OriginConnection, OriginNode
 from .snapshot import SnapshotNode, VisitSnapshotNode
+from .snapshot_branch import SnapshotBranchConnection
 from .visit import OriginVisitConnection, OriginVisitNode
 from .visit_status import VisitStatusConnection
 

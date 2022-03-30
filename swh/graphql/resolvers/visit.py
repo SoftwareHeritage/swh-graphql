@@ -9,6 +9,7 @@ from .base_node import BaseNode
 class VisitModel(BaseModel):
     @property
     def id(self):
+        # FIXME
         return utils.encode(f"{self.origin}-{str(self.visit)}")
 
 

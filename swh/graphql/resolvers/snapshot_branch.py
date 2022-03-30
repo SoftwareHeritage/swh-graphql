@@ -5,12 +5,12 @@ from .base_connection import BaseConnection
 from .base_model import BaseModel
 
 
-class BranchModel(BaseModel):
+class SnapshotBranchModel(BaseModel):
     pass
 
 
 class SnapshotBranchConnection(BaseConnection):
-    _model_class = BranchModel
+    _model_class = SnapshotBranchModel
 
     def _get_page_result(self):
         """
@@ -25,4 +25,4 @@ class SnapshotBranchConnection(BaseConnection):
             for (key, value) in self.obj.branches.items()
         ][:5]
         # FIXME, this pagination is broken, fix it with swh-storage
-        return PagedResult(results=results, next_page_token=self.obj["next_branch"])
+        return PagedResult(results=results, next_page_token=self.obj.next_branch)
