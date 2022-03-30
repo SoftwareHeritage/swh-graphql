@@ -1,16 +1,8 @@
 from swh.graphql.backends import archive
-from swh.graphql.utils import utils
+from swh.graphql.models import VisitModel
 
 from .base_connection import BaseConnection
-from .base_model import BaseModel
 from .base_node import BaseNode
-
-
-class VisitModel(BaseModel):
-    @property
-    def id(self):
-        # FIXME
-        return utils.encode(f"{self.origin}-{str(self.visit)}")
 
 
 class OriginVisitNode(BaseNode):

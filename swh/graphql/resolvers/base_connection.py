@@ -95,6 +95,7 @@ class BaseConnection(ABC):
         return None
 
     def _get_edges(self):
+        # FIXME, make cursor work per item
         return [{"cursor": "test", "node": each} for each in self.nodes]
 
     def _get_after_arg(self):

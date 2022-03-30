@@ -4,6 +4,15 @@ from .snapshot_branch import SnapshotBranchConnection
 from .visit import OriginVisitConnection, OriginVisitNode
 from .visit_status import VisitStatusConnection
 
+# def get_mapping_key(info):
+#     """
+#     Logic to resolve mapping type
+#     """
+#     # FIXME, move to utils
+#     if info.path.prev:
+#         return f"{info.path.prev.key}_{info.path.key}"
+#     return info.path.key
+
 
 def get_node_resolver(resolver_type):
     # FIXME, replace with a proper factory method

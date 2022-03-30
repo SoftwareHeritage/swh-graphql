@@ -1,12 +1,8 @@
 from swh.graphql.backends import archive
+from swh.graphql.models import OriginModel
 
 from .base_connection import BaseConnection
-from .base_model import BaseModel
 from .base_node import BaseNode
-
-
-class OriginModel(BaseModel):
-    pass
 
 
 class OriginNode(BaseNode):

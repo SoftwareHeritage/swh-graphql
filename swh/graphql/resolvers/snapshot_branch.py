@@ -1,12 +1,8 @@
 # from swh.graphql.backends import archive
+from swh.graphql.models import SnapshotBranchModel
 from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
-from .base_model import BaseModel
-
-
-class SnapshotBranchModel(BaseModel):
-    pass
 
 
 class SnapshotBranchConnection(BaseConnection):

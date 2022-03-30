@@ -1,15 +1,7 @@
 from swh.graphql.backends import archive
-from swh.graphql.utils import utils
+from swh.graphql.models import VisitStatusModel
 
 from .base_connection import BaseConnection
-from .base_model import BaseModel
-
-
-class VisitStatusModel(BaseModel):
-    @property
-    def id(self):
-        # FIXME
-        return utils.encode("temp-id")
 
 
 class VisitStatusConnection(BaseConnection):

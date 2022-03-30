@@ -18,4 +18,5 @@ def get_decoded_cursor(cursor):
 
 
 def str_to_swid(str_swid):
+    # FIXME, use core function
     return bytearray.fromhex(str_swid)

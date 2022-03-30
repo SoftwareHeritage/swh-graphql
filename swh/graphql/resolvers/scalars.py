@@ -7,7 +7,7 @@ binary_text_scalar = ScalarType("BinaryText")
 
 @datetime_scalar.serializer
 def serialize_datetime(value):
-    # FIXME, consider timezone
+    # FIXME, consider timezone, use core functions
     return value.timestamp()
 
 

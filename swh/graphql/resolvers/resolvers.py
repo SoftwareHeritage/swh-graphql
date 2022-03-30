@@ -1,5 +1,11 @@
-# FIXME, get rid of this module by directly decorating node/connection classes
-# High level resolvers
+"""
+High level resolvers
+Any schema attribute can be resolved by any of the following ways
+and in the following priority order
+- In this module using an annotation  (eg: @visitstatus.field("snapshot"))
+- As a property in the model object (eg: models.visit.VisitModel.id)
+- As an attribute/item in the object/dict returned by the backend (eg: Origin.url)
+"""
 from ariadne import ObjectType
 
 from .resolver_factory import get_connection_resolver, get_node_resolver
@@ -11,23 +17,14 @@ visit = ObjectType("Visit")
 visitstatus = ObjectType("VisitStatus")
 snapshot = ObjectType("Snapshot")
 
-# def get_mapping_key(info):
-#     """
-#     Logic to resolve mapping type
-#     """
-#     # FIXME, move to utils
-#     if info.path.prev:
-#         return f"{info.path.prev.key}_{info.path.key}"
-#     return info.path.key
-
 # Node resolvers
+# A node resolver can return a model object or a data structure
 
 
 @query.field("origin")
 def origin_resolver(obj, info, **kw):
     """
     """
-    # FIXME change to static factory in base class
     resolver = get_node_resolver("origin")
     return resolver(obj, info, **kw)()
 
@@ -54,12 +51,12 @@ def visit_snapshot(obj, info, **kw):
     return resolver(obj, info, **kw)()
 
 
-# Connections
+# Connection resolvers
+# A connection resolver will return a sub class of BaseConnection
 
 
 @query.field("origins")
 def origins_resolver(obj, info, **kw):
-    # FIXME change to static factory in base class
     resolver = get_connection_resolver("origins")
     return resolver(obj, info, **kw)()
 
@@ -82,4 +79,4 @@ def snapshot_branches(obj, info, **kw):
     return resolver(obj, info, **kw)()
 
 
-# Other
+# Any other type of resolver
