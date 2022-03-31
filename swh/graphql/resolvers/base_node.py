@@ -1,10 +1,11 @@
 """
 """
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class BaseNode(ABC):
-    _model_class = None
+    _model_class: Any = None
 
     def __init__(self, obj, info, **kwargs):
         self.obj = obj
