@@ -5,6 +5,8 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    environment:
+      - RUNNING_ENV=dev
     volumes:
       - ".:/usr/src/app"      
     ports:

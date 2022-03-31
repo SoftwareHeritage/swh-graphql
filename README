@@ -1,5 +1,0 @@
-# To run In dev mode
-
-* uvicorn swh.graphql.asgi:application
-
-* http://127.0.0.1:8000/
