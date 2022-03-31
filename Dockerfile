@@ -1,4 +1,8 @@
-FROM python:3.9
+FROM python:3.10-bullseye
+
+RUN apt-get -y update
+RUN apt-get -y install libcmph-dev
+RUN apt-get -y install librdkafka-dev
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

@@ -1,5 +1,4 @@
 from ariadne import gql, load_schema_from_path, make_executable_schema
-from ariadne.asgi import GraphQL
 
 from .resolvers import resolvers, scalars
 
@@ -17,5 +16,3 @@ schema = make_executable_schema(
     scalars.swhid_scalar,
     scalars.binary_text_scalar,
 )
-
-app = GraphQL(schema, debug=True)
