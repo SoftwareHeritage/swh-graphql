@@ -12,6 +12,8 @@ schema = make_executable_schema(
     resolvers.visit,
     resolvers.visitstatus,
     resolvers.snapshot,
+    resolvers.branch,
+    resolvers.target,
     scalars.datetime_scalar,
     scalars.swhid_scalar,
     scalars.binary_text_scalar,

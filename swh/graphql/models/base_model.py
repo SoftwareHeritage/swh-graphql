@@ -25,3 +25,6 @@ class BaseModel(ABC):
         will get precedence over the _node attributes
         """
         return getattr(self._node, name)
+
+    def is_type_of(self):
+        return self.__class__.__name__

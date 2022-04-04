@@ -1,4 +1,6 @@
 from .origin import OriginConnection, OriginNode
+from .release import ReleaseNode
+from .revision import RevisionNode
 from .snapshot import SnapshotNode, VisitSnapshotNode
 from .snapshot_branch import SnapshotBranchConnection
 from .visit import OriginVisitConnection, OriginVisitNode
@@ -21,6 +23,8 @@ def get_node_resolver(resolver_type):
         "visit": OriginVisitNode,
         "visit-snapshot": VisitSnapshotNode,
         "snapshot": SnapshotNode,
+        "revision": RevisionNode,
+        "release": ReleaseNode,
     }
     # resolver_type = get_mapping_key(info) # FIXME, get full name
     if resolver_type not in mapping:

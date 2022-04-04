@@ -12,7 +12,6 @@ class Archive:
         return self.storage.origin_get([url])[0]
 
     def get_origins(self, after=None, first=50):
-        # FIXME change page_token to base64 encode
         return self.storage.origin_list(page_token=after, limit=first)
 
     def get_origin_visits(self, origin_url, after=None, first=50):

@@ -6,7 +6,7 @@ and in the following priority order
 - As a property in the model object (eg: models.visit.VisitModel.id)
 - As an attribute/item in the object/dict returned by the backend (eg: Origin.url)
 """
-from ariadne import ObjectType
+from ariadne import ObjectType, UnionType
 
 from .resolver_factory import get_connection_resolver, get_node_resolver
 
@@ -16,6 +16,8 @@ origins = ObjectType("OriginConnection")
 visit = ObjectType("Visit")
 visitstatus = ObjectType("VisitStatus")
 snapshot = ObjectType("Snapshot")
+branch = ObjectType("Branch")
+target = UnionType("BranchTarget")
 
 # Node resolvers
 # A node resolver can return a model object or a data structure
@@ -51,6 +53,16 @@ def visit_snapshot(obj, info, **kw):
     return resolver(obj, info, **kw)()
 
 
+@branch.field("target")
+def branch_target(obj, info, **kw):
+    """
+    Branch target can be a revision or a release
+    """
+    resolver_type = obj.type
+    resolver = get_node_resolver(resolver_type)
+    return resolver(obj, info, **kw)()
+
+
 # Connection resolvers
 # A connection resolver will return a sub class of BaseConnection
 
@@ -80,3 +92,11 @@ def snapshot_branches(obj, info, **kw):
 
 
 # Any other type of resolver
+
+
+@target.type_resolver
+def union_resolver(obj, *_):
+    """
+    To resolve any union type
+    """
+    return obj.is_type_of()

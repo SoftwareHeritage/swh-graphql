@@ -110,7 +110,7 @@ type BranchConnectionEdge {
   node: [Branch]
 }
 
-# FIXME, this could be an alias type as well
+# FIXME, this could be alias or Directory as well
 union BranchTarget = Revision | Release
 
 type Branch implements Node {

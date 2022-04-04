@@ -1,4 +1,6 @@
 from .origin import OriginModel
+from .release import ReleaseModel
+from .revision import RevisionModel
 from .snapshot import SnapshotModel
 from .snapshot_branch import SnapshotBranchModel
 from .visit import VisitModel
@@ -10,4 +12,6 @@ __all__ = [
     "SnapshotBranchModel",
     "VisitModel",
     "VisitStatusModel",
+    "RevisionModel",
+    "ReleaseModel",
 ]
