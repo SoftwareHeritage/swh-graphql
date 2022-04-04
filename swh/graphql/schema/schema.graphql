@@ -16,6 +16,7 @@ type PageInfo {
   endCursor: String
   hasNextPage: Boolean!
 }
+
 type OriginConnection {
   edges: [OriginEdge]
   nodes: [Origin]
@@ -69,7 +70,7 @@ type VisitStatusConnection {
 
 type VisitStatusEdge {
   cursor: String!
-  node: [VisitStatus]
+  node: VisitStatus
 }
 
 type VisitStatus implements Node {
@@ -85,23 +86,16 @@ type VisitStatus implements Node {
 type Snapshot implements SWHNode {
   id: SWHId!
 
-  """
-  This pagination is broken at the moment
-  """
   branches(
     first: Int
     after: String
   ): BranchConnection
 
-  # revisions(
-  #   first: Int
-  #   after: String
-  # ): RevisionConnection
-
   # releases(
   #   first: Int
   #   after: String
   # ): ReleaseConnection
+  # FIXME, add alias type as well
 }
 
 type BranchConnection {
@@ -116,10 +110,8 @@ type BranchConnectionEdge {
   node: [Branch]
 }
 
-# QN: Not sure about this, maybe it is better to have
-# different lists for revisions, releases etc
-# instead of branches list in Snapshot
-# union BranchTarget = Revision | Release
+# FIXME, this could be an alias type as well
+union BranchTarget = Revision | Release
 
 type Branch implements Node {
   # FIXME, maybe implement Node is not needed here
@@ -127,14 +119,29 @@ type Branch implements Node {
   id: ID!
   name: BinaryText
   type: String  # FIXME, change to an enum
+  target: BranchTarget
 }
+
+# type RevisionConnection {
+# }
+
+# type RevisionEdge {
+# }
 
 type Revision implements SWHNode {
   id: SWHId!
+  name: String
 }
+
+# type ReleaseConnection {
+# }
+
+# type ReleasEdge {
+# }
 
 type Release implements SWHNode {
   id: SWHId!
+  age: String
 }
 
 type Directory implements SWHNode {
