@@ -97,6 +97,6 @@ def snapshot_branches(obj, info, **kw):
 @target.type_resolver
 def union_resolver(obj, *_):
     """
-    To resolve any union type
+    Generic resolver for all the union types
     """
     return obj.is_type_of()

@@ -1,8 +1,6 @@
 from swh.graphql.backends import archive
-from swh.graphql.models import SnapshotModel
 from swh.graphql.utils import utils
 
-from .base_connection import BaseConnection
 from .base_node import BaseNode
 
 
@@ -11,9 +9,7 @@ class SnapshotNode(BaseNode):
     For directly accessing a snapshot with swhid
     """
 
-    _model_class = SnapshotModel
-
-    def _get_node(self):
+    def _get_node_data(self):
         """
         """
         # FIXME, use methods from SWH core
@@ -27,20 +23,19 @@ class VisitSnapshotNode(BaseNode):
     """
     For accessing a snapshot from a visitstatus type
     """
-    _model_class = SnapshotModel
+    node_class = SnapshotNode
 
-    def _get_node(self):
+    def _get_node_data(self):
         """
         self.obj is visitstatus here
-        snapshot swhid is avaialbe in the object
+        snapshot swhid is avaialbe in the parent (self.obj)
         """
-        snapshot_swhid = self.obj.snapshot
-        return archive.Archive().get_snapshot(snapshot_swhid)
+        return archive.Archive().get_snapshot(self.obj.snapshot)
 
 
-class SnapshotConnection(BaseConnection):
-    """
-    To get all the snapshots under an origin
-    """
+# class SnapshotConnection(BaseConnection):
+#     """
+#     To get all the snapshots under an origin
+#     """
 
-    _model_class = SnapshotModel
+#     _node_class = SnapshotNode

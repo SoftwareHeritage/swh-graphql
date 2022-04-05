@@ -1,20 +1,17 @@
 from swh.graphql.backends import archive
-from swh.graphql.models import OriginModel
 
 from .base_connection import BaseConnection
 from .base_node import BaseNode
 
 
 class OriginNode(BaseNode):
-    _model_class = OriginModel
-
-    def _get_node(self):
+    def _get_node_data(self):
         # FIXME, make this call async (not for v1)
         return archive.Archive().get_origin(self.kwargs.get("url"))
 
 
 class OriginConnection(BaseConnection):
-    _model_class = OriginModel
+    _node_class = OriginNode
 
     def _get_page_result(self):
         # FIXME, make this call async (not for v1)

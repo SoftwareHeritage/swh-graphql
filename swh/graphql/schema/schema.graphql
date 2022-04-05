@@ -130,7 +130,7 @@ type Branch implements Node {
 
 type Revision implements SWHNode {
   id: SWHId!
-  name: String
+  rev: String
 }
 
 # type ReleaseConnection {
@@ -141,7 +141,7 @@ type Revision implements SWHNode {
 
 type Release implements SWHNode {
   id: SWHId!
-  age: String
+  rel: String
 }
 
 type Directory implements SWHNode {

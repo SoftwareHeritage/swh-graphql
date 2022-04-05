@@ -1,14 +1,21 @@
 # from swh.graphql.backends import archive
-from swh.graphql.models import SnapshotBranchModel
-
 # from swh.graphql.utils import utils
 from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
+from .base_node import BaseNode
+
+
+class SnapshotBranchNode(BaseNode):
+    """
+    """
+
+    def _get_node_data(self):
+        pass
 
 
 class SnapshotBranchConnection(BaseConnection):
-    _model_class = SnapshotBranchModel
+    _node_class = SnapshotBranchNode
 
     def _get_page_result(self):
         return self._get_from_parent_node()

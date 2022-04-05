@@ -21,7 +21,7 @@ from swh.graphql.utils import utils
 
 
 class BaseConnection(ABC):
-    _model_class: Any = None
+    _node_class: Any = None
 
     def __init__(self, obj, info, **kwargs):
         self.obj = obj
@@ -29,11 +29,10 @@ class BaseConnection(ABC):
         self.kwargs = kwargs
 
         self._page_data = None
-
         self.pageInfo = self.page_info
         self.totalCount = self.total_count
 
-    def __call__(self):
+    def __call__(self, *args, **kw):
         return self
 
     @property
@@ -46,13 +45,16 @@ class BaseConnection(ABC):
         Override if needed
         return a list of objects
 
-        If a model class is set,
+        If a node class is set,
         return a list of its intance
-        else a list of nodes
+        else a list of raw results
         """
 
-        if self._model_class is not None:
-            return [self._model_class(obj) for obj in self.page_data.results]
+        if self._node_class is not None:
+            return [
+                self._node_class(self.obj, self.info, node_data=result, **self.kwargs)
+                for result in self.page_data.results
+            ]
         return self.page_data.results
 
     @property
@@ -96,7 +98,7 @@ class BaseConnection(ABC):
 
     def _get_edges(self):
         # FIXME, make cursor work per item
-        return [{"cursor": "test", "node": each} for each in self.nodes]
+        return [{"cursor": "test", "node": node} for node in self.nodes]
 
     def _get_after_arg(self):
         """

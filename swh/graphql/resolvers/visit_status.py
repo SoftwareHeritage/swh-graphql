@@ -1,11 +1,27 @@
 from swh.graphql.backends import archive
-from swh.graphql.models import VisitStatusModel
+from swh.graphql.utils import utils
 
 from .base_connection import BaseConnection
+from .base_node import BaseNode
+
+
+class VisitStatusNode(BaseNode):
+    def _get_node_data(self):
+        """
+        """
+
+    @property
+    def id(self):
+        # FIXME, find logic to generate an id
+        return utils.encode("dummy-id")
 
 
 class VisitStatusConnection(BaseConnection):
-    _model_class = VisitStatusModel
+    """
+    self.obj is the visit object
+    """
+
+    _node_class = VisitStatusNode
 
     def _get_page_result(self):
         return archive.Archive().get_visit_status(
