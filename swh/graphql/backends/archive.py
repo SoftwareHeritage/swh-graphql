@@ -35,3 +35,6 @@ class Archive:
 
     def get_revision(self, revision_id):
         return self.storage.revision_get(revision_ids=[revision_id])
+
+    def get_release(self, release_id):
+        return self.storage.release_get(releases=[release_id])

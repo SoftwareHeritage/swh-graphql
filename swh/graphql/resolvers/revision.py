@@ -27,8 +27,6 @@ class BranchRevisionNode(BaseNode):
         self.obj.target is the Revision id
         """
         # FIXME, make this call async (not for v1)
-        # k = (archive.Archive().get_revision(self.obj.target) or None)[0]
-        # import pdb; pdb.set_trace()
         return (archive.Archive().get_revision(self.obj.target) or None)[0]
 
     def is_type_of(self):

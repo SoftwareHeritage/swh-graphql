@@ -152,7 +152,10 @@ type Revision implements SWHNode {
 
 type Release implements SWHNode {
   id: SWHId!
-  rel: String
+  name: BinaryText
+  message: BinaryText
+  author: Person
+  date: DateTime
 }
 
 type Directory implements SWHNode {
