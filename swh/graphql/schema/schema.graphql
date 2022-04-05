@@ -128,9 +128,20 @@ type Branch implements Node {
 # type RevisionEdge {
 # }
 
+type Person {
+  email: BinaryText
+  name: BinaryText
+  fullname: BinaryText
+}
+
 type Revision implements SWHNode {
   id: SWHId!
-  rev: String
+  message: BinaryText
+  author: Person
+  committer: Person
+  date: DateTime
+  type: String
+  directory: SWHId
 }
 
 # type ReleaseConnection {

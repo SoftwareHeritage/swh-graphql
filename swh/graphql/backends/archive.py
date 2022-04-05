@@ -32,3 +32,6 @@ class Archive:
         return self.storage.snapshot_get_branches(
             snapshot, branches_from=after, branches_count=first
         )
+
+    def get_revision(self, revision_id):
+        return self.storage.revision_get(revision_ids=[revision_id])

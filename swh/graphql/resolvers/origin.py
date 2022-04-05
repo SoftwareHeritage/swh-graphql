@@ -9,6 +9,10 @@ class OriginNode(BaseNode):
         # FIXME, make this call async (not for v1)
         return archive.Archive().get_origin(self.kwargs.get("url"))
 
+    # @property
+    # def url(self):
+    #     return "test"
+
 
 class OriginConnection(BaseConnection):
     _node_class = OriginNode

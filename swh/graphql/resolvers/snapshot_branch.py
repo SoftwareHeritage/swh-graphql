@@ -45,7 +45,7 @@ class SnapshotBranchConnection(BaseConnection):
                 "target": value["target"],
             }
             for (key, value) in self.obj.branches.items()
-        ][:1]
+        ][: self._get_first_arg()]
         # FIXME, this pagination is broken, fix it with swh-storage
         # Mocking PagedResult obj
         return PagedResult(results=results, next_page_token=self.obj.next_branch)
