@@ -38,3 +38,13 @@ class BranchRevisionNode(BaseNode):
         """
         # FIXME, this is coupled with the schema
         return "Revision"
+
+    @property
+    def author(self):
+        # return a PersoneNode object
+        return self.obj.author
+
+    @property
+    def committer(self):
+        # return a PersoneNode object
+        return self.obj.committer

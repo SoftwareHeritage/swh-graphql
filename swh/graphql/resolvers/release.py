@@ -22,4 +22,15 @@ class BranchReleaseNode(BaseNode):
         return k
 
     def is_type_of(self):
+        """
+        is_type_of is required only when
+        requesting from a connection
+
+        This is for ariadne to return the correct type in schema
+        """
         return "Release"
+
+    @property
+    def author(self):
+        # return a PersoneNode object
+        return self.obj.author
