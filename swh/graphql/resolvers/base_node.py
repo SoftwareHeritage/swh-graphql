@@ -6,6 +6,7 @@ class BaseNode(ABC):
     """
     Base class for all the Node resolvers
     """
+
     def __init__(self, obj, info, node_data=None, **kwargs):
         self.obj = obj
         self.info = info

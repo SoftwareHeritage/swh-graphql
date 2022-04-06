@@ -1,15 +1,31 @@
 from swh.graphql.backends import archive
+from swh.graphql.utils import utils
 
 from .base_node import BaseNode
 
 
-class ReleaseNode(BaseNode):
+class BaseReleaseNode(BaseNode):
+    def _get_release_by_id(self, release_id):
+        return (archive.Archive().get_release(release_id) or None)[0]
+
+    @property
+    def author(self):
+        # return a PersoneNode object
+        return self._node.author
+
+
+class ReleaseNode(BaseReleaseNode):
+    """
+    When the release is requested directly
+    (not from a connection) with an id
+    """
+
     def _get_node_data(self):
-        """
-        """
+        release_id = utils.str_to_swid(self.kwargs.get("SWHId"))
+        return self._get_release_by_id(release_id)
 
 
-class BranchReleaseNode(BaseNode):
+class BranchReleaseNode(BaseReleaseNode):
     """
     When the release is requested from
     a snapshot branch
@@ -18,7 +34,7 @@ class BranchReleaseNode(BaseNode):
     """
 
     def _get_node_data(self):
-        return (archive.Archive().get_release(self.obj.target) or None)[0]
+        return self._get_release_by_id(self.obj.target)
 
     def is_type_of(self):
         """
@@ -28,8 +44,3 @@ class BranchReleaseNode(BaseNode):
         This is for ariadne to return the correct type in schema
         """
         return "Release"
-
-    @property
-    def author(self):
-        # return a PersoneNode object
-        return self.obj.author

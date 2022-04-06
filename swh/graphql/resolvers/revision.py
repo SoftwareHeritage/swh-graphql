@@ -1,20 +1,36 @@
 from swh.graphql.backends import archive
+from swh.graphql.utils import utils
 
 from .base_node import BaseNode
 
 
-class RevisionNode(BaseNode):
+class BaseRevisionNode(BaseNode):
+    def _get_revision_by_id(self, revision_id):
+        return (archive.Archive().get_revision(revision_id) or None)[0]
+
+    @property
+    def author(self):
+        # return a PersoneNode object
+        return self._node.author
+
+    @property
+    def committer(self):
+        # return a PersoneNode object
+        return self._node.committer
+
+
+class RevisionNode(BaseRevisionNode):
     """
-    When the revision is requested
-    directly using an id
+    When the revision is requested directly
+    (not from a connection) with an id
     """
 
     def _get_node_data(self):
-        """
-        """
+        revision_id = utils.str_to_swid(self.kwargs.get("SWHId"))
+        return self._get_revision_by_id(revision_id)
 
 
-class BranchRevisionNode(BaseNode):
+class BranchRevisionNode(BaseRevisionNode):
     """
     When the revision is requested from
     a snapshot branch
@@ -27,7 +43,7 @@ class BranchRevisionNode(BaseNode):
         self.obj.target is the Revision id
         """
         # FIXME, make this call async (not for v1)
-        return (archive.Archive().get_revision(self.obj.target) or None)[0]
+        return self._get_revision_by_id(self.obj.target)
 
     def is_type_of(self):
         """
@@ -36,15 +52,4 @@ class BranchRevisionNode(BaseNode):
 
         This is for ariadne to return the correct type in schema
         """
-        # FIXME, this is coupled with the schema
         return "Revision"
-
-    @property
-    def author(self):
-        # return a PersoneNode object
-        return self.obj.author
-
-    @property
-    def committer(self):
-        # return a PersoneNode object
-        return self.obj.committer

@@ -213,10 +213,19 @@ type Query {
   #   after: String
   # ): SnapshotConnection
 
-  # """
-  # Get the revision with the given swhid
-  # """
-  # revision()
+  """
+  Get the revision with the given swhid
+  """
+  revision(
+    SWHId: String!
+  ): Revision
+
+  """
+  Get the release with the given swhid
+  """
+  release(
+    SWHId: String!
+  ): Release
 
   # """
   # Get the directory with the given swhid

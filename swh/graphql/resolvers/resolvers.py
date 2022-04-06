@@ -3,7 +3,7 @@ High level resolvers
 Any schema attribute can be resolved by any of the following ways
 and in the following priority order
 - In this module using an annotation  (eg: @visitstatus.field("snapshot"))
-- As a property in the model object (eg: models.visit.VisitModel.id)
+- As a property in the Node object (eg: resolvers.visit.OriginVisitNode.id)
 - As an attribute/item in the object/dict returned by the backend (eg: Origin.url)
 """
 from ariadne import ObjectType, UnionType
@@ -12,15 +12,15 @@ from .resolver_factory import get_connection_resolver, get_node_resolver
 
 query = ObjectType("Query")
 origin = ObjectType("Origin")
-origins = ObjectType("OriginConnection")
 visit = ObjectType("Visit")
 visitstatus = ObjectType("VisitStatus")
 snapshot = ObjectType("Snapshot")
 branch = ObjectType("Branch")
+
 target = UnionType("BranchTarget")
 
 # Node resolvers
-# A node resolver can return a model object or a data structure
+# A node resolver can return a node object or a data structure
 
 
 @query.field("origin")
@@ -60,6 +60,18 @@ def branch_target(obj, info, **kw):
     """
     resolver_type = f"branch-{obj.type}"
     resolver = get_node_resolver(resolver_type)
+    return resolver(obj, info, **kw)()
+
+
+@query.field("revision")
+def revision_resolver(obj, info, **kw):
+    resolver = get_node_resolver("revision")
+    return resolver(obj, info, **kw)()
+
+
+@query.field("release")
+def release_resolver(obj, info, **kw):
+    resolver = get_node_resolver("release")
     return resolver(obj, info, **kw)()
 
 

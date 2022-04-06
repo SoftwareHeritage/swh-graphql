@@ -22,6 +22,7 @@ class BaseConnection(ABC):
     """
     Base class for all the connection resolvers
     """
+
     _node_class: Any = None
     _page_size = 50  # default page size
 

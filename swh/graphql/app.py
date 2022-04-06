@@ -8,7 +8,7 @@ schema = make_executable_schema(
     type_defs,
     resolvers.query,
     resolvers.origin,
-    resolvers.origins,
+    # resolvers.origins,
     resolvers.visit,
     resolvers.visitstatus,
     resolvers.snapshot,
