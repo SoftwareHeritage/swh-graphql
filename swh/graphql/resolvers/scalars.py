@@ -3,6 +3,7 @@ from ariadne import ScalarType
 datetime_scalar = ScalarType("DateTime")
 swhid_scalar = ScalarType("SWHId")
 binary_text_scalar = ScalarType("BinaryText")
+datetimezone_scalar = ScalarType("DateTimeZone")
 
 
 @datetime_scalar.serializer
@@ -20,3 +21,8 @@ def serialize_swid(value):
 def serialize_binary_text(value):
     # FIXME, consider non utf-8
     return value.decode("utf-8")
+
+
+@datetimezone_scalar.serializer
+def serialize_datetimezone(value):
+    return value.to_datetime().timestamp()

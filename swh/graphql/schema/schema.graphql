@@ -2,6 +2,8 @@ scalar SWHId
 
 scalar DateTime
 
+scalar DateTimeZone
+
 scalar BinaryText
 
 interface Node {
@@ -137,7 +139,7 @@ type Revision implements SWHNode {
   message: BinaryText
   author: Person
   committer: Person
-  date: DateTime
+  date: DateTimeZone
   type: String
   directory: SWHId
 }
@@ -153,7 +155,7 @@ type Release implements SWHNode {
   name: BinaryText
   message: BinaryText
   author: Person
-  date: DateTime
+  date: DateTimeZone
 }
 
 type Directory implements SWHNode {

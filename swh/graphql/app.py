@@ -16,4 +16,5 @@ schema = make_executable_schema(
     scalars.datetime_scalar,
     scalars.swhid_scalar,
     scalars.binary_text_scalar,
+    scalars.datetimezone_scalar,
 )
