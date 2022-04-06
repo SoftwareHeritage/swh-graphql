@@ -11,13 +11,21 @@ class SnapshotBranchNode(BaseNode):
     """
 
     def _get_node_data(self):
-        pass
+        """
+        This Node is instantiated only from a
+        connection (SnapshotBranchConnection).
+        Since node_data is always available,
+        there is no reason to make a storage
+        query. Hence this function will never
+        be called. This stub is to make the
+        abstract base class work.
+        """
 
 
 class SnapshotBranchConnection(BaseConnection):
     _node_class = SnapshotBranchNode
 
-    def _get_page_result(self):
+    def _get_paged_result(self):
         return self._get_from_parent_node()
 
         # FIXME making extra query to the storage

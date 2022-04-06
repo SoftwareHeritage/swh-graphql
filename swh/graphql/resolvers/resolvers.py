@@ -58,7 +58,7 @@ def branch_target(obj, info, **kw):
     """
     Branch target can be a revision or a release
     """
-    resolver_type = "branch-" + obj.type
+    resolver_type = f"branch-{obj.type}"
     resolver = get_node_resolver(resolver_type)
     return resolver(obj, info, **kw)()
 

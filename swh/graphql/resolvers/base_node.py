@@ -6,11 +6,10 @@ from collections import namedtuple
 
 
 class BaseNode(ABC):
-    def __init__(self, obj, info, **kwargs):
+    def __init__(self, obj, info, node_data=None, **kwargs):
         self.obj = obj
         self.info = info
         self.kwargs = kwargs
-        node_data = kwargs.get("node_data")
         self._set_node(node_data)
 
     def _set_node(self, node_data):

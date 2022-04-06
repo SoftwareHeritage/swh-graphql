@@ -21,7 +21,7 @@ class OriginVisitNode(BaseNode):
 class OriginVisitConnection(BaseConnection):
     _node_class = OriginVisitNode
 
-    def _get_page_result(self):
+    def _get_paged_result(self):
         """
         Get the visits for the given origin
         parent obj (self.obj) is origin here

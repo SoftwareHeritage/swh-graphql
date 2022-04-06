@@ -23,7 +23,7 @@ class VisitStatusConnection(BaseConnection):
 
     _node_class = VisitStatusNode
 
-    def _get_page_result(self):
+    def _get_paged_result(self):
         return archive.Archive().get_visit_status(
             self.obj.origin,
             self.obj.visit,

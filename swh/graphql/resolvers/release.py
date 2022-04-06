@@ -18,8 +18,7 @@ class BranchReleaseNode(BaseNode):
     """
 
     def _get_node_data(self):
-        k = (archive.Archive().get_release(self.obj.target) or None)[0]
-        return k
+        return (archive.Archive().get_release(self.obj.target) or None)[0]
 
     def is_type_of(self):
         """

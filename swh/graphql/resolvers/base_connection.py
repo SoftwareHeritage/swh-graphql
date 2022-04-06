@@ -22,13 +22,14 @@ from swh.graphql.utils import utils
 
 class BaseConnection(ABC):
     _node_class: Any = None
+    _page_size = 50  # deafult page size
 
     def __init__(self, obj, info, **kwargs):
         self.obj = obj
         self.info = info
         self.kwargs = kwargs
 
-        self._page_data = None
+        self._paged_data = None
         self.pageInfo = self.page_info
         self.totalCount = self.total_count
 
@@ -46,49 +47,52 @@ class BaseConnection(ABC):
         return a list of objects
 
         If a node class is set,
-        return a list of its intance
+        return a list of its (Node) intances
         else a list of raw results
         """
 
         if self._node_class is not None:
             return [
                 self._node_class(self.obj, self.info, node_data=result, **self.kwargs)
-                for result in self.page_data.results
+                for result in self.get_paged_data().results
             ]
-        return self.page_data.results
+        return self.get_paged_data().results
 
     @property
     def page_info(self):
         # FIXME Replace with a dataclass
         # return PageInfo(self.page_data.next_page_token)
+        # FIXME, add more details like startCursor
         return {
-            "hasNextPage": bool(self.page_data.next_page_token),
-            "endCursor": utils.get_encoded_cursor(self.page_data.next_page_token),
+            "hasNextPage": bool(self.get_paged_data().next_page_token),
+            "endCursor": utils.get_encoded_cursor(
+                self.get_paged_data().next_page_token
+            ),
         }
 
     @property
     def total_count(self):
         """
         Will be None for most of the connections
-        override if needed
+        override if needed/possible
         """
 
         return None
 
-    @property
-    def page_data(self):
+    def get_paged_data(self):
         """
         Cache to avoid multiple calls to
-        the backend
+        the backend (_get_paged_result)
+        return a PagedResult object
         """
 
-        if self._page_data is None:
+        if self._paged_data is None:
             # FIXME, make this call async (not for v1)
-            self._page_data = self._get_page_result()
-        return self._page_data
+            self._paged_data = self._get_paged_result()
+        return self._paged_data
 
     @abstractmethod
-    def _get_page_result(self):
+    def _get_paged_result(self):
         """
         Override for desired behaviour
         return a PagedResult object
@@ -98,7 +102,8 @@ class BaseConnection(ABC):
 
     def _get_edges(self):
         # FIXME, make cursor work per item
-        return [{"cursor": "test", "node": node} for node in self.nodes]
+        # Cursor can't be None here
+        return [{"cursor": "dummy", "node": node} for node in self.nodes]
 
     def _get_after_arg(self):
         """
@@ -109,6 +114,6 @@ class BaseConnection(ABC):
 
     def _get_first_arg(self):
         """
-        Override to set the default page size
+        page_size is set to 50 by default
         """
-        return self.kwargs.get("first", 50)
+        return self.kwargs.get("first", self._page_size)
