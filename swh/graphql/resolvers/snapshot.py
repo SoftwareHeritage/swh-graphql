@@ -4,7 +4,12 @@ from swh.graphql.utils import utils
 from .base_node import BaseNode
 
 
-class SnapshotNode(BaseNode):
+class BaseSnapshotNode(BaseNode):
+    def _get_snapshot_by_id(self, snapshot_id):
+        return archive.Archive().get_snapshot(snapshot_id)
+
+
+class SnapshotNode(BaseSnapshotNode):
     """
     For directly accessing a snapshot with swhid
     """
@@ -13,24 +18,21 @@ class SnapshotNode(BaseNode):
         """
         """
         # FIXME, use methods from SWH core
-        snapshot_swhid = utils.str_to_swid(self.kwargs.get("SWHId"))
-        return archive.Archive().get_snapshot(snapshot_swhid)
+        snapshot_id = utils.str_to_swid(self.kwargs.get("SWHId"))
+        return self._get_snapshot_by_id(snapshot_id)
 
 
 class VisitSnapshotNode(BaseNode):
-    # FIXME, maybe it is a good idea to make a
-    # common function for both Node classes (for handling exceptions)
     """
     For accessing a snapshot from a visitstatus type
     """
-    node_class = SnapshotNode
 
     def _get_node_data(self):
         """
         self.obj is visitstatus here
         snapshot swhid is avaialbe in the parent (self.obj)
         """
-        return archive.Archive().get_snapshot(self.obj.snapshot)
+        return self._get_snapshot_by_id(self.obj.snapshot)
 
 
 # class SnapshotConnection(BaseConnection):

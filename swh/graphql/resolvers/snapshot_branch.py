@@ -10,17 +10,6 @@ class SnapshotBranchNode(BaseNode):
     """
     """
 
-    def _get_node_data(self):
-        """
-        This Node is instantiated only from a
-        connection (SnapshotBranchConnection).
-        Since node_data is always available,
-        there is no reason to make a storage
-        query. Hence this function will never
-        be called. This stub is to make the
-        abstract base class work.
-        """
-
 
 class SnapshotBranchConnection(BaseConnection):
     _node_class = SnapshotBranchNode

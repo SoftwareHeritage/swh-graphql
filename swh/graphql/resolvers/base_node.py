@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from collections import namedtuple
 
 
@@ -30,7 +30,6 @@ class BaseNode(ABC):
     def __call__(self, *args, **kw):
         return self
 
-    @abstractmethod
     def _get_node_data(self):
         """
         Override for desired behaviour

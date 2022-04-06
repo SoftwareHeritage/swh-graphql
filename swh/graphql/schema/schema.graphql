@@ -114,8 +114,6 @@ type BranchConnectionEdge {
 union BranchTarget = Revision | Release
 
 type Branch implements Node {
-  # FIXME, maybe implement Node is not needed here
-  # As this has no independent existence
   id: ID!
   name: BinaryText
   type: String  # FIXME, change to an enum

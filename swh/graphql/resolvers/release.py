@@ -38,9 +38,9 @@ class BranchReleaseNode(BaseReleaseNode):
 
     def is_type_of(self):
         """
-        is_type_of is required only when
-        requesting from a connection
+        is_type_of is required only when requesting
+        from a connection
 
-        This is for ariadne to return the correct type in schema
+        This is for ariadne to return the right type
         """
         return "Release"
