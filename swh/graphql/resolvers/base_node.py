@@ -1,11 +1,11 @@
-"""
-"""
-
 from abc import ABC, abstractmethod
 from collections import namedtuple
 
 
 class BaseNode(ABC):
+    """
+    Base class for all the Node resolvers
+    """
     def __init__(self, obj, info, node_data=None, **kwargs):
         self.obj = obj
         self.info = info
@@ -18,19 +18,23 @@ class BaseNode(ABC):
         self._node = self._get_node_from_data(node_data)
 
     def _get_node_from_data(self, node_data):
+        """
+        Create an object from the dict
+        Override to support complex data structures
+        """
         if type(node_data) is dict:
             return namedtuple("NodeObj", node_data.keys())(*node_data.values())
         return node_data
 
     def __call__(self, *args, **kw):
-        """
-        """
         return self
 
     @abstractmethod
     def _get_node_data(self):
         """
         Override for desired behaviour
+        This will be called only when
+        node_data is not available
         """
         # FIXME, make this call async (not for v1)
         return None

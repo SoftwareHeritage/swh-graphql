@@ -1,5 +1,3 @@
-"""
-"""
 from abc import ABC, abstractmethod
 from typing import Any
 
@@ -21,8 +19,11 @@ from swh.graphql.utils import utils
 
 
 class BaseConnection(ABC):
+    """
+    Base class for all the connection resolvers
+    """
     _node_class: Any = None
-    _page_size = 50  # deafult page size
+    _page_size = 50  # default page size
 
     def __init__(self, obj, info, **kwargs):
         self.obj = obj
@@ -30,8 +31,8 @@ class BaseConnection(ABC):
         self.kwargs = kwargs
 
         self._paged_data = None
-        self.pageInfo = self.page_info
-        self.totalCount = self.total_count
+        self.pageInfo = self.page_info  # To match the name in schema
+        self.totalCount = self.total_count  # To match the name in schema
 
     def __call__(self, *args, **kw):
         return self
