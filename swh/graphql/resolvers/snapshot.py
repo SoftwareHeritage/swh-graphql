@@ -22,7 +22,7 @@ class SnapshotNode(BaseSnapshotNode):
         return self._get_snapshot_by_id(snapshot_id)
 
 
-class VisitSnapshotNode(BaseNode):
+class VisitSnapshotNode(BaseSnapshotNode):
     """
     For accessing a snapshot from a visitstatus type
     """

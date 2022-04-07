@@ -13,11 +13,11 @@ from .resolver_factory import get_connection_resolver, get_node_resolver
 query = ObjectType("Query")
 origin = ObjectType("Origin")
 visit = ObjectType("Visit")
-visitstatus = ObjectType("VisitStatus")
+visit_status = ObjectType("VisitStatus")
 snapshot = ObjectType("Snapshot")
-branch = ObjectType("Branch")
+snapshot_branch = ObjectType("Branch")
 
-target = UnionType("BranchTarget")
+branch_target = UnionType("BranchTarget")
 
 # Node resolvers
 # A node resolver can return a node object or a data structure
@@ -47,16 +47,16 @@ def snapshot_resolver(obj, info, **kw):
     return resolver(obj, info, **kw)()
 
 
-@visitstatus.field("snapshot")
-def visit_snapshot(obj, info, **kw):
+@visit_status.field("snapshot")
+def visit_snapshot_resolver(obj, info, **kw):
     resolver = get_node_resolver("visit-snapshot")
     return resolver(obj, info, **kw)()
 
 
-@branch.field("target")
-def branch_target(obj, info, **kw):
+@snapshot_branch.field("target")
+def snapshot_branch_target_resolver(obj, info, **kw):
     """
-    Branch target can be a revision or a release
+    Snapshot branch target can be a revision or a release
     """
     resolver_type = f"branch-{obj.type}"
     resolver = get_node_resolver(resolver_type)
@@ -98,7 +98,7 @@ def visitstatus_resolver(obj, info, **kw):
 
 
 @snapshot.field("branches")
-def snapshot_branches(obj, info, **kw):
+def snapshot_branches_resolver(obj, info, **kw):
     resolver = get_connection_resolver("snapshot-branches")
     return resolver(obj, info, **kw)()
 
@@ -106,7 +106,7 @@ def snapshot_branches(obj, info, **kw):
 # Any other type of resolver
 
 
-@target.type_resolver
+@branch_target.type_resolver
 def union_resolver(obj, *_):
     """
     Generic resolver for all the union types
