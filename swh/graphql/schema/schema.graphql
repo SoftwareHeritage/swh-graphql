@@ -142,6 +142,8 @@ type Revision implements SWHNode {
   date: DateTimeZone
   type: String
   directory: SWHId
+  parentIds: [SWHId]
+  parents: [Revision]
 }
 
 # type ReleaseConnection {

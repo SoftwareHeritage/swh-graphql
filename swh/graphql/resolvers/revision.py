@@ -6,6 +6,7 @@ from .base_node import BaseNode
 
 class BaseRevisionNode(BaseNode):
     def _get_revision_by_id(self, revision_id):
+        # FIXME, make this call async
         return (archive.Archive().get_revision(revision_id) or None)[0]
 
     @property
@@ -18,6 +19,32 @@ class BaseRevisionNode(BaseNode):
         # return a PersoneNode object
         return self._node.committer
 
+    @property
+    def parentIds(self):  # To support the schema naming convention
+        return self._node.parents
+
+    # @paginatedlist
+    @property
+    def parents(self):
+        """
+        Return a list of parent revisions
+        """
+        # FIXME, change this to a paginated list
+        # Storage fix or use paginatedlist decorator
+        return [
+            ParentRevisionNode(obj=self, info=self.info, sha1=revision_id)
+            for revision_id in self.parentIds
+        ]
+
+    def is_type_of(self):
+        """
+        is_type_of is required only when
+        requesting from a connection
+
+        This is for ariadne to return the correct type in schema
+        """
+        return "Revision"
+
 
 class RevisionNode(BaseRevisionNode):
     """
@@ -27,6 +54,16 @@ class RevisionNode(BaseRevisionNode):
 
     def _get_node_data(self):
         revision_id = utils.str_to_swid(self.kwargs.get("SWHId"))
+        return self._get_revision_by_id(revision_id)
+
+
+class ParentRevisionNode(BaseRevisionNode):
+    """
+    When a parent revision is requested
+    """
+
+    def _get_node_data(self):
+        revision_id = self.kwargs.get("sha1")
         return self._get_revision_by_id(revision_id)
 
 
@@ -42,14 +79,4 @@ class BranchRevisionNode(BaseRevisionNode):
         """
         self.obj.target is the Revision id
         """
-        # FIXME, make this call async (not for v1)
         return self._get_revision_by_id(self.obj.target)
-
-    def is_type_of(self):
-        """
-        is_type_of is required only when
-        requesting from a connection
-
-        This is for ariadne to return the correct type in schema
-        """
-        return "Revision"

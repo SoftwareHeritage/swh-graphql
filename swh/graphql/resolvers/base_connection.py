@@ -26,14 +26,11 @@ class BaseConnection(ABC):
     _node_class: Any = None
     _page_size = 50  # default page size
 
-    def __init__(self, obj, info, **kwargs):
+    def __init__(self, obj, info, paged_data=None, **kwargs):
         self.obj = obj
         self.info = info
         self.kwargs = kwargs
-
-        self._paged_data = None
-        self.pageInfo = self.page_info  # To match the name in schema
-        self.totalCount = self.total_count  # To match the name in schema
+        self._paged_data = paged_data
 
     def __call__(self, *args, **kw):
         return self
@@ -61,7 +58,7 @@ class BaseConnection(ABC):
         return self.get_paged_data().results
 
     @property
-    def page_info(self):
+    def pageInfo(self):  # To support the schema naming convention
         # FIXME Replace with a dataclass
         # return PageInfo(self.page_data.next_page_token)
         # FIXME, add more details like startCursor
@@ -73,7 +70,7 @@ class BaseConnection(ABC):
         }
 
     @property
-    def total_count(self):
+    def totalCount(self):  # To support the schema naming convention
         """
         Will be None for most of the connections
         override if needed/possible
