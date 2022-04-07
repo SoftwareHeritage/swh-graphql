@@ -38,3 +38,11 @@ class Archive:
 
     def get_release(self, release_id):
         return self.storage.release_get(releases=[release_id])
+
+    def get_directory(self, directory_id):
+        # FIXME, only for tests
+        return self.storage.directory_ls(directory_id)
+
+    def get_content(self, content_id):
+        # FIXME, only for tests
+        return self.storage.content_find({"sha1_git": content_id})

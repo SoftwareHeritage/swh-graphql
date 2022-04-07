@@ -75,6 +75,18 @@ def release_resolver(obj, info, **kw):
     return resolver(obj, info, **kw)()
 
 
+@query.field("directory")
+def directory_resolver(obj, info, **kw):
+    resolver = get_node_resolver("directory")
+    return resolver(obj, info, **kw)()
+
+
+@query.field("content")
+def content_resolver(obj, info, **kw):
+    resolver = get_node_resolver("content")
+    return resolver(obj, info, **kw)()
+
+
 # Connection resolvers
 # A connection resolver will return a sub class of BaseConnection
 

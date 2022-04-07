@@ -1,3 +1,5 @@
+from .content import ContentNode
+from .directory import DirectoryNode
 from .origin import OriginConnection, OriginNode
 from .release import BranchReleaseNode, ReleaseNode
 from .revision import BranchRevisionNode, RevisionNode
@@ -27,6 +29,8 @@ def get_node_resolver(resolver_type):
         "branch-release": BranchReleaseNode,
         "revision": RevisionNode,
         "release": ReleaseNode,
+        "directory": DirectoryNode,
+        "content": ContentNode,
     }
     # resolver_type = get_mapping_key(info) # FIXME, get full name
     if resolver_type not in mapping:

@@ -160,10 +160,13 @@ type Release implements SWHNode {
 
 type Directory implements SWHNode {
   id: SWHId!
+  name: BinaryText
+  entries: BinaryText  # FIXME, change to Union type
 }
 
 type Content implements SWHNode {
   id: SWHId!
+  status: String
 }
 
 type Query {
@@ -227,17 +230,19 @@ type Query {
     SWHId: String!
   ): Release
 
-  # """
-  # Get the directory with the given swhid
-  # """
-  # directory
+  """
+  Get the directory with the given swhid
+  """
+  directory(
+    SWHId: String!
+  ): Directory
 
-  # """
-  # Get the content with the given swhid
-  # """
-  # content(
-  #   SWHId: String!
-  # ): Content
+  """
+  Get the content with the given swhid
+  """
+  content(
+    SWHId: String!
+  ): Content
 
   # """
   # Search with the given swhid
