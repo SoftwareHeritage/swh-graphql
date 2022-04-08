@@ -141,7 +141,8 @@ type Revision implements SWHNode {
   committer: Person
   date: DateTimeZone
   type: String
-  directory: SWHId
+  directoryId: SWHId
+  directory: Directory
   parentIds: [SWHId]
   parents: [Revision]
 }

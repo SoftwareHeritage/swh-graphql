@@ -31,3 +31,12 @@ class DirectoryNode(BaseDirectoryNode):
         """
         directory_id = utils.str_to_swid(self.kwargs.get("SWHId"))
         return self._get_directory_by_id(directory_id)
+
+
+class RevisionDirectoryNode(BaseDirectoryNode):
+    def _get_node_data(self):
+        """
+        When a directory is requested from a revision
+        """
+        directory_id = self.kwargs.get("sha1")
+        return self._get_directory_by_id(directory_id)
