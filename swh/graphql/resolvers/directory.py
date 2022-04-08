@@ -29,7 +29,7 @@ class DirectoryNode(BaseDirectoryNode):
         When a directory is requested directly
         (not from a connection) with an id
         """
-        directory_id = utils.str_to_swid(self.kwargs.get("SWHId"))
+        directory_id = utils.str_to_swid(self.kwargs.get("Sha1"))
         return self._get_directory_by_id(directory_id)
 
 

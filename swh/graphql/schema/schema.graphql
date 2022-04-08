@@ -1,4 +1,6 @@
-scalar SWHId
+scalar SWHID
+
+scalar Sha1
 
 scalar DateTime
 
@@ -10,8 +12,12 @@ interface Node {
   id: ID!
 }
 
+interface SWHIDNode {
+  id: SWHID!
+}
+
 interface SWHNode {
-  id: SWHId!
+  id: Sha1!
 }
 
 type PageInfo {
@@ -32,7 +38,7 @@ type OriginEdge {
 }
 
 type Origin implements SWHNode {
-  id: SWHId!  # FIXME, this is not swhid
+  id: Sha1!
   url: String!
   visits(
     first: Int
@@ -86,7 +92,7 @@ type VisitStatus implements Node {
 # FIXME, add OriginSnapshotConnection
 
 type Snapshot implements SWHNode {
-  id: SWHId!
+  id: Sha1!
 
   branches(
     first: Int
@@ -135,15 +141,15 @@ type Person {
 }
 
 type Revision implements SWHNode {
-  id: SWHId!
+  id: Sha1!
   message: BinaryText
   author: Person
   committer: Person
   date: DateTimeZone
   type: String
-  directoryId: SWHId
+  directoryId: Sha1
   directory: Directory
-  parentIds: [SWHId]
+  parentIds: [Sha1]
   parents: [Revision]
 }
 
@@ -154,7 +160,7 @@ type Revision implements SWHNode {
 # }
 
 type Release implements SWHNode {
-  id: SWHId!
+  id: Sha1!
   name: BinaryText
   message: BinaryText
   author: Person
@@ -162,13 +168,13 @@ type Release implements SWHNode {
 }
 
 type Directory implements SWHNode {
-  id: SWHId!
+  id: Sha1!
   name: BinaryText
   entries: BinaryText  # FIXME, change to Union type
 }
 
-type Content implements SWHNode {
-  id: SWHId!
+type Content implements SWHIDNode {
+  id: SWHID!
   status: String
 }
 
@@ -204,10 +210,10 @@ type Query {
   ): Visit
 
   """
-  Get a snapshot with SWHId
+  Get a snapshot with SWHID
   """
   snapshot(
-    SWHId: String!
+    Sha1: String!
   ): Snapshot
 
   # """
@@ -223,28 +229,28 @@ type Query {
   Get the revision with the given swhid
   """
   revision(
-    SWHId: String!
+    Sha1: String!
   ): Revision
 
   """
   Get the release with the given swhid
   """
   release(
-    SWHId: String!
+    Sha1: String!
   ): Release
 
   """
   Get the directory with the given swhid
   """
   directory(
-    SWHId: String!
+    Sha1: String!
   ): Directory
 
   """
   Get the content with the given swhid
   """
   content(
-    SWHId: String!
+    SWHID: String!
   ): Content
 
   # """

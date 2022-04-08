@@ -21,7 +21,7 @@ class ReleaseNode(BaseReleaseNode):
     """
 
     def _get_node_data(self):
-        release_id = utils.str_to_swid(self.kwargs.get("SWHId"))
+        release_id = utils.str_to_swid(self.kwargs.get("Sha1"))
         return self._get_release_by_id(release_id)
 
 

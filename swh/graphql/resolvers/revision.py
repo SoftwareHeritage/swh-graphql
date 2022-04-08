@@ -69,7 +69,7 @@ class RevisionNode(BaseRevisionNode):
     """
 
     def _get_node_data(self):
-        revision_id = utils.str_to_swid(self.kwargs.get("SWHId"))
+        revision_id = utils.str_to_swid(self.kwargs.get("Sha1"))
         return self._get_revision_by_id(revision_id)
 
 

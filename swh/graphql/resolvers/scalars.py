@@ -1,7 +1,8 @@
 from ariadne import ScalarType
 
 datetime_scalar = ScalarType("DateTime")
-swhid_scalar = ScalarType("SWHId")
+swhid_scalar = ScalarType("SWHID")
+sha1_scalar = ScalarType("Sha1")
 binary_text_scalar = ScalarType("BinaryText")
 datetimezone_scalar = ScalarType("DateTimeZone")
 
@@ -17,9 +18,14 @@ def serialize_swid(value):
     return value.hex()
 
 
+@sha1_scalar.serializer
+def serialize_sha1(value):
+    return value.hex()
+
+
 @binary_text_scalar.serializer
 def serialize_binary_text(value):
-    # FIXME, consider non utf-8
+    # FIXME
     return value.decode("utf-8")
 
 

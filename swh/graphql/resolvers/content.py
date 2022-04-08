@@ -19,5 +19,5 @@ class ContentNode(BaseContentNode):
         When a content is requested directly
         (not from a connection) with an id
         """
-        content_id = utils.str_to_swid(self.kwargs.get("SWHId"))
+        content_id = utils.str_to_swid(self.kwargs.get("SWHID"))
         return self._get_content_by_id(content_id)[0]

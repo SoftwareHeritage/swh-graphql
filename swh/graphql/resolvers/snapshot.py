@@ -18,7 +18,7 @@ class SnapshotNode(BaseSnapshotNode):
         """
         """
         # FIXME, use methods from SWH core
-        snapshot_id = utils.str_to_swid(self.kwargs.get("SWHId"))
+        snapshot_id = utils.str_to_swid(self.kwargs.get("Sha1"))
         return self._get_snapshot_by_id(snapshot_id)
 
 
