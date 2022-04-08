@@ -1,6 +1,8 @@
 from abc import ABC
 from collections import namedtuple
 
+from swh.graphql.errors import ObjectNotFoundError
+
 
 class BaseNode(ABC):
     """
@@ -23,9 +25,19 @@ class BaseNode(ABC):
         Create an object from the dict
         Override to support complex data structures
         """
+        if node_data is None:
+            self._handle_none_data()
+
         if type(node_data) is dict:
             return namedtuple("NodeObj", node_data.keys())(*node_data.values())
         return node_data
+
+    def _handle_none_data(self):
+        """
+        raise and error in case the object returned is None
+        override for desired behaviour
+        """
+        raise ObjectNotFoundError("Requested object is not available")
 
     def __call__(self, *args, **kw):
         return self
