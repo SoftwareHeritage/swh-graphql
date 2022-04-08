@@ -25,24 +25,21 @@ branch_target = UnionType("BranchTarget")
 
 @query.field("origin")
 def origin_resolver(obj, info, **kw):
-    """
-    """
+    """ """
     resolver = get_node_resolver("origin")
     return resolver(obj, info, **kw)()
 
 
 @query.field("visit")
 def visit_resolver(obj, info, **kw):
-    """
-    """
+    """ """
     resolver = get_node_resolver("visit")
     return resolver(obj, info, **kw)()
 
 
 @query.field("snapshot")
 def snapshot_resolver(obj, info, **kw):
-    """
-    """
+    """ """
     resolver = get_node_resolver("snapshot")
     return resolver(obj, info, **kw)()
 

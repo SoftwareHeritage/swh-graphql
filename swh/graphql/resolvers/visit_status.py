@@ -7,8 +7,7 @@ from .base_node import BaseNode
 
 class VisitStatusNode(BaseNode):
     def _get_node_data(self):
-        """
-        """
+        """ """
 
     @property
     def id(self):

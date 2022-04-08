@@ -7,8 +7,7 @@ from .base_node import BaseNode
 
 
 class SnapshotBranchNode(BaseNode):
-    """
-    """
+    """ """
 
 
 class SnapshotBranchConnection(BaseConnection):

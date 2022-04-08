@@ -40,8 +40,7 @@ class BaseRevisionNode(BaseNode):
 
     @property
     def directoryId(self):  # To support the schema naming convention
-        """
-        """
+        """ """
         return self._node.directory
 
     @property
