@@ -13,6 +13,15 @@ class BaseReleaseNode(BaseNode):
         # return a PersoneNode object
         return self._node.author
 
+    def is_type_of(self):
+        """
+        is_type_of is required only when requesting
+        from a connection
+
+        This is for ariadne to return the right type
+        """
+        return "Release"
+
 
 class ReleaseNode(BaseReleaseNode):
     """
@@ -35,12 +44,3 @@ class BranchReleaseNode(BaseReleaseNode):
 
     def _get_node_data(self):
         return self._get_release_by_id(self.obj.target)
-
-    def is_type_of(self):
-        """
-        is_type_of is required only when requesting
-        from a connection
-
-        This is for ariadne to return the right type
-        """
-        return "Release"

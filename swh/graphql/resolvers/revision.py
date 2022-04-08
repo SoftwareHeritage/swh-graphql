@@ -33,6 +33,9 @@ class BaseRevisionNode(BaseNode):
         # FIXME, change this to a paginated list
         # Storage fix or use paginatedlist decorator
         # change to node factory
+
+        # FIXME, now making one db calls per parent
+        # Change to get the nodedata list here itself
         return [
             ParentRevisionNode(obj=self, info=self.info, sha1=revision_id)
             for revision_id in self.parentIds
