@@ -46,7 +46,7 @@ class BaseConnection(ABC):
         return a list of objects
 
         If a node class is set,
-        return a list of its (Node) intances
+        return a list of its (Node) instances
         else a list of raw results
         """
 
@@ -75,7 +75,6 @@ class BaseConnection(ABC):
         Will be None for most of the connections
         override if needed/possible
         """
-
         return None
 
     def get_paged_data(self):
@@ -84,7 +83,6 @@ class BaseConnection(ABC):
         the backend (_get_paged_result)
         return a PagedResult object
         """
-
         if self._paged_data is None:
             # FIXME, make this call async (not for v1)
             self._paged_data = self._get_paged_result()

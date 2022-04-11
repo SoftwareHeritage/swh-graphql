@@ -6,21 +6,17 @@ from .base_node import BaseNode
 
 class BaseDirectoryNode(BaseNode):
     def _get_directory_by_id(self, directory_id):
-        return archive.Archive().get_directory(directory_id)
+        # fetch more metadata like name
+        return {
+            "id": directory_id,
+        }
 
     @property
     def entries(self):
-        # FIXME, return a paginated list of
-        # directory or contnet node object
-        return self._node[0]["name"]
-
-    @property
-    def name(self):
-        return b"test-name"
-
-    @property
-    def id(self):
-        return b"test-id"
+        entries = archive.Archive().get_directory_entries(self._node.id)
+        # FIXME, local pagination, should be moved to swh-storage (backend)
+        # return Paginated(DirectoryEntryConnection, entries)
+        return entries
 
 
 class DirectoryNode(BaseDirectoryNode):
@@ -30,6 +26,7 @@ class DirectoryNode(BaseDirectoryNode):
         (not from a connection) with an id
         """
         directory_id = utils.str_to_swid(self.kwargs.get("Sha1"))
+        # path = ""
         return self._get_directory_by_id(directory_id)
 
 
