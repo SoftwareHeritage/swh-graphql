@@ -132,6 +132,12 @@ def snapshot_branches_resolver(obj, info, **kw):
     return resolver(obj, info, **kw)()
 
 
+@revision.field("parents")
+def revision_parent_resolver(obj, info, **kw):
+    resolver = get_connection_resolver("revision-parents")
+    return resolver(obj, info, **kw)()
+
+
 @directory.field("entries")
 def directory_entry_resolver(obj, info, **kw):
     resolver = get_connection_resolver("directory-entries")

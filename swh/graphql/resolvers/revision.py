@@ -1,13 +1,14 @@
 from swh.graphql.backends import archive
 from swh.graphql.utils import utils
 
+from .base_connection import BaseConnection
 from .base_node import BaseNode
 
 
 class BaseRevisionNode(BaseNode):
     def _get_revision_by_id(self, revision_id):
         # FIXME, make this call async
-        return (archive.Archive().get_revision(revision_id) or None)[0]
+        return (archive.Archive().get_revisions([revision_id]) or None)[0]
 
     @property
     def author(self):
@@ -22,20 +23,6 @@ class BaseRevisionNode(BaseNode):
     @property
     def parentIds(self):  # To support the schema naming convention
         return self._node.parents
-
-    @property
-    def parents(self):
-        """
-        Return a list of parent revisions
-        """
-        # FIXME, change this to a paginated list
-        # Storage fix or use local paginator
-        # Move to resolvers.resolvers.py
-
-        return [
-            ParentRevisionNode(obj=self, info=self.info, sha1=revision_id)
-            for revision_id in self.parentIds
-        ]
 
     @property
     def directoryId(self):  # To support the schema naming convention
@@ -63,19 +50,6 @@ class RevisionNode(BaseRevisionNode):
         return self._get_revision_by_id(revision_id)
 
 
-class ParentRevisionNode(BaseRevisionNode):
-    """
-    When a parent revision is requested
-    from a revision
-    """
-
-    # This class will be removed onece ParentRevisionConnection
-    # is implemented
-    def _get_node_data(self):
-        revision_id = self.kwargs.get("sha1")
-        return self._get_revision_by_id(revision_id)
-
-
 class BranchRevisionNode(BaseRevisionNode):
     """
     When the revision is requested from
@@ -89,3 +63,21 @@ class BranchRevisionNode(BaseRevisionNode):
         self.obj.target is the Revision id
         """
         return self._get_revision_by_id(self.obj.target)
+
+
+class ParentRevisionConnection(BaseConnection):
+    """
+    When parent revisions requested from a
+    revision
+    self.obj is the child revision here
+    self.obj.parentIds is the list of
+    parent revisions
+    """
+
+    _node_class = BaseRevisionNode
+
+    def _get_paged_result(self):
+        # FIXME, using dummy(local) pagination, move pagination to backend
+        # To remove localpagination, just drop the paginated call
+        parents = archive.Archive().get_revisions(self.obj.parentIds)
+        return utils.paginated(parents, self._get_first_arg(), self._get_after_arg())

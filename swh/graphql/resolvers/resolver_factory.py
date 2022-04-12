@@ -3,7 +3,7 @@ from .directory import DirectoryEntryDirectoryNode, DirectoryNode, RevisionDirec
 from .directory_entry import DirectoryEntryConnection
 from .origin import OriginConnection, OriginNode
 from .release import BranchReleaseNode, ReleaseNode
-from .revision import BranchRevisionNode, RevisionNode
+from .revision import BranchRevisionNode, ParentRevisionConnection, RevisionNode
 from .snapshot import SnapshotNode, VisitSnapshotNode
 from .snapshot_branch import SnapshotBranchConnection
 from .visit import OriginVisitConnection, OriginVisitNode
@@ -49,6 +49,7 @@ def get_connection_resolver(resolver_type):
         "origin-visits": OriginVisitConnection,
         "visit-status": VisitStatusConnection,
         "snapshot-branches": SnapshotBranchConnection,
+        "revision-parents": ParentRevisionConnection,
         "directory-entries": DirectoryEntryConnection,
         # revision-parents
     }

@@ -30,8 +30,8 @@ class Archive:
             snapshot, branches_from=after, branches_count=first
         )
 
-    def get_revision(self, revision_id):
-        return self.storage.revision_get(revision_ids=[revision_id])
+    def get_revisions(self, revision_ids):
+        return self.storage.revision_get(revision_ids=revision_ids)
 
     def get_release(self, release_id):
         return self.storage.release_get(releases=[release_id])

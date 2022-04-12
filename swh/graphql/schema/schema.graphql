@@ -117,6 +117,12 @@ type BranchConnectionEdge {
   node: Branch
 }
 
+type Person {
+  email: BinaryText
+  name: BinaryText
+  fullname: BinaryText
+}
+
 # FIXME, this can be Content, Directory, Snapshot, or Alias as well
 union BranchTarget = Revision | Release
 
@@ -126,16 +132,16 @@ type Branch {
   target: BranchTarget
 }
 
-# type RevisionConnection {
-# }
+type RevisionConnection {
+  edges: [RevisionEdge]
+  nodes: [Revision]
+  pageInfo: PageInfo!
+  totalCount: Int
+}
 
-# type RevisionEdge {
-# }
-
-type Person {
-  email: BinaryText
-  name: BinaryText
-  fullname: BinaryText
+type RevisionEdge {
+  cursor: String!
+  node: Revision
 }
 
 type Revision implements SWHNode {
@@ -148,7 +154,11 @@ type Revision implements SWHNode {
   directoryId: Sha1
   directory: Directory
   parentIds: [Sha1]
-  parents: [Revision]
+  parents(
+    first: Int
+    after: String
+  ): RevisionConnection
+  # log
 }
 
 # type ReleaseConnection {
