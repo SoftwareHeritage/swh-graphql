@@ -81,8 +81,7 @@ type VisitStatusEdge {
   node: VisitStatus
 }
 
-type VisitStatus implements Node {
-  id: ID!
+type VisitStatus {
   status: String!
   date: DateTime!
   snapshot: Snapshot
@@ -115,14 +114,13 @@ type BranchConnection {
 
 type BranchConnectionEdge {
   cursor: String!
-  node: [Branch]
+  node: Branch
 }
 
 # FIXME, this can be Content, Directory, Snapshot, or Alias as well
 union BranchTarget = Revision | Release
 
-type Branch implements Node {
-  id: ID!
+type Branch {
   name: BinaryText
   type: String  # FIXME, change to an enum
   target: BranchTarget
