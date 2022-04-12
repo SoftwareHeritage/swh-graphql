@@ -25,9 +25,6 @@ class Archive:
             origin_url, visit_id, page_token=after, limit=first
         )
 
-    def get_snapshot(self, snapshot_swhid):
-        return self.storage.snapshot_get(snapshot_swhid)
-
     def get_snapshot_branches(self, snapshot, after=None, first=50):
         return self.storage.snapshot_get_branches(
             snapshot, branches_from=after, branches_count=first

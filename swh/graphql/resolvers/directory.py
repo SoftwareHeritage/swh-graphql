@@ -6,6 +6,7 @@ from .base_node import BaseNode
 class BaseDirectoryNode(BaseNode):
     def _get_directory_by_id(self, directory_id):
         # Now not fetching any data (schema is exposing just id)
+        # same pattern is used in snapshot resolver
         # FIXME, use the right API to fetch metadata like name, path
         return {
             "id": directory_id,

@@ -15,7 +15,7 @@ def get_encoded_cursor(cursor):
 
 def get_decoded_cursor(cursor):
     if cursor is None:
-        return 0
+        return None
     return base64.b64decode(cursor).decode("utf-8")
 
 
@@ -33,8 +33,9 @@ def paginated(source, first, after=0):
     """
 
     # FIXME, handle data errors here
-    end_cursor = int(after) + first
-    results = source[int(after) : end_cursor]
+    after = 0 if after is None else int(after)
+    end_cursor = after + first
+    results = source[after:end_cursor]
     next_page_token = None
     if len(source) > end_cursor:
         next_page_token = str(end_cursor)

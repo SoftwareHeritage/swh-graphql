@@ -1,4 +1,3 @@
-from swh.graphql.backends import archive
 from swh.graphql.utils import utils
 
 from .base_node import BaseNode
@@ -6,7 +5,11 @@ from .base_node import BaseNode
 
 class BaseSnapshotNode(BaseNode):
     def _get_snapshot_by_id(self, snapshot_id):
-        return archive.Archive().get_snapshot(snapshot_id)
+        # Now not fetching any data (schema is exposing just id)
+        # same pattern is used in directory resolver
+        return {
+            "id": snapshot_id,
+        }
 
 
 class SnapshotNode(BaseSnapshotNode):
@@ -29,7 +32,7 @@ class VisitSnapshotNode(BaseSnapshotNode):
     def _get_node_data(self):
         """
         self.obj is visitstatus here
-        snapshot swhid is avaialbe in the parent (self.obj)
+        snapshot sha1 is avaialbe in the visit object (self.obj)
         """
         return self._get_snapshot_by_id(self.obj.snapshot)
 

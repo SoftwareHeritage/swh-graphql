@@ -1,5 +1,7 @@
-# from swh.graphql.backends import archive
-# from swh.graphql.utils import utils
+from collections import namedtuple
+
+from swh.graphql.backends import archive
+from swh.graphql.utils import utils
 from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
@@ -7,45 +9,55 @@ from .base_node import BaseNode
 
 
 class SnapshotBranchNode(BaseNode):
-    """ """
+    """
+    target field for this Node is a UNION in the schema
+    It is resolved in resolvers.resolvers.py
+    """
+
+    def _get_node_from_data(self, node_data):
+        """
+        node_data is not a dict in this case
+        overriding to support this special data structure
+        """
+
+        branch_name, branch_obj = node_data
+        node = {
+            "name": branch_name,
+            "type": branch_obj.target_type.value,
+            "target": branch_obj.target,
+        }
+        return namedtuple("NodeObj", node.keys())(*node.values())
 
 
 class SnapshotBranchConnection(BaseConnection):
     _node_class = SnapshotBranchNode
 
     def _get_paged_result(self):
-        return self._get_from_parent_node()
-
-        # FIXME making extra query to the storage
-        # This is not really needed as we have the data
-        # in the self.obj itself
-        # Mocking paged data
-        # result = archive.Archive().get_snapshot_branches(
-        #     utils.str_to_swid(self.obj.id.hex()),
-        #     after=self._get_after_arg(),
-        #     first=self._get_first_arg())
-        # return PagedResult(results=result['branches'],
-        #                    next_page_token=result['next_branch'].hex())
-
-    def _get_from_parent_node(self):
         """
-        Branches are avaialble in the snapshot object itself
-        Not making an extra query
+        When branches requested from a snapshot
+        self.obj.id is snapshot_id here
+        (as returned from resolvers/snapshot.py)
         """
 
-        results = [
-            {
-                "name": key,
-                "type": value["target_type"],
-                "id": "temp-id",
-                "target": value["target"],
-            }
-            for (key, value) in self.obj.branches.items()
-        ][: self._get_first_arg()]
-        # FIXME, this pagination is broken, fix it with swh-storage
-        # Mocking PagedResult obj
-        return PagedResult(results=results, next_page_token=self.obj.next_branch)
+        # FIXME, this pagination is not consistent with other connections
+        # FIX in swh-storage to return PagedResult
+        result = archive.Archive().get_snapshot_branches(
+            self.obj.id, after=self._get_after_arg(), first=self._get_first_arg()
+        )
+        # FIXME Cursor must be a hex to be consistent with
+        # the base class, hack to make that work
+        end_cusrsor = (
+            result["next_branch"].hex() if result["next_branch"] is not None else None
+        )
+        return PagedResult(
+            results=result["branches"].items(), next_page_token=end_cusrsor
+        )
 
-    def total_count(self):
-        # FIXME, this can be implemented with current swh.storage API
-        return None
+    def _get_after_arg(self):
+        """
+        Snapshot branch is using a different cursor; logic to handle that
+        """
+        # FIXME Cursor must be a hex to be consistent with
+        # the base class, hack to make that work
+        after = utils.get_decoded_cursor(self.kwargs.get("after", ""))
+        return bytes.fromhex(after)
