@@ -35,7 +35,7 @@ class RevisionDirectoryNode(BaseDirectoryNode):
         self.obj.directoryId is the required dir id
         (set from resolvers.revision.py:BaseRevisionNode)
         """
-        directory_id = self.kwargs.get("sha1")
+        directory_id = self.obj.directoryId
         return self._get_directory_by_id(directory_id)
 
 

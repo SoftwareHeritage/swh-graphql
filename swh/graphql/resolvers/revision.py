@@ -2,7 +2,6 @@ from swh.graphql.backends import archive
 from swh.graphql.utils import utils
 
 from .base_node import BaseNode
-from .directory import RevisionDirectoryNode
 
 
 class BaseRevisionNode(BaseNode):
@@ -42,14 +41,6 @@ class BaseRevisionNode(BaseNode):
     def directoryId(self):  # To support the schema naming convention
         """ """
         return self._node.directory
-
-    @property
-    def directory(self):
-        """
-        Return the
-        """
-        # FIXME change to node factory
-        return RevisionDirectoryNode(obj=self, info=self.info, sha1=self.directoryId)
 
     def is_type_of(self):
         """

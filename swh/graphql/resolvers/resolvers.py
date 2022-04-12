@@ -16,6 +16,7 @@ visit = ObjectType("Visit")
 visit_status = ObjectType("VisitStatus")
 snapshot = ObjectType("Snapshot")
 snapshot_branch = ObjectType("Branch")
+revision = ObjectType("Revision")
 directory = ObjectType("Directory")
 directory_entry = ObjectType("DirectoryEntry")
 
@@ -66,6 +67,12 @@ def snapshot_branch_target_resolver(obj, info, **kw):
 @query.field("revision")
 def revision_resolver(obj, info, **kw):
     resolver = get_node_resolver("revision")
+    return resolver(obj, info, **kw)()
+
+
+@revision.field("directory")
+def revision_directory_resolver(obj, info, **kw):
+    resolver = get_node_resolver("revision-directory")
     return resolver(obj, info, **kw)()
 
 

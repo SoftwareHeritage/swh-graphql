@@ -12,9 +12,9 @@ interface Node {
   id: ID!
 }
 
-interface SWHIDNode {
-  id: SWHID!
-}
+# interface SWHIDNode {
+#   id: SWHID!
+# }
 
 interface SWHNode {
   id: Sha1!

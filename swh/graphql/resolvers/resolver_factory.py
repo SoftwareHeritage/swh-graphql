@@ -1,5 +1,5 @@
 from .content import ContentNode, DirectoryEntryContentNode
-from .directory import DirectoryEntryDirectoryNode, DirectoryNode
+from .directory import DirectoryEntryDirectoryNode, DirectoryNode, RevisionDirectoryNode
 from .directory_entry import DirectoryEntryConnection
 from .origin import OriginConnection, OriginNode
 from .release import BranchReleaseNode, ReleaseNode
@@ -29,12 +29,12 @@ def get_node_resolver(resolver_type):
         "branch-revision": BranchRevisionNode,
         "branch-release": BranchReleaseNode,
         "revision": RevisionNode,
+        "revision-directory": RevisionDirectoryNode,
         "release": ReleaseNode,
         "directory": DirectoryNode,
         "content": ContentNode,
         "dir-entry-dir": DirectoryEntryDirectoryNode,
         "dir-entry-file": DirectoryEntryContentNode,
-        # revision-directory
     }
     # resolver_type = get_mapping_key(info) # FIXME, get full name
     if resolver_type not in mapping:

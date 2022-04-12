@@ -12,6 +12,7 @@ schema = make_executable_schema(
     resolvers.visit_status,
     resolvers.snapshot,
     resolvers.snapshot_branch,
+    resolvers.revision,
     resolvers.directory,
     resolvers.directory_entry,
     resolvers.branch_target,
