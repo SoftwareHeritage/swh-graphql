@@ -184,12 +184,16 @@ union DirectoryTarget = Directory | Content
 type DirectoryEntry {
   name: BinaryText
   type: String  # FIXME, replace with enum
+  targetId: Sha1
   target: DirectoryTarget
 }
 
 type Directory implements SWHNode {
   id: Sha1!
-  entries: DirectoryEntryConnection
+  entries(
+    first: Int
+    after: String
+  ): DirectoryEntryConnection
 }
 
 type ContentChecksum {

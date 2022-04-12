@@ -40,7 +40,6 @@ class Archive:
         return self.storage.release_get(releases=[release_id])
 
     def get_directory_entries(self, directory_id):
-        # FIXME, only for tests
         return self.storage.directory_ls(directory_id)
 
     def get_content(self, content_id):

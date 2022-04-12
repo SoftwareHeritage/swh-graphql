@@ -71,6 +71,9 @@ class BaseConnection(ABC):
 
     @property
     def totalCount(self):  # To support the schema naming convention
+        return self._get_total_count()
+
+    def _get_total_count(self):
         """
         Will be None for most of the connections
         override if needed/possible

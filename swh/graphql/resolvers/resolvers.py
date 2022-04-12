@@ -16,6 +16,7 @@ visit = ObjectType("Visit")
 visit_status = ObjectType("VisitStatus")
 snapshot = ObjectType("Snapshot")
 snapshot_branch = ObjectType("Branch")
+directory = ObjectType("Directory")
 
 branch_target = UnionType("BranchTarget")
 
@@ -109,6 +110,12 @@ def visitstatus_resolver(obj, info, **kw):
 @snapshot.field("branches")
 def snapshot_branches_resolver(obj, info, **kw):
     resolver = get_connection_resolver("snapshot-branches")
+    return resolver(obj, info, **kw)()
+
+
+@directory.field("entries")
+def directory_entry_resolver(obj, info, **kw):
+    resolver = get_connection_resolver("directory-entries")
     return resolver(obj, info, **kw)()
 
 

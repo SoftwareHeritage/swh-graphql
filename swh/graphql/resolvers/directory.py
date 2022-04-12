@@ -1,4 +1,3 @@
-from swh.graphql.backends import archive
 from swh.graphql.utils import utils
 
 from .base_node import BaseNode
@@ -6,17 +5,11 @@ from .base_node import BaseNode
 
 class BaseDirectoryNode(BaseNode):
     def _get_directory_by_id(self, directory_id):
-        # fetch more metadata like name
+        # Now not fetching any data (schema is exposing just id)
+        # FIXME, use the right API to fetch metadata like name, path
         return {
             "id": directory_id,
         }
-
-    @property
-    def entries(self):
-        entries = archive.Archive().get_directory_entries(self._node.id)
-        # FIXME, local pagination, should be moved to swh-storage (backend)
-        # return Paginated(DirectoryEntryConnection, entries)
-        return entries
 
 
 class DirectoryNode(BaseDirectoryNode):
