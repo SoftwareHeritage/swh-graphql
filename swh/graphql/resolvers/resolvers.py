@@ -17,8 +17,10 @@ visit_status = ObjectType("VisitStatus")
 snapshot = ObjectType("Snapshot")
 snapshot_branch = ObjectType("Branch")
 directory = ObjectType("Directory")
+directory_entry = ObjectType("DirectoryEntry")
 
 branch_target = UnionType("BranchTarget")
+directory_entry_target = UnionType("DirectoryEntryTarget")
 
 # Node resolvers
 # A node resolver can return a node object or a data structure
@@ -79,6 +81,16 @@ def directory_resolver(obj, info, **kw):
     return resolver(obj, info, **kw)()
 
 
+@directory_entry.field("target")
+def directory_entry_target_resolver(obj, info, **kw):
+    """
+    directory entry target can be a directory or a content
+    """
+    resolver_type = f"dir-entry-{obj.type}"
+    resolver = get_node_resolver(resolver_type)
+    return resolver(obj, info, **kw)()
+
+
 @query.field("content")
 def content_resolver(obj, info, **kw):
     resolver = get_node_resolver("content")
@@ -122,6 +134,7 @@ def directory_entry_resolver(obj, info, **kw):
 # Any other type of resolver
 
 
+@directory_entry_target.type_resolver
 @branch_target.type_resolver
 def union_resolver(obj, *_):
     """

@@ -26,7 +26,7 @@ class DirectoryEntryConnection(BaseConnection):
         using dummy pagination
         """
 
-        # FIXME, using dummy(local) pagination, move to backend
+        # FIXME, using dummy(local) pagination, move pagination to backend
         # To remove localpagination, just drop the paginated call
         entries = archive.Archive().get_directory_entries(self.obj.id)
         return utils.paginated(entries, self._get_first_arg(), self._get_after_arg())

@@ -24,18 +24,15 @@ class BaseRevisionNode(BaseNode):
     def parentIds(self):  # To support the schema naming convention
         return self._node.parents
 
-    # @paginatedlist
     @property
     def parents(self):
         """
         Return a list of parent revisions
         """
         # FIXME, change this to a paginated list
-        # Storage fix or use paginatedlist decorator
-        # change to node factory
+        # Storage fix or use local paginator
+        # Move to resolvers.resolvers.py
 
-        # FIXME, now making one db calls per parent
-        # Change to get the nodedata list here itself
         return [
             ParentRevisionNode(obj=self, info=self.info, sha1=revision_id)
             for revision_id in self.parentIds
@@ -78,8 +75,11 @@ class RevisionNode(BaseRevisionNode):
 class ParentRevisionNode(BaseRevisionNode):
     """
     When a parent revision is requested
+    from a revision
     """
 
+    # This class will be removed onece ParentRevisionConnection
+    # is implemented
     def _get_node_data(self):
         revision_id = self.kwargs.get("sha1")
         return self._get_revision_by_id(revision_id)

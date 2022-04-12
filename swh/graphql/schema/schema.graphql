@@ -177,13 +177,13 @@ type DirectoryEntryEdge {
   node: DirectoryEntry
 }
 
-union DirectoryTarget = Directory | Content
+union DirectoryEntryTarget = Directory | Content
 
 type DirectoryEntry {
   name: BinaryText
   type: String  # FIXME, replace with enum
   targetId: Sha1
-  target: DirectoryTarget
+  target: DirectoryEntryTarget
 }
 
 type Directory implements SWHNode {
@@ -210,8 +210,8 @@ type ContentLicense {
   test: String
 }
 
-type Content implements SWHIDNode {
-  id: SWHID!
+type Content implements SWHNode {
+  id: Sha1!
   checksum: ContentChecksum
   # data:
   filetype: ContentType

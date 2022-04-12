@@ -12,6 +12,9 @@ class BaseDirectoryNode(BaseNode):
             "id": directory_id,
         }
 
+    def is_type_of(self):
+        return "Directory"
+
 
 class DirectoryNode(BaseDirectoryNode):
     def _get_node_data(self):
@@ -28,6 +31,19 @@ class RevisionDirectoryNode(BaseDirectoryNode):
     def _get_node_data(self):
         """
         When a directory is requested from a revision
+        self.obj is revision here
+        self.obj.directoryId is the required dir id
+        (set from resolvers.revision.py:BaseRevisionNode)
         """
         directory_id = self.kwargs.get("sha1")
         return self._get_directory_by_id(directory_id)
+
+
+class DirectoryEntryDirectoryNode(BaseDirectoryNode):
+    def _get_node_data(self):
+        """
+        When a sub directory is requested from a
+        parent directory entry
+        obj.target is the sub directory id here
+        """
+        return self._get_directory_by_id(self.obj.target)
