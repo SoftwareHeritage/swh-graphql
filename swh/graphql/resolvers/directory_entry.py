@@ -19,7 +19,7 @@ class DirectoryEntryConnection(BaseConnection):
     def _get_paged_result(self):
         """
         When entries requested from a directory
-        self.obj.id is directory_id here
+        self.obj.id is the directory_id here
         (as returned from resolvers/directory.py)
 
         This is not paginated from swh-storgae

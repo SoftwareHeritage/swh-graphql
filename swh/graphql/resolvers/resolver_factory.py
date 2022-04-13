@@ -55,7 +55,6 @@ def get_connection_resolver(resolver_type):
         "snapshot-branches": SnapshotBranchConnection,
         "revision-parents": ParentRevisionConnection,
         "directory-entries": DirectoryEntryConnection,
-        # revision-parents
     }
     # resolver_type = get_mapping_key(info) # FIXME, get full name
     if resolver_type not in mapping:

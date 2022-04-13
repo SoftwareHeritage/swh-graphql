@@ -19,8 +19,7 @@ class BaseDirectoryNode(BaseNode):
 class DirectoryNode(BaseDirectoryNode):
     def _get_node_data(self):
         """
-        When a directory is requested directly
-        (not from a connection) with an id
+        When a directory is requested directly with an id
         """
         directory_id = utils.str_to_swid(self.kwargs.get("Sha1"))
         # path = ""
@@ -28,8 +27,6 @@ class DirectoryNode(BaseDirectoryNode):
 
 
 class RevisionDirectoryNode(BaseDirectoryNode):
-    # FIXME. maybe this shouls also be resolved
-    # at the targetdirectory class
     def _get_node_data(self):
         """
         When a directory is requested from a revision
@@ -45,6 +42,8 @@ class TargetDirectoryNode(BaseDirectoryNode):
     def _get_node_data(self):
         """
         When a directory is requested as a target
-        obj.target is the sub directory id here
+        self.obj can be a Release or a DirectoryEntry
+
+        obj.target is the requested directory id here
         """
         return self._get_directory_by_id(self.obj.target)

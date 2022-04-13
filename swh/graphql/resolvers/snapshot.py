@@ -14,12 +14,11 @@ class BaseSnapshotNode(BaseNode):
 
 class SnapshotNode(BaseSnapshotNode):
     """
-    For directly accessing a snapshot with swhid
+    For directly accessing a snapshot with an Id
     """
 
     def _get_node_data(self):
         """ """
-        # FIXME, use methods from SWH core
         snapshot_id = utils.str_to_swid(self.kwargs.get("Sha1"))
         return self._get_snapshot_by_id(snapshot_id)
 
@@ -32,14 +31,6 @@ class VisitSnapshotNode(BaseSnapshotNode):
     def _get_node_data(self):
         """
         self.obj is visitstatus here
-        snapshot sha1 is available in the visit object (self.obj)
+        self.obj.snapshot is the requested snapshot id
         """
         return self._get_snapshot_by_id(self.obj.snapshot)
-
-
-# class SnapshotConnection(BaseConnection):
-#     """
-#     To get all the snapshots under an origin
-#     """
-
-#     _node_class = SnapshotNode

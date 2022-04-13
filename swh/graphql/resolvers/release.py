@@ -9,11 +9,6 @@ class BaseReleaseNode(BaseNode):
         return (archive.Archive().get_releases([release_id]) or None)[0]
 
     @property
-    def author(self):
-        # return a PersoneNode object
-        return self._node.author
-
-    @property
     def targetId(self):  # To support the schema naming convention
         return self._node.target
 
@@ -23,9 +18,8 @@ class BaseReleaseNode(BaseNode):
 
     def is_type_of(self):
         """
-        is_type_of is required only when requesting
-        from a connection
-
+        is_type_of is required only when resolving
+        a UNION type
         This is for ariadne to return the right type
         """
         return "Release"
@@ -46,7 +40,7 @@ class TargetReleaseNode(BaseReleaseNode):
     When a release is requested as a target
 
     self.obj could be a snapshotbranch or a release
-    self.obj.target is the release id here
+    self.obj.target is the requested release id here
     """
 
     def _get_node_data(self):

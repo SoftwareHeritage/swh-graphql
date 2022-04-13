@@ -7,18 +7,7 @@ from .base_node import BaseNode
 
 class BaseRevisionNode(BaseNode):
     def _get_revision_by_id(self, revision_id):
-        # FIXME, make this call async
         return (archive.Archive().get_revisions([revision_id]) or None)[0]
-
-    @property
-    def author(self):
-        # return a PersoneNode object
-        return self._node.author
-
-    @property
-    def committer(self):
-        # return a PersoneNode object
-        return self._node.committer
 
     @property
     def parentIds(self):  # To support the schema naming convention
@@ -35,18 +24,16 @@ class BaseRevisionNode(BaseNode):
 
     def is_type_of(self):
         """
-        is_type_of is required only when
-        requesting from a connection
-
-        This is for ariadne to return the correct type in schema
+        is_type_of is required only when resolving
+        a UNION type
+        This is for ariadne to return the right type
         """
         return "Revision"
 
 
 class RevisionNode(BaseRevisionNode):
     """
-    When the revision is requested directly
-    (not from a connection) with an id
+    When the revision is requested directly with an id
     """
 
     def _get_node_data(self):
@@ -59,7 +46,7 @@ class TargetRevisionNode(BaseRevisionNode):
     When a revision is requested as a target
 
     self.obj could be a snapshotbranch or a release
-    self.obj.target is the revision id here
+    self.obj.target is the requested revision id here
     """
 
     def _get_node_data(self):
@@ -73,9 +60,9 @@ class ParentRevisionConnection(BaseConnection):
     """
     When parent revisions requested from a
     revision
-    self.obj is the child revision here
+    self.obj is the child revision
     self.obj.parentIds is the list of
-    parent revisions
+    requested revisions
     """
 
     _node_class = BaseRevisionNode

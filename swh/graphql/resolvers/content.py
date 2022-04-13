@@ -20,7 +20,7 @@ class ContentNode(BaseContentNode):
     def _get_node_data(self):
         """
         When a content is requested directly
-        (not from a connection) with an id
+        with an id
         """
         content_id = utils.str_to_swid(self.kwargs.get("SWHID"))
         return self._get_content_by_id(content_id)[0]
@@ -30,7 +30,8 @@ class TargetContentNode(BaseContentNode):
     def _get_node_data(self):
         """
         When a content is requested from a
-        directory entry
+        directory entry or from a release target
+
         content id is obj.target here
         """
         content_id = self.obj.target

@@ -26,7 +26,7 @@ release_target = UnionType("ReleaseTarget")
 directory_entry_target = UnionType("DirectoryEntryTarget")
 
 # Node resolvers
-# A node resolver can return a node object or a data structure
+# A node resolver should return an instance of BaseNode
 
 
 @query.field("origin")
@@ -120,7 +120,7 @@ def content_resolver(obj, info, **kw):
 
 
 # Connection resolvers
-# A connection resolver will return a sub class of BaseConnection
+# A connection resolver should return an instance of BaseConnection
 
 
 @query.field("origins")
