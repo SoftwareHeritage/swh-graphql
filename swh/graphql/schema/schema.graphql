@@ -210,31 +210,36 @@ type Directory implements SWHNode {
   ): DirectoryEntryConnection
 }
 
-type ContentChecksum {
-  test: String
+type ContentChecksum {  # FIXME, temp types
+  blake2s256: Sha1
+  sha1: Sha1
+  sha1_git: Sha1
+  sha256: Sha1
 }
 
-type ContentType {
-  test: String
-}
+# type ContentType {
+#   test: String
+# }
 
-type ContentLanguage {
-  test: String
-}
+# type ContentLanguage {
+#   test: String
+# }
 
-type ContentLicense {
-  test: String
-}
+# type ContentLicense {
+#   test: String
+# }
 
 type Content implements SWHNode {
   id: Sha1!
+  swhid: String
   checksum: ContentChecksum
   # data:
-  filetype: ContentType
-  language: ContentLanguage
+  # filetype: ContentType
+  # language: ContentLanguage
+  # license: ContentLicense
   length: Int
-  license: ContentLicense
   status: String
+  data: BinaryText
 }
 
 type Query {

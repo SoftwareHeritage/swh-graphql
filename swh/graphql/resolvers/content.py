@@ -5,12 +5,29 @@ from .base_node import BaseNode
 
 
 class BaseContentNode(BaseNode):
+    """
+    """
+
     def _get_content_by_id(self, content_id):
-        return archive.Archive().get_content(content_id)
+        content = archive.Archive().get_content(content_id)
+        return content[0] if content else None
 
     @property
     def id(self):
-        return b"test"
+        return self._node.unique_key()
+
+    @property
+    def swhid(self):
+        return self._node.swhid()
+
+    @property
+    def checksum(self):
+        # FIXME, return a Node object
+        return self._node.hashes()
+
+    @property
+    def data(self):
+        return
 
     def is_type_of(self):
         return "Content"
@@ -23,7 +40,7 @@ class ContentNode(BaseContentNode):
         with an id
         """
         content_id = utils.str_to_swid(self.kwargs.get("SWHID"))
-        return self._get_content_by_id(content_id)[0]
+        return self._get_content_by_id(content_id)
 
 
 class TargetContentNode(BaseContentNode):
