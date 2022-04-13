@@ -33,8 +33,8 @@ class Archive:
     def get_revisions(self, revision_ids):
         return self.storage.revision_get(revision_ids=revision_ids)
 
-    def get_release(self, release_id):
-        return self.storage.release_get(releases=[release_id])
+    def get_releases(self, release_ids):
+        return self.storage.release_get(releases=release_ids)
 
     def get_directory_entries(self, directory_id):
         return self.storage.directory_ls(directory_id)

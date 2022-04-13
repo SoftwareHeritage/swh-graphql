@@ -151,7 +151,7 @@ type Revision implements SWHNode {
   author: Person
   committer: Person
   date: DateTimeZone
-  type: String
+  type: String   # Revision type: FIXME, change to an enum
   directoryId: Sha1
   directory: Directory
   parentIds: [Sha1]
@@ -168,12 +168,17 @@ type Revision implements SWHNode {
 # type ReleasEdge {
 # }
 
+union ReleaseTarget = Release | Revision | Directory | Content
+
 type Release implements SWHNode {
   id: Sha1!
   name: BinaryText
   message: BinaryText
   author: Person
   date: DateTimeZone
+  targetId: Sha1
+  type: String  # target type: FIXME, change to an enum
+  target: ReleaseTarget
 }
 
 type DirectoryEntryConnection {

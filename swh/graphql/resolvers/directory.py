@@ -28,6 +28,8 @@ class DirectoryNode(BaseDirectoryNode):
 
 
 class RevisionDirectoryNode(BaseDirectoryNode):
+    # FIXME. maybe this shouls also be resolved
+    # at the targetdirectory class
     def _get_node_data(self):
         """
         When a directory is requested from a revision
@@ -39,11 +41,10 @@ class RevisionDirectoryNode(BaseDirectoryNode):
         return self._get_directory_by_id(directory_id)
 
 
-class DirectoryEntryDirectoryNode(BaseDirectoryNode):
+class TargetDirectoryNode(BaseDirectoryNode):
     def _get_node_data(self):
         """
-        When a sub directory is requested from a
-        parent directory entry
+        When a directory is requested as a target
         obj.target is the sub directory id here
         """
         return self._get_directory_by_id(self.obj.target)

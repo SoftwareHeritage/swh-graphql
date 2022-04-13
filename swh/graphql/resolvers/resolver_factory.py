@@ -1,9 +1,9 @@
-from .content import ContentNode, DirectoryEntryContentNode
-from .directory import DirectoryEntryDirectoryNode, DirectoryNode, RevisionDirectoryNode
+from .content import ContentNode, TargetContentNode
+from .directory import DirectoryNode, RevisionDirectoryNode, TargetDirectoryNode
 from .directory_entry import DirectoryEntryConnection
 from .origin import OriginConnection, OriginNode
-from .release import BranchReleaseNode, ReleaseNode
-from .revision import BranchRevisionNode, ParentRevisionConnection, RevisionNode
+from .release import ReleaseNode, TargetReleaseNode
+from .revision import ParentRevisionConnection, RevisionNode, TargetRevisionNode
 from .snapshot import SnapshotNode, VisitSnapshotNode
 from .snapshot_branch import SnapshotBranchConnection
 from .visit import OriginVisitConnection, OriginVisitNode
@@ -26,15 +26,19 @@ def get_node_resolver(resolver_type):
         "visit": OriginVisitNode,
         "visit-snapshot": VisitSnapshotNode,
         "snapshot": SnapshotNode,
-        "branch-revision": BranchRevisionNode,
-        "branch-release": BranchReleaseNode,
+        "branch-revision": TargetRevisionNode,
+        "release-revision": TargetRevisionNode,
+        "branch-release": TargetReleaseNode,
+        "release-release": TargetReleaseNode,
+        "release-directory": TargetDirectoryNode,
+        "release-content": TargetContentNode,
         "revision": RevisionNode,
         "revision-directory": RevisionDirectoryNode,
         "release": ReleaseNode,
         "directory": DirectoryNode,
         "content": ContentNode,
-        "dir-entry-dir": DirectoryEntryDirectoryNode,
-        "dir-entry-file": DirectoryEntryContentNode,
+        "dir-entry-dir": TargetDirectoryNode,
+        "dir-entry-file": TargetContentNode,
     }
     # resolver_type = get_mapping_key(info) # FIXME, get full name
     if resolver_type not in mapping:

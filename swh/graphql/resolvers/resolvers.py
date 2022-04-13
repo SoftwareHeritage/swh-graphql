@@ -17,10 +17,12 @@ visit_status = ObjectType("VisitStatus")
 snapshot = ObjectType("Snapshot")
 snapshot_branch = ObjectType("Branch")
 revision = ObjectType("Revision")
+release = ObjectType("Release")
 directory = ObjectType("Directory")
 directory_entry = ObjectType("DirectoryEntry")
 
 branch_target = UnionType("BranchTarget")
+release_target = UnionType("ReleaseTarget")
 directory_entry_target = UnionType("DirectoryEntryTarget")
 
 # Node resolvers
@@ -79,6 +81,19 @@ def revision_directory_resolver(obj, info, **kw):
 @query.field("release")
 def release_resolver(obj, info, **kw):
     resolver = get_node_resolver("release")
+    return resolver(obj, info, **kw)()
+
+
+@release.field("target")
+def release_target_resolver(obj, info, **kw):
+    """
+    release target can be a release, revision,
+    directory or content
+    obj is release here, target type is
+    obj.target_type
+    """
+    resolver_type = f"release-{obj.target_type.value}"
+    resolver = get_node_resolver(resolver_type)
     return resolver(obj, info, **kw)()
 
 
@@ -147,6 +162,7 @@ def directory_entry_resolver(obj, info, **kw):
 # Any other type of resolver
 
 
+@release_target.type_resolver
 @directory_entry_target.type_resolver
 @branch_target.type_resolver
 def union_resolver(obj, *_):

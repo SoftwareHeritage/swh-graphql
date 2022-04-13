@@ -29,6 +29,10 @@ class BaseRevisionNode(BaseNode):
         """ """
         return self._node.directory
 
+    @property
+    def type(self):
+        return self._node.type.value
+
     def is_type_of(self):
         """
         is_type_of is required only when
@@ -50,12 +54,12 @@ class RevisionNode(BaseRevisionNode):
         return self._get_revision_by_id(revision_id)
 
 
-class BranchRevisionNode(BaseRevisionNode):
+class TargetRevisionNode(BaseRevisionNode):
     """
-    When the revision is requested from
-    a snapshot branch
-    self.obj is a branch object
-    self.obj.target is the revision id
+    When a revision is requested as a target
+
+    self.obj could be a snapshotbranch or a release
+    self.obj.target is the revision id here
     """
 
     def _get_node_data(self):

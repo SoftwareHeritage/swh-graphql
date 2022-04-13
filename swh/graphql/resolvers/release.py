@@ -6,12 +6,20 @@ from .base_node import BaseNode
 
 class BaseReleaseNode(BaseNode):
     def _get_release_by_id(self, release_id):
-        return (archive.Archive().get_release(release_id) or None)[0]
+        return (archive.Archive().get_releases([release_id]) or None)[0]
 
     @property
     def author(self):
         # return a PersoneNode object
         return self._node.author
+
+    @property
+    def targetId(self):  # To support the schema naming convention
+        return self._node.target
+
+    @property
+    def type(self):
+        return self._node.target_type.value
 
     def is_type_of(self):
         """
@@ -25,8 +33,7 @@ class BaseReleaseNode(BaseNode):
 
 class ReleaseNode(BaseReleaseNode):
     """
-    When the release is requested directly
-    (not from a connection) with an id
+    When the release is requested directly with an id
     """
 
     def _get_node_data(self):
@@ -34,12 +41,12 @@ class ReleaseNode(BaseReleaseNode):
         return self._get_release_by_id(release_id)
 
 
-class BranchReleaseNode(BaseReleaseNode):
+class TargetReleaseNode(BaseReleaseNode):
     """
-    When the release is requested from
-    a snapshot branch
-    self.obj is a branch object
-    self.obj.target is the release id
+    When a release is requested as a target
+
+    self.obj could be a snapshotbranch or a release
+    self.obj.target is the release id here
     """
 
     def _get_node_data(self):

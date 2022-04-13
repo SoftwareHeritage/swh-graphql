@@ -26,7 +26,7 @@ class ContentNode(BaseContentNode):
         return self._get_content_by_id(content_id)[0]
 
 
-class DirectoryEntryContentNode(BaseContentNode):
+class TargetContentNode(BaseContentNode):
     def _get_node_data(self):
         """
         When a content is requested from a
