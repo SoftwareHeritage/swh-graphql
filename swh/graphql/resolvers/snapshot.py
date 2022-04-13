@@ -32,7 +32,7 @@ class VisitSnapshotNode(BaseSnapshotNode):
     def _get_node_data(self):
         """
         self.obj is visitstatus here
-        snapshot sha1 is avaialbe in the visit object (self.obj)
+        snapshot sha1 is available in the visit object (self.obj)
         """
         return self._get_snapshot_by_id(self.obj.snapshot)
 

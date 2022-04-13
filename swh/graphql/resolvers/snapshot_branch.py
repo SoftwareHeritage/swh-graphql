@@ -28,6 +28,10 @@ class SnapshotBranchNode(BaseNode):
         }
         return namedtuple("NodeObj", node.keys())(*node.values())
 
+    @property
+    def targetId(self):  # To support the schema naming convention
+        return self._node.target
+
 
 class SnapshotBranchConnection(BaseConnection):
     _node_class = SnapshotBranchNode

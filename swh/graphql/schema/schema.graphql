@@ -129,6 +129,7 @@ union BranchTarget = Revision | Release
 type Branch {
   name: BinaryText
   type: String  # FIXME, change to an enum
+  targetId: Sha1
   target: BranchTarget
 }
 

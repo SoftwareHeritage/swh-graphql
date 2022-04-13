@@ -30,7 +30,7 @@ class BaseNode(ABC):
     def _get_node_from_data(self, node_data):
         """
         Get the object from node_data
-        In case of a dict, covert it to an object
+        In case of a dict, convert it to an object
         Override to support different data structures
         """
         if type(node_data) is dict:
