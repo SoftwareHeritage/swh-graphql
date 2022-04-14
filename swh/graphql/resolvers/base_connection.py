@@ -1,21 +1,16 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from dataclasses import dataclass
+from typing import Optional, Type
 
 from swh.graphql.utils import utils
 
-# from dataclasses import dataclass
-
-# @dataclass
-# class PageInfo:
-#     nex_page_token: str
+from .base_node import BaseNode
 
 
-# class Arguments:
-#     """
-#     dataclass
-#     """
-#     after  # Elements that come after the specified cursor
-#     first  # Returns the first n elements
+@dataclass
+class PageInfo:
+    hasNextPage: bool
+    endCursor: str
 
 
 class BaseConnection(ABC):
@@ -23,7 +18,7 @@ class BaseConnection(ABC):
     Base class for all the connection resolvers
     """
 
-    _node_class: Any = None
+    _node_class: Optional[Type[BaseNode]] = None
     _page_size = 50  # default page size
 
     def __init__(self, obj, info, paged_data=None, **kwargs):
@@ -42,14 +37,11 @@ class BaseConnection(ABC):
     @property
     def nodes(self):
         """
-        Override if needed
-        return a list of objects
+        Override if needed; return a list of objects
 
-        If a node class is set,
-        return a list of its (Node) instances
+        If a node class is set, return a list of its (Node) instances
         else a list of raw results
         """
-
         if self._node_class is not None:
             return [
                 self._node_class(self.obj, self.info, node_data=result, **self.kwargs)
@@ -59,15 +51,11 @@ class BaseConnection(ABC):
 
     @property
     def pageInfo(self):  # To support the schema naming convention
-        # FIXME Replace with a dataclass
-        # return PageInfo(self.page_data.next_page_token)
         # FIXME, add more details like startCursor
-        return {
-            "hasNextPage": bool(self.get_paged_data().next_page_token),
-            "endCursor": utils.get_encoded_cursor(
-                self.get_paged_data().next_page_token
-            ),
-        }
+        return PageInfo(
+            hasNextPage=bool(self.get_paged_data().next_page_token),
+            endCursor=utils.get_encoded_cursor(self.get_paged_data().next_page_token),
+        )
 
     @property
     def totalCount(self):  # To support the schema naming convention
