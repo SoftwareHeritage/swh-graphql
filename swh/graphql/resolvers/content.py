@@ -5,8 +5,7 @@ from .base_node import BaseNode
 
 
 class BaseContentNode(BaseNode):
-    """
-    """
+    """ """
 
     def _get_content_by_id(self, content_id):
         content = archive.Archive().get_content(content_id)
