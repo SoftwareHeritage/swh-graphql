@@ -25,9 +25,12 @@ class Archive:
             origin_url, visit_id, page_token=after, limit=first
         )
 
-    def get_snapshot_branches(self, snapshot, after=None, first=50):
+    def get_snapshot_branches(self, snapshot, after, first, target_types):
         return self.storage.snapshot_get_branches(
-            snapshot, branches_from=after, branches_count=first
+            snapshot,
+            branches_from=after,
+            branches_count=first,
+            target_types=target_types,
         )
 
     def get_revisions(self, revision_ids):

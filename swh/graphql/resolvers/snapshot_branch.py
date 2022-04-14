@@ -43,16 +43,19 @@ class SnapshotBranchConnection(BaseConnection):
         (as returned from resolvers/snapshot.py)
         """
 
-        # FIXME, this pagination is not consistent with other connections
-        # FIX in swh-storage to return PagedResult
         result = archive.Archive().get_snapshot_branches(
-            self.obj.id, after=self._get_after_arg(), first=self._get_first_arg()
+            self.obj.id,
+            after=self._get_after_arg(),
+            first=self._get_first_arg(),
+            target_types=self.kwargs.get("types", None),
         )
         # FIXME Cursor must be a hex to be consistent with
         # the base class, hack to make that work
         end_cusrsor = (
             result["next_branch"].hex() if result["next_branch"] is not None else None
         )
+        # FIXME, this pagination is not consistent with other connections
+        # FIX in swh-storage to return PagedResult
         return PagedResult(
             results=result["branches"].items(), next_page_token=end_cusrsor
         )

@@ -96,6 +96,7 @@ type Snapshot implements SWHNode {
   branches(
     first: Int
     after: String
+    types: [BranchTypes]
   ): BranchConnection
 
   # releases(
@@ -126,9 +127,14 @@ type Person {
 # FIXME, this can be Content, Directory, Snapshot, or Alias as well
 union BranchTarget = Revision | Release
 
+enum BranchTypes {
+  revision
+  release
+}
+
 type Branch {
   name: BinaryText
-  type: String  # FIXME, change to an enum
+  type: BranchTypes
   targetId: Sha1
   target: BranchTarget
 }
@@ -170,6 +176,13 @@ type Revision implements SWHNode {
 
 union ReleaseTarget = Release | Revision | Directory | Content
 
+enum ReleaseTargetType {
+  release
+  revision
+  content
+  directory
+}
+
 type Release implements SWHNode {
   id: Sha1!
   name: BinaryText
@@ -177,7 +190,7 @@ type Release implements SWHNode {
   author: Person
   date: DateTimeZone
   targetId: Sha1
-  type: String  # target type: FIXME, change to an enum
+  targetType: ReleaseTargetType
   target: ReleaseTarget
 }
 
@@ -195,9 +208,15 @@ type DirectoryEntryEdge {
 
 union DirectoryEntryTarget = Directory | Content
 
+enum DirectoryEntryType {
+  dir
+  file
+  rev
+}
+
 type DirectoryEntry {
   name: BinaryText
-  type: String  # FIXME, replace with enum
+  type: DirectoryEntryType
   targetId: Sha1
   target: DirectoryEntryTarget
 }

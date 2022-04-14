@@ -13,7 +13,7 @@ class BaseReleaseNode(BaseNode):
         return self._node.target
 
     @property
-    def type(self):
+    def targetType(self):  # To support the schema naming convention
         return self._node.target_type.value
 
     def is_type_of(self):
