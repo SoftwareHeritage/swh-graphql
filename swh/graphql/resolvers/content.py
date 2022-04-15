@@ -38,7 +38,7 @@ class ContentNode(BaseContentNode):
         When a content is requested directly
         with an id
         """
-        content_id = utils.str_to_swid(self.kwargs.get("SWHID"))
+        content_id = utils.str_to_sha1(self.kwargs.get("SWHID"))
         return self._get_content_by_id(content_id)
 
 

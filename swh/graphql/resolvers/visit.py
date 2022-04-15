@@ -14,7 +14,7 @@ class OriginVisitNode(BaseNode):
     @property
     def id(self):
         # FIXME, use a better id
-        return utils.encode(f"{self.origin}-{str(self.visit)}")
+        return utils.b64encode(f"{self.origin}-{str(self.visit)}")
 
 
 class OriginVisitConnection(BaseConnection):

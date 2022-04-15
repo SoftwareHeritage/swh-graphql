@@ -1,30 +1,31 @@
 import base64
+from typing import List
 
 from swh.storage.interface import PagedResult
 
 
-def encode(text):
+def b64encode(text: str) -> str:
     return base64.b64encode(bytes(text, "utf-8")).decode("utf-8")
 
 
-def get_encoded_cursor(cursor):
+def get_encoded_cursor(cursor: str) -> str:
     if cursor is None:
         return None
-    return base64.b64encode(bytes(cursor, "utf-8")).decode("utf-8")
+    return b64encode(cursor)
 
 
-def get_decoded_cursor(cursor):
+def get_decoded_cursor(cursor: str) -> str:
     if cursor is None:
         return None
     return base64.b64decode(cursor).decode("utf-8")
 
 
-def str_to_swid(str_swid):
+def str_to_sha1(sha1: str) -> bytearray:
     # FIXME, use core function
-    return bytearray.fromhex(str_swid)
+    return bytearray.fromhex(sha1)
 
 
-def paginated(source, first, after=0):
+def paginated(source: List, first: int, after=0) -> PagedResult:
     """
     Pagination at the GraphQL level
     This is a temporary fix and inefficient.

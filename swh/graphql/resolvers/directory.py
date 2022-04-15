@@ -21,7 +21,7 @@ class DirectoryNode(BaseDirectoryNode):
         """
         When a directory is requested directly with an id
         """
-        directory_id = utils.str_to_swid(self.kwargs.get("Sha1"))
+        directory_id = utils.str_to_sha1(self.kwargs.get("Sha1"))
         # path = ""
         return self._get_directory_by_id(directory_id)
 
