@@ -12,10 +12,6 @@ interface Node {
   id: ID!
 }
 
-# interface SWHIDNode {
-#   id: SWHID!
-# }
-
 interface SWHNode {
   id: Sha1!
 }
@@ -73,7 +69,6 @@ type Visit implements Node {
     after: String
   ): VisitStatusConnection
   latestStatus: VisitStatus
-  # origin: Origin # FIXME, this can be added later
 }
 
 type VisitStatusConnection {
@@ -95,8 +90,6 @@ type VisitStatus {
   type: String
 }
 
-# FIXME, add OriginSnapshotConnection
-
 type SnapshotConnection {
   edges: [SnapshotEdge]
   nodes: [Snapshot]
@@ -117,12 +110,6 @@ type Snapshot implements SWHNode {
     after: String
     types: [BranchTypes]
   ): BranchConnection
-
-  # releases(
-  #   first: Int
-  #   after: String
-  # ): ReleaseConnection
-  # FIXME, add alias type as well
 }
 
 type BranchConnection {
@@ -186,12 +173,6 @@ type Revision implements SWHNode {
   ): RevisionConnection
   # log
 }
-
-# type ReleaseConnection {
-# }
-
-# type ReleasEdge {
-# }
 
 union ReleaseTarget = Release | Revision | Directory | Content
 
@@ -284,8 +265,6 @@ type Query {
   """
   Get an origin with its url
   """
-  # FIXME, find some unique id to help cache
-  # maybe base64 encode the URL
   origin(
     url: String!
   ): Origin
@@ -305,7 +284,6 @@ type Query {
   Get a visit object with its id
   and/or origin and visit id
   """
-  # FIXME, find some unique id to help cache
   visit(
     originUrl: String!
     visitId: Int!
@@ -317,15 +295,6 @@ type Query {
   snapshot(
     Sha1: String!
   ): Snapshot
-
-  # """
-  # Get all the snapshot for the given origin
-  # """
-  # originSnapshot(
-  #   originUrl: String!
-  #   first: Int
-  #   after: String
-  # ): SnapshotConnection
 
   """
   Get the revision with the given swhid
