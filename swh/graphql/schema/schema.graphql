@@ -61,7 +61,7 @@ type VisitEdge {
 
 type Visit implements Node {
   id: ID!
-  visit: Int
+  visitId: Int
   date: DateTime!
   type: String
   status(

@@ -17,7 +17,7 @@ class LatestVisitStatusNode(BaseVisitStatusNode):
 
     def _get_node_data(self):
         return archive.Archive().get_latest_visit_status(
-            self.obj.origin, self.obj.visit
+            self.obj.origin, self.obj.visitId
         )
 
 
@@ -31,7 +31,7 @@ class VisitStatusConnection(BaseConnection):
     def _get_paged_result(self):
         return archive.Archive().get_visit_status(
             self.obj.origin,
-            self.obj.visit,
+            self.obj.visitId,
             after=self._get_after_arg(),
             first=self._get_first_arg(),
         )
