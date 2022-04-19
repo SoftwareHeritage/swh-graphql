@@ -31,6 +31,9 @@ class Archive:
     def get_latest_visit_status(self, origin_url, visit_id):
         return self.storage.origin_visit_status_get_latest(origin_url, visit_id)
 
+    def get_origin_snapshots(self, origin_url):
+        return self.storage.origin_snapshot_get_all(origin_url)
+
     def get_snapshot_branches(self, snapshot, after, first, target_types):
         return self.storage.snapshot_get_branches(
             snapshot,

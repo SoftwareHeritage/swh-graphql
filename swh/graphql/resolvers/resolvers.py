@@ -149,6 +149,13 @@ def visits_resolver(obj, info, **kw):
     return resolver(obj, info, **kw)()
 
 
+@origin.field("snapshots")
+def origin_snapshots_resolver(obj, info, **kw):
+    """ """
+    resolver = get_connection_resolver("origin-snapshots")
+    return resolver(obj, info, **kw)()
+
+
 @visit.field("status")
 def visitstatus_resolver(obj, info, **kw):
     resolver = get_connection_resolver("visit-status")

@@ -1,5 +1,7 @@
+from swh.graphql.backends import archive
 from swh.graphql.utils import utils
 
+from .base_connection import BaseConnection
 from .base_node import BaseNode
 
 
@@ -34,3 +36,15 @@ class VisitSnapshotNode(BaseSnapshotNode):
         self.obj.snapshot is the requested snapshot id
         """
         return self._get_snapshot_by_id(self.obj.snapshot)
+
+
+class OriginSnapshotConnection(BaseConnection):
+    _node_class = BaseSnapshotNode
+
+    def _get_paged_result(self):
+        """ """
+        results = archive.Archive().get_origin_snapshots(self.obj.url)
+        snapshots = [{"id": snapshot} for snapshot in results]
+        # FIXME, using dummy(local) pagination, move pagination to backend
+        # To remove localpagination, just drop the paginated call
+        return utils.paginated(snapshots, self._get_first_arg(), self._get_after_arg())

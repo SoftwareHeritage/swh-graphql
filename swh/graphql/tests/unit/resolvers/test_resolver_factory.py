@@ -41,6 +41,7 @@ class TestFactory:
         [
             ("origins", "OriginConnection"),
             ("origin-visits", "OriginVisitConnection"),
+            ("origin-snapshots", "OriginSnapshotConnection"),
             ("visit-status", "VisitStatusConnection"),
             ("snapshot-branches", "SnapshotBranchConnection"),
             ("revision-parents", "ParentRevisionConnection"),

@@ -42,6 +42,7 @@ class TestResolvers:
         [
             (rs.origins_resolver, resolvers.origin.OriginConnection),
             (rs.visits_resolver, resolvers.visit.OriginVisitConnection),
+            (rs.origin_snapshots_resolver, resolvers.snapshot.OriginSnapshotConnection),
             (rs.visitstatus_resolver, resolvers.visit_status.VisitStatusConnection),
             (
                 rs.snapshot_branches_resolver,

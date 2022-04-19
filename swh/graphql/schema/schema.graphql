@@ -45,6 +45,10 @@ type Origin implements SWHNode {
     after: String
   ): VisitConnection!
   latestVisit: Visit
+  snapshots(
+    first: Int
+    after: String
+  ): SnapshotConnection
 }
 
 type VisitConnection {
@@ -92,6 +96,18 @@ type VisitStatus {
 }
 
 # FIXME, add OriginSnapshotConnection
+
+type SnapshotConnection {
+  edges: [SnapshotEdge]
+  nodes: [Snapshot]
+  pageInfo: PageInfo!
+  totalCount: Int
+}
+
+type SnapshotEdge {
+  cursor: String!
+  node: Snapshot
+}
 
 type Snapshot implements SWHNode {
   id: Sha1!
