@@ -37,12 +37,12 @@ type Origin implements SWHNode {
   id: Sha1!
   url: String!
   visits(
-    first: Int
+    first: Int!
     after: String
   ): VisitConnection!
   latestVisit: Visit
   snapshots(
-    first: Int
+    first: Int!
     after: String
   ): SnapshotConnection
 }
@@ -106,7 +106,7 @@ type Snapshot implements SWHNode {
   id: Sha1!
 
   branches(
-    first: Int
+    first: Int!
     after: String
     types: [BranchTypes]
   ): BranchConnection
@@ -276,7 +276,7 @@ type Query {
   """
   # FIMXE, use Input types to make this cleaner
   origins(
-    first: Int
+    first: Int!
     after: String
     urlPattern: String
   ): OriginConnection
