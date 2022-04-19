@@ -14,6 +14,11 @@ class Archive:
     def get_origins(self, after=None, first=50):
         return self.storage.origin_list(page_token=after, limit=first)
 
+    def search_origins(self, pattern, after=None, first=50):
+        return self.storage.origin_search(
+            url_pattern=pattern, page_token=after, limit=first
+        )
+
     def get_origin_visits(self, origin_url, after=None, first=50):
         return self.storage.origin_visit_get(origin_url, page_token=after, limit=first)
 

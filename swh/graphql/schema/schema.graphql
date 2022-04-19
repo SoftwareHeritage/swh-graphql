@@ -278,6 +278,7 @@ type Query {
   origins(
     first: Int
     after: String
+    urlPattern: String
   ): OriginConnection
 
   """
