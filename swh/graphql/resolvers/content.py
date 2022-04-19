@@ -16,7 +16,7 @@ class BaseContentNode(BaseNode):
         return self._node.unique_key()
 
     @property
-    def swhid(self):
+    def swhId(self):  # To support the schema naming convention
         return self._node.swhid()
 
     @property

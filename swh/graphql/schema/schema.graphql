@@ -250,7 +250,7 @@ type ContentChecksum {  # FIXME, temp types
 
 type Content implements SWHNode {
   id: Sha1!
-  swhid: String
+  swhId: String
   checksum: ContentChecksum
   # data:
   # filetype: ContentType
@@ -294,28 +294,28 @@ type Query {
   Get a snapshot with SWHID
   """
   snapshot(
-    Sha1: String!
+    Sha1: Sha1!
   ): Snapshot
 
   """
   Get the revision with the given swhid
   """
   revision(
-    Sha1: String!
+    Sha1: Sha1!
   ): Revision
 
   """
   Get the release with the given swhid
   """
   release(
-    Sha1: String!
+    Sha1: Sha1!
   ): Release
 
   """
   Get the directory with the given swhid
   """
   directory(
-    Sha1: String!
+    Sha1: Sha1!
   ): Directory
 
   """
