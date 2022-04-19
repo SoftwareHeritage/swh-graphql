@@ -56,6 +56,7 @@ class SnapshotBranchConnection(BaseConnection):
         )
         # FIXME, this pagination is not consistent with other connections
         # FIX in swh-storage to return PagedResult
+        # STORAGE-TODO
         return PagedResult(
             results=result["branches"].items(), next_page_token=end_cusrsor
         )

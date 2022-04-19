@@ -47,4 +47,5 @@ class OriginSnapshotConnection(BaseConnection):
         snapshots = [{"id": snapshot} for snapshot in results]
         # FIXME, using dummy(local) pagination, move pagination to backend
         # To remove localpagination, just drop the paginated call
+        # STORAGE-TODO
         return utils.paginated(snapshots, self._get_first_arg(), self._get_after_arg())

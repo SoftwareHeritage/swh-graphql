@@ -70,5 +70,6 @@ class ParentRevisionConnection(BaseConnection):
     def _get_paged_result(self):
         # FIXME, using dummy(local) pagination, move pagination to backend
         # To remove localpagination, just drop the paginated call
+        # STORAGE-TODO
         parents = archive.Archive().get_revisions(self.obj.parentIds)
         return utils.paginated(parents, self._get_first_arg(), self._get_after_arg())
