@@ -6,7 +6,7 @@ from .release import ReleaseNode, TargetReleaseNode
 from .revision import ParentRevisionConnection, RevisionNode, TargetRevisionNode
 from .snapshot import SnapshotNode, VisitSnapshotNode
 from .snapshot_branch import SnapshotBranchConnection
-from .visit import OriginVisitConnection, OriginVisitNode
+from .visit import LatestVisitNode, OriginVisitConnection, OriginVisitNode
 from .visit_status import VisitStatusConnection
 
 
@@ -15,6 +15,7 @@ def get_node_resolver(resolver_type):
     mapping = {
         "origin": OriginNode,
         "visit": OriginVisitNode,
+        "latest-visit": LatestVisitNode,
         "visit-snapshot": VisitSnapshotNode,
         "snapshot": SnapshotNode,
         "branch-revision": TargetRevisionNode,

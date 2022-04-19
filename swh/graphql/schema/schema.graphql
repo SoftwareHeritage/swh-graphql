@@ -44,6 +44,7 @@ type Origin implements SWHNode {
     first: Int
     after: String
   ): VisitConnection!
+  latestVisit: Visit
 }
 
 type VisitConnection {
@@ -60,6 +61,7 @@ type VisitEdge {
 
 type Visit implements Node {
   id: ID!
+  visit: Int
   date: DateTime!
   type: String
   status(
@@ -289,7 +291,7 @@ type Query {
   # FIXME, find some unique id to help cache
   visit(
     originUrl: String!
-    id: String!
+    visitId: Int!
   ): Visit
 
   """

@@ -36,6 +36,13 @@ def origin_resolver(obj, info, **kw):
     return resolver(obj, info, **kw)()
 
 
+@origin.field("latestVisit")
+def latest_visit_resolver(obj, info, **kw):
+    """ """
+    resolver = get_node_resolver("latest-visit")
+    return resolver(obj, info, **kw)()
+
+
 @query.field("visit")
 def visit_resolver(obj, info, **kw):
     """ """

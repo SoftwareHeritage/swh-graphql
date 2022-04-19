@@ -16,6 +16,7 @@ class TestResolvers:
         [
             (rs.origin_resolver, resolvers.origin.OriginNode),
             (rs.visit_resolver, resolvers.visit.OriginVisitNode),
+            (rs.latest_visit_resolver, resolvers.visit.LatestVisitNode),
             (rs.snapshot_resolver, resolvers.snapshot.SnapshotNode),
             (rs.visit_snapshot_resolver, resolvers.snapshot.VisitSnapshotNode),
             (rs.revision_resolver, resolvers.revision.RevisionNode),
