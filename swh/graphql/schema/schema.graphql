@@ -68,6 +68,7 @@ type Visit implements Node {
     first: Int
     after: String
   ): VisitStatusConnection
+  latestStatus: VisitStatus
   # origin: Origin # FIXME, this can be added later
 }
 

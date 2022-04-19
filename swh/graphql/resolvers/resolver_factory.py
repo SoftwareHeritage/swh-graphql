@@ -7,7 +7,7 @@ from .revision import ParentRevisionConnection, RevisionNode, TargetRevisionNode
 from .snapshot import SnapshotNode, VisitSnapshotNode
 from .snapshot_branch import SnapshotBranchConnection
 from .visit import LatestVisitNode, OriginVisitConnection, OriginVisitNode
-from .visit_status import VisitStatusConnection
+from .visit_status import LatestVisitStatusNode, VisitStatusConnection
 
 
 def get_node_resolver(resolver_type):
@@ -16,6 +16,7 @@ def get_node_resolver(resolver_type):
         "origin": OriginNode,
         "visit": OriginVisitNode,
         "latest-visit": LatestVisitNode,
+        "latest-status": LatestVisitStatusNode,
         "visit-snapshot": VisitSnapshotNode,
         "snapshot": SnapshotNode,
         "branch-revision": TargetRevisionNode,

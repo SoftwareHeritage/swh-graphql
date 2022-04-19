@@ -50,6 +50,13 @@ def visit_resolver(obj, info, **kw):
     return resolver(obj, info, **kw)()
 
 
+@visit.field("latestStatus")
+def latest_visit_status_resolver(obj, info, **kw):
+    """ """
+    resolver = get_node_resolver("latest-status")
+    return resolver(obj, info, **kw)()
+
+
 @query.field("snapshot")
 def snapshot_resolver(obj, info, **kw):
     """ """

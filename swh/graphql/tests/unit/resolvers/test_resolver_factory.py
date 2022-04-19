@@ -10,6 +10,7 @@ class TestFactory:
             ("origin", "OriginNode"),
             ("visit", "OriginVisitNode"),
             ("latest-visit", "LatestVisitNode"),
+            ("latest-status", "LatestVisitStatusNode"),
             ("visit-snapshot", "VisitSnapshotNode"),
             ("snapshot", "SnapshotNode"),
             ("branch-revision", "TargetRevisionNode"),

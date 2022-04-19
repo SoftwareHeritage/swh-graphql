@@ -4,8 +4,21 @@ from .base_connection import BaseConnection
 from .base_node import BaseNode
 
 
-class VisitStatusNode(BaseNode):
+class BaseVisitStatusNode(BaseNode):
     """ """
+
+
+class LatestVisitStatusNode(BaseVisitStatusNode):
+    """
+    Get the latest visit status for a visit
+    self.obj is the visit object here
+    self.obj.origin is the origin URL
+    """
+
+    def _get_node_data(self):
+        return archive.Archive().get_latest_visit_status(
+            self.obj.origin, self.obj.visit
+        )
 
 
 class VisitStatusConnection(BaseConnection):
@@ -13,7 +26,7 @@ class VisitStatusConnection(BaseConnection):
     self.obj is the visit object
     """
 
-    _node_class = VisitStatusNode
+    _node_class = BaseVisitStatusNode
 
     def _get_paged_result(self):
         return archive.Archive().get_visit_status(
