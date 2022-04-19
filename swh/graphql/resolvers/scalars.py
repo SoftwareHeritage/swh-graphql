@@ -29,13 +29,6 @@ def validate_sha1(value):
     return value
 
 
-# @swhid_scalar.value_parser
-# def validate_sha1(value):
-#     # FIXME, handle the error here
-#     validate_sha1_git(value)
-#     return value
-
-
 @binary_text_scalar.serializer
 def serialize_binary_text(value):
     # FIXME
@@ -45,7 +38,3 @@ def serialize_binary_text(value):
 @datetimezone_scalar.serializer
 def serialize_datetimezone(value):
     return value.to_datetime().timestamp()
-
-
-class SWHIDScalar(ScalarType):
-    pass
