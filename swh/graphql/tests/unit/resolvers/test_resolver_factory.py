@@ -45,6 +45,7 @@ class TestFactory:
             ("visit-status", "VisitStatusConnection"),
             ("snapshot-branches", "SnapshotBranchConnection"),
             ("revision-parents", "ParentRevisionConnection"),
+            ("revision-log", "LogRevisionConnection"),
             ("directory-entries", "DirectoryEntryConnection"),
         ],
     )

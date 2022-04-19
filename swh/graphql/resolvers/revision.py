@@ -73,3 +73,20 @@ class ParentRevisionConnection(BaseConnection):
         # STORAGE-TODO
         parents = archive.Archive().get_revisions(self.obj.parentIds)
         return utils.paginated(parents, self._get_first_arg(), self._get_after_arg())
+
+
+class LogRevisionConnection(BaseConnection):
+    """
+    When revisionslog is requested from a
+    revision
+    self.obj is the revision id
+    """
+
+    _node_class = BaseRevisionNode
+
+    def _get_paged_result(self):
+        log = archive.Archive().get_revision_log([self.obj.id])
+        # FIXME, using dummy(local) pagination, move pagination to backend
+        # To remove localpagination, just drop the paginated call
+        # STORAGE-TODO
+        return utils.paginated(log, self._get_first_arg(), self._get_after_arg())

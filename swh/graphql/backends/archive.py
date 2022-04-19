@@ -50,6 +50,9 @@ class Archive:
     def get_revisions(self, revision_ids):
         return self.storage.revision_get(revision_ids=revision_ids)
 
+    def get_revision_log(self, revision_ids, after=None, first=50):
+        return self.storage.revision_log(revisions=revision_ids, limit=first)
+
     def get_releases(self, release_ids):
         return self.storage.release_get(releases=release_ids)
 
