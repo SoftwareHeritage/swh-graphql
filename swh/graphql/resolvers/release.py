@@ -1,5 +1,4 @@
 from swh.graphql.backends import archive
-from swh.graphql.utils import utils
 
 from .base_node import BaseNode
 
@@ -31,8 +30,7 @@ class ReleaseNode(BaseReleaseNode):
     """
 
     def _get_node_data(self):
-        release_id = utils.str_to_sha1(self.kwargs.get("Sha1"))
-        return self._get_release_by_id(release_id)
+        return self._get_release_by_id(self.kwargs.get("Sha1"))
 
 
 class TargetReleaseNode(BaseReleaseNode):

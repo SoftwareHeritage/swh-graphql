@@ -23,10 +23,10 @@ def serialize_sha1(value):
 
 
 @sha1_scalar.value_parser
-def validate_sha1(value):
+def validate_and_get_sha1_git(value):
     # FIXME, handle the error and raise a Graphql one
     validate_sha1_git(value)
-    return value
+    return bytearray.fromhex(value)
 
 
 @binary_text_scalar.serializer

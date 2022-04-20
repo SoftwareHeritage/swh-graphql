@@ -33,12 +33,11 @@ class BaseRevisionNode(BaseNode):
 
 class RevisionNode(BaseRevisionNode):
     """
-    When the revision is requested directly with an id
+    When the revision is requested directly with its id (hash)
     """
 
     def _get_node_data(self):
-        revision_id = utils.str_to_sha1(self.kwargs.get("Sha1"))
-        return self._get_revision_by_id(revision_id)
+        return self._get_revision_by_id(self.kwargs.get("Sha1"))
 
 
 class TargetRevisionNode(BaseRevisionNode):
@@ -60,7 +59,7 @@ class ParentRevisionConnection(BaseConnection):
     """
     When parent revisions requested from a
     revision
-    self.obj is the child revision
+    self.obj is the current(child) revision
     self.obj.parentIds is the list of
     requested revisions
     """
@@ -79,7 +78,7 @@ class LogRevisionConnection(BaseConnection):
     """
     When revisionslog is requested from a
     revision
-    self.obj is the revision id
+    self.obj is the current revision id
     """
 
     _node_class = BaseRevisionNode

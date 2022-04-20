@@ -295,38 +295,38 @@ type Query {
   ): Visit
 
   """
-  Get a snapshot with SWHID
+  Get a snapshot with Sha1
   """
   snapshot(
     Sha1: Sha1!
   ): Snapshot
 
   """
-  Get the revision with the given swhid
+  Get the revision with the given Sha1
   """
   revision(
     Sha1: Sha1!
   ): Revision
 
   """
-  Get the release with the given swhid
+  Get the release with the given Sha1
   """
   release(
     Sha1: Sha1!
   ): Release
 
   """
-  Get the directory with the given swhid
+  Get the directory with the given Sha1
   """
   directory(
     Sha1: Sha1!
   ): Directory
 
   """
-  Get the content with the given swhid
+  Get the content with the given Sha1
   """
   content(
-    SWHID: String!
+    Sha1: Sha1!
   ): Content
 
   # """

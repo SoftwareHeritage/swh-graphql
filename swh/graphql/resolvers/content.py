@@ -1,5 +1,4 @@
 from swh.graphql.backends import archive
-from swh.graphql.utils import utils
 
 from .base_node import BaseNode
 
@@ -38,8 +37,7 @@ class ContentNode(BaseContentNode):
         When a content is requested directly
         with an id
         """
-        content_id = utils.str_to_sha1(self.kwargs.get("SWHID"))
-        return self._get_content_by_id(content_id)
+        return self._get_content_by_id(self.kwargs.get("Sha1"))
 
 
 class TargetContentNode(BaseContentNode):

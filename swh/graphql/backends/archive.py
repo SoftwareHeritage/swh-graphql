@@ -45,7 +45,7 @@ class Archive:
             branches_from=after,
             branches_count=first,
             target_types=target_types,
-            branch_name_include_substring=name_include
+            branch_name_include_substring=name_include,
         )
 
     def get_revisions(self, revision_ids):
