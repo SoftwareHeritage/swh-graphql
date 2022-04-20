@@ -86,6 +86,7 @@ type VisitStatusEdge {
 type VisitStatus {
   status: String!
   date: DateTime!
+  snapshotId: Sha1
   snapshot: Snapshot
   type: String
 }

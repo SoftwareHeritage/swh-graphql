@@ -7,6 +7,10 @@ from .base_node import BaseNode
 class BaseVisitStatusNode(BaseNode):
     """ """
 
+    @property
+    def snapshotId(self):  # To support the schema naming convention
+        return self._node.snapshot
+
 
 class LatestVisitStatusNode(BaseVisitStatusNode):
     """
