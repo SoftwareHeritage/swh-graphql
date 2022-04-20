@@ -1,3 +1,5 @@
+import datetime
+
 from swh.graphql.utils import utils
 
 
@@ -23,6 +25,12 @@ class TestUtils:
             utils.str_to_sha1("208f61cc7a5dbc9879ae6e5c2f95891e270f09ef")
             == b" \x8fa\xccz]\xbc\x98y\xaen\\/\x95\x89\x1e'\x0f\t\xef"
         )
+
+    def test_get_formatted_date(self):
+        date = datetime.datetime(
+            2015, 8, 4, 22, 26, 14, 804009, tzinfo=datetime.timezone.utc
+        )
+        assert utils.get_formatted_date(date) == "2015-08-04T22:26:14.804009+00:00"
 
     def test_paginated(self):
         source = [1, 2, 3, 4, 5]

@@ -1,5 +1,6 @@
 from ariadne import ScalarType
 
+from swh.graphql.utils import utils
 from swh.model.fields.hashes import validate_sha1_git
 
 # from swh.model.swhids import QualifiedSWHID
@@ -13,8 +14,7 @@ datetimezone_scalar = ScalarType("DateTimeZone")
 
 @datetime_scalar.serializer
 def serialize_datetime(value):
-    # FIXME, consider timezone, use core functions
-    return value.timestamp()
+    return utils.get_formatted_date(value)
 
 
 @sha1_scalar.serializer
@@ -31,10 +31,11 @@ def validate_sha1(value):
 
 @binary_text_scalar.serializer
 def serialize_binary_text(value):
-    # FIXME
     return value.decode("utf-8")
 
 
 @datetimezone_scalar.serializer
 def serialize_datetimezone(value):
-    return value.to_datetime().timestamp()
+    # FIXME, handle error and return None
+    date = value.to_datetime()
+    return utils.get_formatted_date(date)

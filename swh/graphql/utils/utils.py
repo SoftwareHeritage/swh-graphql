@@ -1,4 +1,5 @@
 import base64
+from datetime import datetime
 from typing import List
 
 from swh.storage.interface import PagedResult
@@ -23,6 +24,11 @@ def get_decoded_cursor(cursor: str) -> str:
 def str_to_sha1(sha1: str) -> bytearray:
     # FIXME, use core function
     return bytearray.fromhex(sha1)
+
+
+def get_formatted_date(date: datetime) -> str:
+    # FIXME, handle error + return other formats
+    return date.isoformat()
 
 
 def paginated(source: List, first: int, after=0) -> PagedResult:
