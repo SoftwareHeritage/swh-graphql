@@ -137,6 +137,10 @@ union BranchTarget = Revision | Release
 enum BranchTypes {
   revision
   release
+  alias
+  content
+  directory
+  snapshot
 }
 
 type Branch {
