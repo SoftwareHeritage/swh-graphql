@@ -109,6 +109,7 @@ type Snapshot implements SWHNode {
     first: Int!
     after: String
     types: [BranchTypes]
+    nameInclude: String
   ): BranchConnection
 }
 

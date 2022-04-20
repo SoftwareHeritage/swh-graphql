@@ -48,6 +48,7 @@ class SnapshotBranchConnection(BaseConnection):
             after=self._get_after_arg(),
             first=self._get_first_arg(),
             target_types=self.kwargs.get("types"),
+            name_include=self.kwargs.get("nameInclude"),
         )
         # FIXME Cursor must be a hex to be consistent with
         # the base class, hack to make that work

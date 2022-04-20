@@ -39,12 +39,13 @@ class Archive:
     def get_origin_snapshots(self, origin_url):
         return self.storage.origin_snapshot_get_all(origin_url)
 
-    def get_snapshot_branches(self, snapshot, after, first, target_types):
+    def get_snapshot_branches(self, snapshot, after, first, target_types, name_include):
         return self.storage.snapshot_get_branches(
             snapshot,
             branches_from=after,
             branches_count=first,
             target_types=target_types,
+            branch_name_include_substring=name_include
         )
 
     def get_revisions(self, revision_ids):
