@@ -270,12 +270,18 @@ type Content implements SWHNode {
   data: BinaryText
 }
 
+input ReviewInput {
+  stars: Int!
+  commentary: String
+}
+
 type Query {
   """
   Get an origin with its url
   """
   origin(
     url: String!
+    sha1: Sha1
   ): Origin
 
   """
@@ -331,7 +337,7 @@ type Query {
   Get the content with the given Sha1
   """
   content(
-    Sha1: Sha1!
+    SWHID: SWHID!
   ): Content
 
   # """

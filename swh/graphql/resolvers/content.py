@@ -37,7 +37,7 @@ class ContentNode(BaseContentNode):
         When a content is requested directly
         with an id
         """
-        return self._get_content_by_id(self.kwargs.get("Sha1"))
+        return self._get_content_by_id(self.kwargs.get("SWHID"))
 
 
 class TargetContentNode(BaseContentNode):

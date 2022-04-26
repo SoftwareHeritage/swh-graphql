@@ -3,8 +3,7 @@ from ariadne import ScalarType
 from swh.graphql.utils import utils
 from swh.model.fields.hashes import validate_sha1_git
 from swh.model.model import TimestampWithTimezone
-
-# from swh.model.swhids import QualifiedSWHID
+from swh.model.swhids import QualifiedSWHID
 
 datetime_scalar = ScalarType("DateTime")
 swhid_scalar = ScalarType("SWHID")
@@ -42,3 +41,9 @@ def serialize_datetimezone(value):
         date = value.to_datetime()
         return utils.get_formatted_date(date)
     return None
+
+
+@swhid_scalar.value_parser
+def validate_swhid(value):
+    swhid = QualifiedSWHID.from_string(value)
+    return swhid.object_id
