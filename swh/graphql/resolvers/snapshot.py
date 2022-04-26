@@ -21,7 +21,8 @@ class SnapshotNode(BaseSnapshotNode):
 
     def _get_node_data(self):
         """ """
-        return self._get_snapshot_by_id(self.kwargs.get("Sha1"))
+        # FXIME, query to make sure snapshot exists
+        return self._get_snapshot_by_id(self.kwargs.get("SWHID"))
 
 
 class VisitSnapshotNode(BaseSnapshotNode):
