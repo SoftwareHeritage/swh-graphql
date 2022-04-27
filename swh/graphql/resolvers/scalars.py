@@ -9,12 +9,6 @@ datetime_scalar = ScalarType("DateTime")
 swhid_scalar = ScalarType("SWHID")
 sha1_scalar = ScalarType("Sha1")
 binary_text_scalar = ScalarType("BinaryText")
-datetimezone_scalar = ScalarType("DateTimeZone")
-
-
-@datetime_scalar.serializer
-def serialize_datetime(value):
-    return utils.get_formatted_date(value)
 
 
 @sha1_scalar.serializer
@@ -34,13 +28,12 @@ def serialize_binary_text(value):
     return value.decode("utf-8")
 
 
-@datetimezone_scalar.serializer
-def serialize_datetimezone(value):
+@datetime_scalar.serializer
+def serialize_datetime(value):
     # FIXME, handle error and return None
     if type(value) == TimestampWithTimezone:
-        date = value.to_datetime()
-        return utils.get_formatted_date(date)
-    return None
+        value = value.to_datetime()
+    return utils.get_formatted_date(value)
 
 
 @swhid_scalar.value_parser

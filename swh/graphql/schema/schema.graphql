@@ -4,8 +4,6 @@ scalar Sha1
 
 scalar DateTime
 
-scalar DateTimeZone
-
 scalar BinaryText
 
 interface Node {
@@ -168,7 +166,7 @@ type Revision implements SWHNode {
   message: BinaryText
   author: Person
   committer: Person
-  date: DateTimeZone
+  date: DateTime
   type: String   # Revision type: FIXME, change to an enum
   directoryId: Sha1
   directory: Directory
@@ -197,7 +195,7 @@ type Release implements SWHNode {
   name: BinaryText
   message: BinaryText
   author: Person
-  date: DateTimeZone
+  date: DateTime
   targetId: Sha1
   targetType: ReleaseTargetType
   target: ReleaseTarget
