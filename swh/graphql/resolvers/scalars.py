@@ -45,5 +45,4 @@ def serialize_datetimezone(value):
 
 @swhid_scalar.value_parser
 def validate_swhid(value):
-    swhid = QualifiedSWHID.from_string(value)
-    return swhid.object_id
+    return QualifiedSWHID.from_string(value)

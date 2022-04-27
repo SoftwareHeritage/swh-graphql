@@ -20,7 +20,7 @@ class DirectoryNode(BaseDirectoryNode):
         When a directory is requested directly with an id
         """
         # FXIME, query to make sure directory exists
-        directory_id = self.kwargs.get("SWHID")
+        directory_id = self.kwargs.get("SWHID").object_id
         # path = ""
         return self._get_directory_by_id(directory_id)
 

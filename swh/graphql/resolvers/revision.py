@@ -37,7 +37,7 @@ class RevisionNode(BaseRevisionNode):
     """
 
     def _get_node_data(self):
-        return self._get_revision_by_id(self.kwargs.get("SWHID"))
+        return self._get_revision_by_id(self.kwargs.get("SWHID").object_id)
 
 
 class TargetRevisionNode(BaseRevisionNode):
