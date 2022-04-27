@@ -1,5 +1,6 @@
 from swh.graphql.backends import archive
 from swh.graphql.utils import utils
+from swh.model.model import Snapshot
 
 from .base_connection import BaseConnection
 from .base_node import BaseNode
@@ -7,11 +8,10 @@ from .base_node import BaseNode
 
 class BaseSnapshotNode(BaseNode):
     def _get_snapshot_by_id(self, snapshot_id):
-        # Now not fetching any data (schema is exposing just id)
-        # same pattern is used in directory resolver
-        return {
-            "id": snapshot_id,
-        }
+        # Return a Snapshot model object
+        # branches is initialized as empty
+        # Same pattern is used in directory
+        return Snapshot(id=snapshot_id, branches={})
 
 
 class SnapshotNode(BaseSnapshotNode):
@@ -21,8 +21,10 @@ class SnapshotNode(BaseSnapshotNode):
 
     def _get_node_data(self):
         """ """
-        # FXIME, query to make sure snapshot exists
-        return self._get_snapshot_by_id(self.kwargs.get("SWHID").object_id)
+        snapshot_id = self.kwargs.get("SWHID").object_id
+        if archive.Archive().is_snapshot_available([snapshot_id]):
+            return self._get_snapshot_by_id(snapshot_id)
+        return None
 
 
 class VisitSnapshotNode(BaseSnapshotNode):

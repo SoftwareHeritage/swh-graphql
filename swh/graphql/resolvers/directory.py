@@ -1,14 +1,15 @@
+from swh.graphql.backends import archive
+from swh.model.model import Directory
+
 from .base_node import BaseNode
 
 
 class BaseDirectoryNode(BaseNode):
     def _get_directory_by_id(self, directory_id):
-        # Now not fetching any data (schema is exposing just id)
-        # same pattern is used in snapshot resolver
-        # FIXME, use the right API to fetch metadata like name, path
-        return {
-            "id": directory_id,
-        }
+        # Return a Directory model object
+        # entries is initialized as empty
+        # Same pattern is used in snapshot
+        return Directory(id=directory_id, entries=())
 
     def is_type_of(self):
         return "Directory"
@@ -19,10 +20,11 @@ class DirectoryNode(BaseDirectoryNode):
         """
         When a directory is requested directly with an id
         """
-        # FXIME, query to make sure directory exists
         directory_id = self.kwargs.get("SWHID").object_id
         # path = ""
-        return self._get_directory_by_id(directory_id)
+        if archive.Archive().is_directory_available([directory_id]):
+            return self._get_directory_by_id(directory_id)
+        return None
 
 
 class RevisionDirectoryNode(BaseDirectoryNode):

@@ -41,6 +41,9 @@ class Archive:
     def get_origin_snapshots(self, origin_url):
         return self.storage.origin_snapshot_get_all(origin_url)
 
+    def is_snapshot_available(self, snapshot_ids):
+        return not self.storage.snapshot_missing(snapshot_ids)
+
     def get_snapshot_branches(self, snapshot, after, first, target_types, name_include):
         return self.storage.snapshot_get_branches(
             snapshot,
@@ -59,8 +62,13 @@ class Archive:
     def get_releases(self, release_ids):
         return self.storage.release_get(releases=release_ids)
 
-    def get_directory_entries(self, directory_id):
-        return self.storage.directory_ls(directory_id)
+    def is_directory_available(self, directory_ids):
+        return not self.storage.directory_missing(directory_ids)
+
+    def get_directory_entries(self, directory_id, after=None, first=50):
+        return self.storage.directory_get_entries(
+            directory_id, limit=first, page_token=after
+        )
 
     def get_content(self, content_id):
         # FIXME, only for tests
