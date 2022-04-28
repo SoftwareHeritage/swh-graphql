@@ -20,8 +20,8 @@ schema = make_executable_schema(
     resolvers.release_target,
     resolvers.directory_entry_target,
     scalars.id_scalar,
+    scalars.string_scalar,
     scalars.datetime_scalar,
     scalars.swhid_scalar,
     scalars.hash_value_scalar,
-    scalars.binary_string_scalar,
 )

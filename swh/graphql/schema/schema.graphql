@@ -4,8 +4,6 @@ scalar HashValue
 
 scalar DateTime
 
-scalar BinaryString
-
 interface Node {
   id: ID!
 }
@@ -126,9 +124,9 @@ type BranchConnectionEdge {
 }
 
 type Person {
-  email: BinaryString
-  name: BinaryString
-  fullname: BinaryString
+  email: String
+  name: String
+  fullname: String
 }
 
 # FIXME, this can be Content, Directory, Snapshot, or Alias as well
@@ -144,7 +142,7 @@ enum BranchTypes {
 }
 
 type Branch {
-  name: BinaryString
+  name: String
   type: BranchTypes
   targetId: HashValue
   target: BranchTarget
@@ -165,7 +163,7 @@ type RevisionEdge {
 type Revision implements SWHNode & Node {
   id: ID!
   SWHID: SWHID!
-  message: BinaryString
+  message: String
   author: Person
   committer: Person
   date: DateTime
@@ -195,8 +193,8 @@ enum ReleaseTargetType {
 type Release implements SWHNode & Node {
   id: ID!
   SWHID: SWHID!
-  name: BinaryString
-  message: BinaryString
+  name: String
+  message: String
   author: Person
   date: DateTime
   targetId: HashValue
@@ -225,7 +223,7 @@ enum DirectoryEntryType {
 }
 
 type DirectoryEntry {
-  name: BinaryString
+  name: String
   type: DirectoryEntryType
   targetId: HashValue
   target: DirectoryEntryTarget
@@ -269,7 +267,7 @@ type Content implements SWHNode & Node {
   # license: ContentLicense
   length: Int
   status: String
-  data: BinaryString
+  data: String
 }
 
 type Query {

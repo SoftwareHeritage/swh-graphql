@@ -9,8 +9,8 @@ from swh.model.swhids import CoreSWHID
 datetime_scalar = ScalarType("DateTime")
 swhid_scalar = ScalarType("SWHID")
 hash_value_scalar = ScalarType("HashValue")
-binary_string_scalar = ScalarType("BinaryString")
 id_scalar = ScalarType("ID")
+string_scalar = ScalarType("String")
 
 
 @id_scalar.serializer
@@ -20,14 +20,16 @@ def serialize_id(value):
     return value
 
 
+@string_scalar.serializer
+def serialize_string(value):
+    if type(value) is bytes:
+        return value.decode("utf-8")
+    return value
+
+
 @hash_value_scalar.serializer
 def serialize_hash_value(value):
     return value.hex()
-
-
-@binary_string_scalar.serializer
-def serialize_binary_string(value):
-    return value.decode("utf-8")
 
 
 @datetime_scalar.serializer
