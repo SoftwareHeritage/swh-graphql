@@ -1,17 +1,17 @@
 scalar SWHID
 
-scalar Sha1
+scalar HashValue
 
 scalar DateTime
 
-scalar BinaryText
+scalar BinaryString
 
 interface Node {
   id: ID!
 }
 
 interface SWHNode {
-  id: Sha1!
+  SWHID: SWHID!
 }
 
 type PageInfo {
@@ -31,8 +31,8 @@ type OriginEdge {
   node: Origin
 }
 
-type Origin implements SWHNode {
-  id: Sha1!
+type Origin implements Node {
+  id: ID!
   url: String!
   visits(
     first: Int!
@@ -84,7 +84,7 @@ type VisitStatusEdge {
 type VisitStatus {
   status: String!
   date: DateTime!
-  snapshotId: Sha1
+  snapshotId: HashValue
   snapshot: Snapshot
   type: String
 }
@@ -101,8 +101,9 @@ type SnapshotEdge {
   node: Snapshot
 }
 
-type Snapshot implements SWHNode {
-  id: Sha1!
+type Snapshot implements SWHNode & Node {
+  id: ID!
+  SWHID: SWHID!
 
   branches(
     first: Int!
@@ -125,9 +126,9 @@ type BranchConnectionEdge {
 }
 
 type Person {
-  email: BinaryText
-  name: BinaryText
-  fullname: BinaryText
+  email: BinaryString
+  name: BinaryString
+  fullname: BinaryString
 }
 
 # FIXME, this can be Content, Directory, Snapshot, or Alias as well
@@ -143,9 +144,9 @@ enum BranchTypes {
 }
 
 type Branch {
-  name: BinaryText
+  name: BinaryString
   type: BranchTypes
-  targetId: Sha1
+  targetId: HashValue
   target: BranchTarget
 }
 
@@ -161,16 +162,17 @@ type RevisionEdge {
   node: Revision
 }
 
-type Revision implements SWHNode {
-  id: Sha1!
-  message: BinaryText
+type Revision implements SWHNode & Node {
+  id: ID!
+  SWHID: SWHID!
+  message: BinaryString
   author: Person
   committer: Person
   date: DateTime
   type: String   # Revision type: FIXME, change to an enum
-  directoryId: Sha1
+  directoryId: HashValue
   directory: Directory
-  parentIds: [Sha1]
+  parentIds: [HashValue]
   parents(
     first: Int
     after: String
@@ -190,13 +192,14 @@ enum ReleaseTargetType {
   directory
 }
 
-type Release implements SWHNode {
-  id: Sha1!
-  name: BinaryText
-  message: BinaryText
+type Release implements SWHNode & Node {
+  id: ID!
+  SWHID: SWHID!
+  name: BinaryString
+  message: BinaryString
   author: Person
   date: DateTime
-  targetId: Sha1
+  targetId: HashValue
   targetType: ReleaseTargetType
   target: ReleaseTarget
 }
@@ -222,14 +225,15 @@ enum DirectoryEntryType {
 }
 
 type DirectoryEntry {
-  name: BinaryText
+  name: BinaryString
   type: DirectoryEntryType
-  targetId: Sha1
+  targetId: HashValue
   target: DirectoryEntryTarget
 }
 
-type Directory implements SWHNode {
-  id: Sha1!
+type Directory implements SWHNode & Node {
+  id: ID!
+  SWHID: SWHID!
   entries(
     first: Int
     after: String
@@ -237,10 +241,10 @@ type Directory implements SWHNode {
 }
 
 type ContentChecksum {  # FIXME, temp types
-  blake2s256: Sha1
-  sha1: Sha1
-  sha1_git: Sha1
-  sha256: Sha1
+  blake2s256: HashValue
+  sha1: HashValue
+  sha1_git: HashValue
+  sha256: HashValue
 }
 
 # type ContentType {
@@ -255,9 +259,9 @@ type ContentChecksum {  # FIXME, temp types
 #   test: String
 # }
 
-type Content implements SWHNode {
-  id: Sha1!
-  swhId: String
+type Content implements SWHNode & Node {
+  id: ID!
+  SWHID: SWHID!
   checksum: ContentChecksum
   # data:
   # filetype: ContentType
@@ -265,7 +269,7 @@ type Content implements SWHNode {
   # license: ContentLicense
   length: Int
   status: String
-  data: BinaryText
+  data: BinaryString
 }
 
 type Query {

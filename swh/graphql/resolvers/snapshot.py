@@ -3,10 +3,10 @@ from swh.graphql.utils import utils
 from swh.model.model import Snapshot
 
 from .base_connection import BaseConnection
-from .base_node import BaseNode
+from .base_node import BaseSWHNode
 
 
-class BaseSnapshotNode(BaseNode):
+class BaseSnapshotNode(BaseSWHNode):
     def _get_snapshot_by_id(self, snapshot_id):
         # Return a Snapshot model object
         # branches is initialized as empty

@@ -68,3 +68,9 @@ class BaseNode(ABC):
 
     def is_type_of(self):
         return self.__class__.__name__
+
+
+class BaseSWHNode(BaseNode):
+    @property
+    def SWHID(self):
+        return self._node.swhid()

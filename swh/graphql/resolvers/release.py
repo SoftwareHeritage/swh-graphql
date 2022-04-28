@@ -1,9 +1,9 @@
 from swh.graphql.backends import archive
 
-from .base_node import BaseNode
+from .base_node import BaseSWHNode
 
 
-class BaseReleaseNode(BaseNode):
+class BaseReleaseNode(BaseSWHNode):
     def _get_release_by_id(self, release_id):
         return (archive.Archive().get_releases([release_id]) or None)[0]
 

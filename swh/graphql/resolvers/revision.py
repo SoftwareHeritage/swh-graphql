@@ -2,10 +2,10 @@ from swh.graphql.backends import archive
 from swh.graphql.utils import utils
 
 from .base_connection import BaseConnection
-from .base_node import BaseNode
+from .base_node import BaseSWHNode
 
 
-class BaseRevisionNode(BaseNode):
+class BaseRevisionNode(BaseSWHNode):
     def _get_revision_by_id(self, revision_id):
         return (archive.Archive().get_revisions([revision_id]) or None)[0]
 

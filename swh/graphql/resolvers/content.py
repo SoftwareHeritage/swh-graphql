@@ -1,9 +1,9 @@
 from swh.graphql.backends import archive
 
-from .base_node import BaseNode
+from .base_node import BaseSWHNode
 
 
-class BaseContentNode(BaseNode):
+class BaseContentNode(BaseSWHNode):
     """ """
 
     def _get_content_by_id(self, content_id):
@@ -11,21 +11,13 @@ class BaseContentNode(BaseNode):
         return content[0] if content else None
 
     @property
-    def id(self):
-        return self._node.unique_key()
-
-    @property
-    def swhId(self):  # To support the schema naming convention
-        return self._node.swhid()
-
-    @property
     def checksum(self):
         # FIXME, return a Node object
         return self._node.hashes()
 
     @property
-    def data(self):
-        return
+    def id(self):
+        return self._node.sha1_git
 
     def is_type_of(self):
         return "Content"

@@ -1,10 +1,10 @@
 from swh.graphql.backends import archive
 
 from .base_connection import BaseConnection
-from .base_node import BaseNode
+from .base_node import BaseSWHNode
 
 
-class OriginNode(BaseNode):
+class OriginNode(BaseSWHNode):
     def _get_node_data(self):
         return archive.Archive().get_origin(self.kwargs.get("url"))
 

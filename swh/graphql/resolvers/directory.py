@@ -1,10 +1,10 @@
 from swh.graphql.backends import archive
 from swh.model.model import Directory
 
-from .base_node import BaseNode
+from .base_node import BaseSWHNode
 
 
-class BaseDirectoryNode(BaseNode):
+class BaseDirectoryNode(BaseSWHNode):
     def _get_directory_by_id(self, directory_id):
         # Return a Directory model object
         # entries is initialized as empty
