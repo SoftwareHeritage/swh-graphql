@@ -8,7 +8,7 @@ class BaseReleaseNode(BaseSWHNode):
         return (archive.Archive().get_releases([release_id]) or None)[0]
 
     @property
-    def targetId(self):  # To support the schema naming convention
+    def targetHash(self):  # To support the schema naming convention
         return self._node.target
 
     @property
@@ -26,7 +26,7 @@ class BaseReleaseNode(BaseSWHNode):
 
 class ReleaseNode(BaseReleaseNode):
     """
-    When the release is requested directly with an id
+    When the release is requested directly with its SWHID
     """
 
     def _get_node_data(self):
@@ -38,8 +38,8 @@ class TargetReleaseNode(BaseReleaseNode):
     When a release is requested as a target
 
     self.obj could be a snapshotbranch or a release
-    self.obj.target is the requested release id here
+    self.obj.targetHash is the requested release id here
     """
 
     def _get_node_data(self):
-        return self._get_release_by_id(self.obj.target)
+        return self._get_release_by_id(self.obj.targetHash)

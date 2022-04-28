@@ -16,7 +16,7 @@ class BaseSnapshotNode(BaseSWHNode):
 
 class SnapshotNode(BaseSnapshotNode):
     """
-    For directly accessing a snapshot with an Id
+    For directly accessing a snapshot with its SWHID
     """
 
     def _get_node_data(self):
@@ -35,9 +35,10 @@ class VisitSnapshotNode(BaseSnapshotNode):
     def _get_node_data(self):
         """
         self.obj is visitstatus here
-        self.obj.snapshot is the requested snapshot id
+        self.obj.snapshotSWHID is the requested snapshot SWHID
         """
-        return self._get_snapshot_by_id(self.obj.snapshot)
+        snapshot_id = self.obj.snapshotSWHID.object_id
+        return self._get_snapshot_by_id(snapshot_id)
 
 
 class OriginSnapshotConnection(BaseConnection):
@@ -46,7 +47,7 @@ class OriginSnapshotConnection(BaseConnection):
     def _get_paged_result(self):
         """ """
         results = archive.Archive().get_origin_snapshots(self.obj.url)
-        snapshots = [{"id": snapshot} for snapshot in results]
+        snapshots = [Snapshot(id=snapshot, branches={}) for snapshot in results]
         # FIXME, using dummy(local) pagination, move pagination to backend
         # To remove localpagination, just drop the paginated call
         # STORAGE-TODO

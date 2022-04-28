@@ -27,7 +27,7 @@ class ContentNode(BaseContentNode):
     def _get_node_data(self):
         """
         When a content is requested directly
-        with an id
+        with its SWHID
         """
         return self._get_content_by_id(self.kwargs.get("SWHID").object_id)
 
@@ -38,7 +38,7 @@ class TargetContentNode(BaseContentNode):
         When a content is requested from a
         directory entry or from a release target
 
-        content id is obj.target here
+        content id is obj.targetHash here
         """
-        content_id = self.obj.target
+        content_id = self.obj.targetHash
         return self._get_content_by_id(content_id)

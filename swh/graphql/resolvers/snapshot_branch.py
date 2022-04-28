@@ -20,6 +20,7 @@ class SnapshotBranchNode(BaseNode):
         overriding to support this special data structure
         """
 
+        # STORAGE-TODO; return an object in the normal format
         branch_name, branch_obj = node_data
         node = {
             "name": branch_name,
@@ -29,7 +30,7 @@ class SnapshotBranchNode(BaseNode):
         return namedtuple("NodeObj", node.keys())(*node.values())
 
     @property
-    def targetId(self):  # To support the schema naming convention
+    def targetHash(self):  # To support the schema naming convention
         return self._node.target
 
 
@@ -39,12 +40,12 @@ class SnapshotBranchConnection(BaseConnection):
     def _get_paged_result(self):
         """
         When branches requested from a snapshot
-        self.obj.id is snapshot_id here
+        self.obj.SWHID is the snapshot SWHID here
         (as returned from resolvers/snapshot.py)
         """
 
         result = archive.Archive().get_snapshot_branches(
-            self.obj.id,
+            self.obj.SWHID.object_id,
             after=self._get_after_arg(),
             first=self._get_first_arg(),
             target_types=self.kwargs.get("types"),

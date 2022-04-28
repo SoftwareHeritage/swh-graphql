@@ -18,7 +18,7 @@ class BaseDirectoryNode(BaseSWHNode):
 class DirectoryNode(BaseDirectoryNode):
     def _get_node_data(self):
         """
-        When a directory is requested directly with an id
+        When a directory is requested directly with its SWHID
         """
         directory_id = self.kwargs.get("SWHID").object_id
         # path = ""
@@ -32,10 +32,10 @@ class RevisionDirectoryNode(BaseDirectoryNode):
         """
         When a directory is requested from a revision
         self.obj is revision here
-        self.obj.directoryId is the required dir id
+        self.obj.directorySWHID is the required dir SWHID
         (set from resolvers.revision.py:BaseRevisionNode)
         """
-        directory_id = self.obj.directoryId
+        directory_id = self.obj.directorySWHID.object_id
         return self._get_directory_by_id(directory_id)
 
 
@@ -45,6 +45,6 @@ class TargetDirectoryNode(BaseDirectoryNode):
         When a directory is requested as a target
         self.obj can be a Release or a DirectoryEntry
 
-        obj.target is the requested directory id here
+        obj.targetHash is the requested directory id here
         """
-        return self._get_directory_by_id(self.obj.target)
+        return self._get_directory_by_id(self.obj.targetHash)

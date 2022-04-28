@@ -82,7 +82,7 @@ type VisitStatusEdge {
 type VisitStatus {
   status: String!
   date: DateTime!
-  snapshotId: HashValue
+  snapshotSWHID: SWHID
   snapshot: Snapshot
   type: String
 }
@@ -144,7 +144,7 @@ enum BranchTypes {
 type Branch {
   name: String
   type: BranchTypes
-  targetId: HashValue
+  targetHash: HashValue
   target: BranchTarget
 }
 
@@ -168,17 +168,17 @@ type Revision implements SWHNode & Node {
   committer: Person
   date: DateTime
   type: String   # Revision type: FIXME, change to an enum
-  directoryId: HashValue
+  directorySWHID: SWHID
   directory: Directory
-  parentIds: [HashValue]
+  parentSWHIDs: [SWHID]
   parents(
     first: Int
     after: String
   ): RevisionConnection
-  revisionLog(
-    first: Int!
-    after: String
-  ): RevisionConnection
+  # revisionLog(
+  #   first: Int!
+  #   after: String
+  # ): RevisionConnection
 }
 
 union ReleaseTarget = Release | Revision | Directory | Content
@@ -197,7 +197,7 @@ type Release implements SWHNode & Node {
   message: String
   author: Person
   date: DateTime
-  targetId: HashValue
+  targetHash: HashValue
   targetType: ReleaseTargetType
   target: ReleaseTarget
 }
@@ -225,7 +225,7 @@ enum DirectoryEntryType {
 type DirectoryEntry {
   name: String
   type: DirectoryEntryType
-  targetId: HashValue
+  targetHash: HashValue
   target: DirectoryEntryTarget
 }
 

@@ -49,7 +49,7 @@ class TestResolvers:
                 resolvers.snapshot_branch.SnapshotBranchConnection,
             ),
             (rs.revision_parents_resolver, resolvers.revision.ParentRevisionConnection),
-            (rs.revision_log_resolver, resolvers.revision.LogRevisionConnection),
+            # (rs.revision_log_resolver, resolvers.revision.LogRevisionConnection),
             (
                 rs.directory_entry_resolver,
                 resolvers.directory_entry.DirectoryEntryConnection,

@@ -174,10 +174,10 @@ def revision_parents_resolver(obj, info, **kw):
     return resolver(obj, info, **kw)()
 
 
-@revision.field("revisionLog")
-def revision_log_resolver(obj, info, **kw):
-    resolver = get_connection_resolver("revision-log")
-    return resolver(obj, info, **kw)()
+# @revision.field("revisionLog")
+# def revision_log_resolver(obj, info, **kw):
+#     resolver = get_connection_resolver("revision-log")
+#     return resolver(obj, info, **kw)()
 
 
 @directory.field("entries")

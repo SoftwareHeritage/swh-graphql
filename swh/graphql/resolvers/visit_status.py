@@ -1,4 +1,5 @@
 from swh.graphql.backends import archive
+from swh.model.swhids import CoreSWHID, ObjectType
 
 from .base_connection import BaseConnection
 from .base_node import BaseNode
@@ -8,8 +9,8 @@ class BaseVisitStatusNode(BaseNode):
     """ """
 
     @property
-    def snapshotId(self):  # To support the schema naming convention
-        return self._node.snapshot
+    def snapshotSWHID(self):  # To support the schema naming convention
+        return CoreSWHID(object_type=ObjectType.SNAPSHOT, object_id=self._node.snapshot)
 
 
 class LatestVisitStatusNode(BaseVisitStatusNode):
@@ -28,6 +29,7 @@ class LatestVisitStatusNode(BaseVisitStatusNode):
 class VisitStatusConnection(BaseConnection):
     """
     self.obj is the visit object
+    self.obj.origin is the origin URL
     """
 
     _node_class = BaseVisitStatusNode
