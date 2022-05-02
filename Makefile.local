@@ -1,10 +1,10 @@
 .PHONY: run-dev
 run-dev:
-	uvicorn swh.graphql.asgi:application --reload
+	uvicorn asgi:application --reload
 
 .PHONY: run-dev-stable
 run-dev-stable:
-	uvicorn swh.graphql.asgi:application
+	uvicorn asgi:application
 
 .PHONY: run-dev-docker
 run-dev-docker:
