@@ -129,8 +129,8 @@ type Person {
   fullname: String
 }
 
-# FIXME, this can be Content, Directory, Snapshot, or Alias as well
-union BranchTarget = Revision | Release
+
+union BranchTarget = Revision | Release | Branch | Content | Directory | Snapshot
 
 enum BranchTypes {
   revision
@@ -144,7 +144,6 @@ enum BranchTypes {
 type Branch {
   name: String
   type: BranchTypes
-  targetHash: HashValue
   target: BranchTarget
 }
 
@@ -168,17 +167,17 @@ type Revision implements SWHNode & Node {
   committer: Person
   date: DateTime
   type: String   # Revision type: FIXME, change to an enum
-  directorySWHID: SWHID
+  # directorySWHID: SWHID
   directory: Directory
   parentSWHIDs: [SWHID]
   parents(
     first: Int
     after: String
   ): RevisionConnection
-  # revisionLog(
-  #   first: Int!
-  #   after: String
-  # ): RevisionConnection
+  revisionLog(
+    first: Int!
+    after: String
+  ): RevisionConnection
 }
 
 union ReleaseTarget = Release | Revision | Directory | Content
@@ -197,7 +196,6 @@ type Release implements SWHNode & Node {
   message: String
   author: Person
   date: DateTime
-  targetHash: HashValue
   targetType: ReleaseTargetType
   target: ReleaseTarget
 }
@@ -225,7 +223,6 @@ enum DirectoryEntryType {
 type DirectoryEntry {
   name: String
   type: DirectoryEntryType
-  targetHash: HashValue
   target: DirectoryEntryTarget
 }
 
@@ -238,7 +235,7 @@ type Directory implements SWHNode & Node {
   ): DirectoryEntryConnection
 }
 
-type ContentChecksum {  # FIXME, temp types
+type ContentChecksum {
   blake2s256: HashValue
   sha1: HashValue
   sha1_git: HashValue
