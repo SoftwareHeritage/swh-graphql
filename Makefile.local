@@ -1,10 +1,10 @@
 .PHONY: run-dev
 run-dev:
-	uvicorn asgi:application --reload
+	SWH_CONFIG_FILENAME=config/dev.yml; uvicorn swh.graphql.server:make_app_from_configfile --reload
 
 .PHONY: run-dev-stable
 run-dev-stable:
-	uvicorn asgi:application
+	SWH_CONFIG_FILENAME=config/dev.yml; uvicorn swh.graphql.server:make_app_from_configfile
 
 .PHONY: run-dev-docker
 run-dev-docker:
@@ -14,7 +14,7 @@ run-dev-docker:
 run-staging:
 	docker-compose -f docker-compose.yml -f docker-compose-staging.yml up --build
 
-.PHONY: update-staging
-update-staging:
+.PHONY: update-desktop6
+update-desktop6:
 	git pull origin master
 	docker-compose -f docker-compose.yml -f docker-compose-staging.yml restart

@@ -1,9 +1,16 @@
+# import pkg_resources
+import os
+from pathlib import Path
+
 from ariadne import gql, load_schema_from_path, make_executable_schema
 
 from .resolvers import resolvers, scalars
 
 type_defs = gql(
-    load_schema_from_path("/src/swh-graphql/swh/graphql/schema/schema.graphql")
+    # pkg_resources.resource_string("swh.graphql", "schem/schema.graphql").decode()
+    load_schema_from_path(
+        os.path.join(Path(__file__).parent.resolve(), "schema", "schema.graphql")
+    )
 )
 
 schema = make_executable_schema(

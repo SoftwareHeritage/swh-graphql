@@ -1,12 +1,9 @@
-from swh.storage import get_storage
+from swh.graphql import server
 
 
 class Archive:
     def __init__(self):
-        # FIXME, setup config
-        self.storage = get_storage(
-            cls="remote", url="http://moma.internal.softwareheritage.org:5002"
-        )
+        self.storage = server.get_storage()
 
     def get_origin(self, url):
         return self.storage.origin_get([url])[0]
