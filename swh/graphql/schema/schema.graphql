@@ -1,7 +1,5 @@
 scalar SWHID
 
-scalar HashValue
-
 scalar DateTime
 
 interface Node {
@@ -236,10 +234,10 @@ type Directory implements MerkleNode & Node {
 }
 
 type ContentChecksum {
-  blake2s256: HashValue
-  sha1: HashValue
-  sha1_git: HashValue
-  sha256: HashValue
+  blake2s256: String
+  sha1: String
+  sha1_git: String
+  sha256: String
 }
 
 # type ContentType {

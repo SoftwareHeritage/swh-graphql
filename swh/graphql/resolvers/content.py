@@ -13,7 +13,7 @@ class BaseContentNode(BaseSWHNode):
     @property
     def checksum(self):
         # FIXME, return a Node object
-        return self._node.hashes()
+        return {k: v.hex() for (k, v) in self._node.hashes().items()}
 
     @property
     def id(self):

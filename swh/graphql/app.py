@@ -32,5 +32,4 @@ schema = make_executable_schema(
     scalars.string_scalar,
     scalars.datetime_scalar,
     scalars.swhid_scalar,
-    scalars.hash_value_scalar,
 )
