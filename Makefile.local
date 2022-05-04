@@ -1,10 +1,10 @@
 .PHONY: run-dev
 run-dev:
-	SWH_CONFIG_FILENAME=config/dev.yml; uvicorn swh.graphql.server:make_app_from_configfile --reload
+	export SWH_CONFIG_FILENAME=config/dev.yml; uvicorn swh.graphql.server:make_app_from_configfile --reload
 
 .PHONY: run-dev-stable
 run-dev-stable:
-	SWH_CONFIG_FILENAME=config/dev.yml; uvicorn swh.graphql.server:make_app_from_configfile
+	export SWH_CONFIG_FILENAME=config/dev.yml; uvicorn swh.graphql.server:make_app_from_configfile
 
 .PHONY: run-dev-docker
 run-dev-docker:
