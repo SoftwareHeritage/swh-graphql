@@ -8,7 +8,7 @@ interface Node {
   id: ID!
 }
 
-interface SWHNode {
+interface MerkleNode {
   SWHID: SWHID!
 }
 
@@ -99,7 +99,7 @@ type SnapshotEdge {
   node: Snapshot
 }
 
-type Snapshot implements SWHNode & Node {
+type Snapshot implements MerkleNode & Node {
   id: ID!
   SWHID: SWHID!
 
@@ -159,7 +159,7 @@ type RevisionEdge {
   node: Revision
 }
 
-type Revision implements SWHNode & Node {
+type Revision implements MerkleNode & Node {
   id: ID!
   SWHID: SWHID!
   message: String
@@ -189,7 +189,7 @@ enum ReleaseTargetType {
   directory
 }
 
-type Release implements SWHNode & Node {
+type Release implements MerkleNode & Node {
   id: ID!
   SWHID: SWHID!
   name: String
@@ -226,7 +226,7 @@ type DirectoryEntry {
   target: DirectoryEntryTarget
 }
 
-type Directory implements SWHNode & Node {
+type Directory implements MerkleNode & Node {
   id: ID!
   SWHID: SWHID!
   entries(
@@ -254,7 +254,7 @@ type ContentChecksum {
 #   test: String
 # }
 
-type Content implements SWHNode & Node {
+type Content implements MerkleNode & Node {
   id: ID!
   SWHID: SWHID!
   checksum: ContentChecksum
