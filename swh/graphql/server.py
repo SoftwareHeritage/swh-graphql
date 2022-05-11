@@ -1,3 +1,8 @@
+# Copyright (C) 2022 The Software Heritage developers
+# See the AUTHORS file at the top-level directory of this distribution
+# License: GNU General Public License version 3, or any later version
+# See top-level LICENSE file for more information
+
 import os
 from typing import Any, Dict, Optional
 
@@ -58,7 +63,8 @@ def make_app_from_configfile():
         config_path = os.environ.get("SWH_CONFIG_FILENAME")
         graphql_cfg = load_and_check_config(config_path)
 
-    if graphql_cfg.get("server-type") == "asgi":
+    server_type = graphql_cfg.get("server-type")
+    if server_type == "asgi":
         from ariadne.asgi import GraphQL
 
         application = GraphQL(schema)
