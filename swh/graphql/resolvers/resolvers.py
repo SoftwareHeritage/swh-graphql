@@ -15,6 +15,7 @@ from ariadne import ObjectType, UnionType
 from graphql.type import GraphQLResolveInfo
 
 from swh.graphql import resolvers as rs
+from swh.graphql.utils import utils
 
 from .resolver_factory import get_connection_resolver, get_node_resolver
 
@@ -28,6 +29,7 @@ revision: ObjectType = ObjectType("Revision")
 release: ObjectType = ObjectType("Release")
 directory: ObjectType = ObjectType("Directory")
 directory_entry: ObjectType = ObjectType("DirectoryEntry")
+binary_string: ObjectType = ObjectType("BinaryString")
 
 branch_target: UnionType = UnionType("BranchTarget")
 release_target: UnionType = UnionType("ReleaseTarget")
@@ -243,3 +245,13 @@ def union_resolver(obj, *_) -> str:
     Generic resolver for all the union types
     """
     return obj.is_type_of()
+
+
+@binary_string.field("text")
+def binary_string_text_resolver(obj, *args, **kw):
+    return obj.decode(utils.ENCODING, "replace")
+
+
+@binary_string.field("base64")
+def binary_string_base64_resolver(obj, *args, **kw):
+    return utils.get_b64_string(obj)

@@ -14,7 +14,7 @@ class BaseVisitNode(BaseNode):
     @property
     def id(self):
         # FIXME, use a better id
-        return utils.b64encode(f"{self.origin}-{str(self.visit)}")
+        return utils.get_b64_string(f"{self.origin}-{str(self.visit)}")
 
     @property
     def visitId(self):  # To support the schema naming convention

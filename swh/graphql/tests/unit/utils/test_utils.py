@@ -9,8 +9,11 @@ from swh.graphql.utils import utils
 
 
 class TestUtils:
-    def test_b64encode(self):
-        assert utils.b64encode("testing") == "dGVzdGluZw=="
+    def test_get_b64_string(self):
+        assert utils.get_b64_string("testing") == "dGVzdGluZw=="
+
+    def test_get_b64_string_binary(self):
+        assert utils.get_b64_string(b"testing") == "dGVzdGluZw=="
 
     def test_get_encoded_cursor_is_none(self):
         assert utils.get_encoded_cursor(None) is None

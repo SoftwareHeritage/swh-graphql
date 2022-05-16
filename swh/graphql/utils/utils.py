@@ -9,21 +9,25 @@ from typing import List
 
 from swh.storage.interface import PagedResult
 
+ENCODING = "utf-8"
 
-def b64encode(text: str) -> str:
-    return base64.b64encode(bytes(text, "utf-8")).decode("utf-8")
+
+def get_b64_string(source) -> str:
+    if type(source) is str:
+        source = source.encode(ENCODING)
+    return base64.b64encode(source).decode("ascii")
 
 
 def get_encoded_cursor(cursor: str) -> str:
     if cursor is None:
         return None
-    return b64encode(cursor)
+    return get_b64_string(cursor)
 
 
 def get_decoded_cursor(cursor: str) -> str:
     if cursor is None:
         return None
-    return base64.b64decode(cursor).decode("utf-8")
+    return base64.b64decode(cursor).decode(ENCODING)
 
 
 def str_to_sha1(sha1: str) -> bytearray:

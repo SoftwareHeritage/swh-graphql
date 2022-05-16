@@ -118,3 +118,11 @@ class TestResolvers:
         obj = mocker.Mock()
         obj.is_type_of.return_value = "test"
         assert rs.union_resolver(obj) == "test"
+
+    def test_binary_string_text_resolver(self):
+        text = rs.binary_string_text_resolver(b"test", None)
+        assert text == "test"
+
+    def test_binary_string_base64_resolver(self):
+        b64string = rs.binary_string_base64_resolver(b"test", None)
+        assert b64string == "dGVzdA=="

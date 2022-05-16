@@ -33,8 +33,8 @@ schema = make_executable_schema(
     resolvers.branch_target,
     resolvers.release_target,
     resolvers.directory_entry_target,
+    resolvers.binary_string,
     scalars.id_scalar,
-    scalars.string_scalar,
     scalars.datetime_scalar,
     scalars.swhid_scalar,
 )

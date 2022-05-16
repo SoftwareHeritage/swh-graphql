@@ -45,6 +45,22 @@ type PageInfo {
 }
 
 """
+Binary strings; different encodings
+"""
+type BinaryString {
+  """
+  Utf-8 encoded value, any non Unicode character will be replaced
+  """
+  text: String
+
+  """
+  base64 encoded value
+  """
+  base64: String
+}
+
+
+"""
 Connection to origins
 """
 type OriginConnection {
@@ -411,17 +427,17 @@ type Person {
   """
   User's email address
   """
-  email: String
+  email: BinaryString
 
   """
   User's name
   """
-  name: String
+  name: BinaryString
 
   """
   User's full name
   """
-  fullname: String
+  fullname: BinaryString
 }
 
 """
@@ -448,7 +464,7 @@ type Branch {
   """
   Branch name
   """
-  name: String
+  name: BinaryString
 
   """
   Type of Branch target
@@ -518,7 +534,7 @@ type Revision implements MerkleNode & Node {
   """
   Message associated to the revision
   """
-  message: String
+  message: BinaryString
 
   """
   """
@@ -607,12 +623,12 @@ type Release implements MerkleNode & Node {
   """
   The name of the release
   """
-  name: String
+  name: BinaryString
 
   """
   The message associated to the release
   """
-  message: String
+  message: BinaryString
 
   """
   """
@@ -695,7 +711,7 @@ type DirectoryEntry {
   """
   The directory entry name
   """
-  name: String
+  name: BinaryString
 
   """
   Directory entry object type; can be file, dir or rev
