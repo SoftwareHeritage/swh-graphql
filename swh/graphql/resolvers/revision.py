@@ -48,7 +48,7 @@ class RevisionNode(BaseRevisionNode):
     """
 
     def _get_node_data(self):
-        return self._get_revision_by_id(self.kwargs.get("SWHID").object_id)
+        return self._get_revision_by_id(self.kwargs.get("swhid").object_id)
 
 
 class TargetRevisionNode(BaseRevisionNode):
@@ -95,7 +95,7 @@ class LogRevisionConnection(BaseConnection):
 
     def _get_paged_result(self):
         # STORAGE-TODO (date in revisionlog is a dict)
-        log = archive.Archive().get_revision_log([self.obj.SWHID.object_id])
+        log = archive.Archive().get_revision_log([self.obj.swhid.object_id])
         # FIXME, using dummy(local) pagination, move pagination to backend
         # To remove localpagination, just drop the paginated call
         # STORAGE-TODO (pagination)

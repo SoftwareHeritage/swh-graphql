@@ -35,7 +35,7 @@ class ReleaseNode(BaseReleaseNode):
     """
 
     def _get_node_data(self):
-        return self._get_release_by_id(self.kwargs.get("SWHID").object_id)
+        return self._get_release_by_id(self.kwargs.get("swhid").object_id)
 
 
 class TargetReleaseNode(BaseReleaseNode):

@@ -45,12 +45,12 @@ class SnapshotBranchConnection(BaseConnection):
     def _get_paged_result(self):
         """
         When branches requested from a snapshot
-        self.obj.SWHID is the snapshot SWHID here
+        self.obj.swhid is the snapshot SWHID here
         (as returned from resolvers/snapshot.py)
         """
 
         result = archive.Archive().get_snapshot_branches(
-            self.obj.SWHID.object_id,
+            self.obj.swhid.object_id,
             after=self._get_after_arg(),
             first=self._get_first_arg(),
             target_types=self.kwargs.get("types"),

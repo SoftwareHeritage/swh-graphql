@@ -34,7 +34,7 @@ class ContentNode(BaseContentNode):
         When a content is requested directly
         with its SWHID
         """
-        return self._get_content_by_id(self.kwargs.get("SWHID").object_id)
+        return self._get_content_by_id(self.kwargs.get("swhid").object_id)
 
 
 class TargetContentNode(BaseContentNode):

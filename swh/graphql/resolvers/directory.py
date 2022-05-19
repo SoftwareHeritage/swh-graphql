@@ -25,7 +25,7 @@ class DirectoryNode(BaseDirectoryNode):
         """
         When a directory is requested directly with its SWHID
         """
-        directory_id = self.kwargs.get("SWHID").object_id
+        directory_id = self.kwargs.get("swhid").object_id
         # path = ""
         if archive.Archive().is_directory_available([directory_id]):
             return self._get_directory_by_id(directory_id)
@@ -37,7 +37,7 @@ class RevisionDirectoryNode(BaseDirectoryNode):
         """
         When a directory is requested from a revision
         self.obj is revision here
-        self.obj.directorySWHID is the required dir SWHID
+        self.obj.directorySWHID is the required directory SWHID
         (set from resolvers.revision.py:BaseRevisionNode)
         """
         directory_id = self.obj.directorySWHID.object_id

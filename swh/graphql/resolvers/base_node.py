@@ -77,5 +77,5 @@ class BaseNode(ABC):
 
 class BaseSWHNode(BaseNode):
     @property
-    def SWHID(self):
+    def swhid(self):
         return self._node.swhid()

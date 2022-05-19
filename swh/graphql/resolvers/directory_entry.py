@@ -24,7 +24,7 @@ class DirectoryEntryConnection(BaseConnection):
     def _get_paged_result(self):
         """
         When entries requested from a directory
-        self.obj.SWHID is the directory SWHID here
+        self.obj.swhid is the directory SWHID here
 
         This is not paginated from swh-storgae
         using dummy pagination
@@ -34,6 +34,6 @@ class DirectoryEntryConnection(BaseConnection):
         # To remove localpagination, just drop the paginated call
         # STORAGE-TODO
         entries = (
-            archive.Archive().get_directory_entries(self.obj.SWHID.object_id).results
+            archive.Archive().get_directory_entries(self.obj.swhid.object_id).results
         )
         return utils.paginated(entries, self._get_first_arg(), self._get_after_arg())
