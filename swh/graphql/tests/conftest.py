@@ -22,6 +22,7 @@ def storage():
     app_server.storage = storage
     # populate the in-memory storage
     populate_dummy_data(storage)
+    return storage
 
 
 @pytest.fixture
