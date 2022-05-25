@@ -4,4 +4,4 @@ storage:
 
 debug: yes
 
-server-type: asgi
+server-type: wsgi
