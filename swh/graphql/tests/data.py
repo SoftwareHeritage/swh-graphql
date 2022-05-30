@@ -18,3 +18,7 @@ def populate_dummy_data(storage):
 
 def get_origins():
     return swh_model_data.ORIGINS
+
+
+def get_snapshots():
+    return swh_model_data.SNAPSHOTS
