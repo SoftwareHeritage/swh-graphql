@@ -6,39 +6,41 @@
 import pytest
 
 from ..data import get_origins
-from .utils import get_query_response
+from .utils import assert_missing_object, get_query_response
 
 
 @pytest.mark.parametrize("origin", get_origins())
 def test_get_visit(client, storage, origin):
     query_str = """
-    {
-      visit(originUrl: "%s", visitId: %s) {
+    {{
+      visit(originUrl: "{origin_url}", visitId: {visit_id}) {{
         visitId
         date
         type
-        latestStatus {
+        latestStatus {{
           status
           date
           type
-          snapshot {
+          snapshot {{
             swhid
-          }
-        }
-        status {
-          nodes {
+          }}
+        }}
+        status {{
+          nodes {{
             status
-          }
-        }
-      }
-    }
+          }}
+        }}
+      }}
+    }}
     """
 
     visits_and_statuses = storage.origin_visit_get_with_statuses(origin.url).results
     for vws in visits_and_statuses:
         visit = vws.visit
         statuses = vws.statuses
-        data, _ = get_query_response(client, query_str % (origin.url, visit.visit))
+        data, _ = get_query_response(
+            client, query_str.format(origin_url=origin.url, visit_id=visit.visit)
+        )
         assert data["visit"] == {
             "visitId": visit.visit,
             "type": visit.type,
@@ -63,7 +65,4 @@ def test_invalid_get_visit(client):
       }
     }
     """
-    data, errors = get_query_response(client, query_str)
-    assert data["visit"] is None
-    assert len(errors) == 1
-    assert errors[0]["message"] == "Requested object is not available"
+    assert_missing_object(client, query_str, "visit")

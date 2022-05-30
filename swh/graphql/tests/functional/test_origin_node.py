@@ -3,48 +3,54 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from .utils import get_query_response
+import pytest
+
+from ..data import get_origins
+from .utils import assert_missing_object, get_query_response
 
 
 def test_invalid_get(client):
     query_str = """
     {
-      origin(url: "http://example.com/forge1/") {
+      origin(url: "http://example.com/non-existing") {
         url
       }
     }
     """
-    data, errors = get_query_response(client, query_str)
-    assert data["origin"] is None
-    assert len(errors) == 1
-    assert errors[0]["message"] == "Requested object is not available"
+    assert_missing_object(client, query_str, "origin")
 
 
-def test_get(client):
-    query_str = """
-    {
-      origin(url: "http://example.com/forge1") {
+@pytest.mark.parametrize("origin", get_origins())
+def test_get(client, storage, origin):
+    query_str = f"""
+    {{
+      origin(url: "{origin.url}") {{
         url
         id
-        visits(first: 10) {
-          nodes {
+        visits(first: 10) {{
+          nodes {{
             id
-          }
-        }
-        latestVisit {
+          }}
+        }}
+        latestVisit {{
           visitId
-        }
-        snapshots(first: 2) {
-          nodes {
+        }}
+        snapshots(first: 2) {{
+          nodes {{
             id
-          }
-        }
-      }
-    }
+          }}
+        }}
+      }}
+    }}
     """
-    data, _ = get_query_response(client, query_str)
-    origin = data["origin"]
-    assert origin["url"] == "http://example.com/forge1"
-    assert len(origin["visits"]["nodes"]) == 2
-    assert origin["latestVisit"]["visitId"] == 2
-    assert len(origin["snapshots"]["nodes"]) == 1
+
+    response, _ = get_query_response(client, query_str)
+    data_origin = response["origin"]
+    storage_origin = storage.origin_get([origin.url])[0]
+    visits_and_statuses = storage.origin_visit_get_with_statuses(origin.url).results
+    assert data_origin["url"] == storage_origin.url
+    assert data_origin["id"] == storage_origin.id.hex()
+    assert len(data_origin["visits"]["nodes"]) == len(visits_and_statuses)
+    assert data_origin["latestVisit"]["visitId"] == visits_and_statuses[-1].visit.visit
+    snapshots = storage.origin_snapshot_get_all(origin.url)
+    assert len(data_origin["snapshots"]["nodes"]) == len(snapshots)
