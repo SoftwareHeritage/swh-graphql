@@ -8,9 +8,14 @@ from swh.graphql.utils import utils
 
 from .base_connection import BaseConnection
 from .base_node import BaseNode
+from .origin import OriginNode
 
 
 class BaseVisitNode(BaseNode):
+    """
+    Base resolver for all the visit nodes
+    """
+
     @property
     def id(self):
         # FIXME, use a better id
@@ -23,7 +28,8 @@ class BaseVisitNode(BaseNode):
 
 class OriginVisitNode(BaseVisitNode):
     """
-    Get the visit directly with an origin URL and a visit ID
+    Node resolver for a visit requested directly with an origin URL
+    and a visit ID
     """
 
     def _get_node_data(self):
@@ -34,23 +40,27 @@ class OriginVisitNode(BaseVisitNode):
 
 class LatestVisitNode(BaseVisitNode):
     """
-    Get the latest visit for an origin
-    self.obj is the origin object here
-    self.obj.url is the origin URL
+    Node resolver for the latest visit in an origin
     """
 
+    obj: OriginNode
+
     def _get_node_data(self):
+        # self.obj.url is the origin URL
         return archive.Archive().get_origin_latest_visit(self.obj.url)
 
 
 class OriginVisitConnection(BaseConnection):
+    """
+    Connection resolver for the visit objects in an origin
+    """
+
+    obj: OriginNode
+
     _node_class = BaseVisitNode
 
     def _get_paged_result(self):
-        """
-        Get the visits for the given origin
-        parent obj (self.obj) is origin here
-        """
+        # self.obj.url is the origin URL
         return archive.Archive().get_origin_visits(
             self.obj.url, after=self._get_after_arg(), first=self._get_first_arg()
         )

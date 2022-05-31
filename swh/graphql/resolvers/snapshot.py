@@ -9,9 +9,15 @@ from swh.model.model import Snapshot
 
 from .base_connection import BaseConnection
 from .base_node import BaseSWHNode
+from .origin import OriginNode
+from .visit_status import BaseVisitStatusNode
 
 
 class BaseSnapshotNode(BaseSWHNode):
+    """
+    Base resolver for all the snapshot nodes
+    """
+
     def _get_snapshot_by_id(self, snapshot_id):
         # Return a Snapshot model object
         # branches is initialized as empty
@@ -21,7 +27,7 @@ class BaseSnapshotNode(BaseSWHNode):
 
 class SnapshotNode(BaseSnapshotNode):
     """
-    For directly accessing a snapshot with its SWHID
+    Node resolver for a snapshot requested directly with its SWHID
     """
 
     def _get_node_data(self):
@@ -34,23 +40,27 @@ class SnapshotNode(BaseSnapshotNode):
 
 class VisitSnapshotNode(BaseSnapshotNode):
     """
-    For accessing a snapshot from a visitstatus type
+    Node resolver for a snapshot requested from a visit-status
     """
 
+    obj: BaseVisitStatusNode
+
     def _get_node_data(self):
-        """
-        self.obj is visitstatus here
-        self.obj.snapshotSWHID is the requested snapshot SWHID
-        """
+        # self.obj.snapshotSWHID is the requested snapshot SWHID
         snapshot_id = self.obj.snapshotSWHID.object_id
         return self._get_snapshot_by_id(snapshot_id)
 
 
 class OriginSnapshotConnection(BaseConnection):
+    """
+    Connection resolver for the snapshots in an origin
+    """
+
+    obj: OriginNode
+
     _node_class = BaseSnapshotNode
 
     def _get_paged_result(self):
-        """ """
         results = archive.Archive().get_origin_snapshots(self.obj.url)
         snapshots = [Snapshot(id=snapshot, branches={}) for snapshot in results]
         # FIXME, using dummy(local) pagination, move pagination to backend

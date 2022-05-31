@@ -3,10 +3,6 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-# This module will be removed once the test data
-# generation in SWH-wb moved to a shared location
-# or to a new test data project
-
 from swh.model.tests import swh_model_data
 
 

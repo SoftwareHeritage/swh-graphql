@@ -5,12 +5,14 @@
 
 """
 High level resolvers
-Any schema attribute can be resolved by any of the following ways
-and in the following priority order
-- In this module using an annotation  (eg: @visitstatus.field("snapshot"))
-- As a property in the Node object (eg: resolvers.visit.OriginVisitNode.id)
-- As an attribute/item in the object/dict returned by the backend (eg: Origin.url)
 """
+
+# Any schema attribute can be resolved by any of the following ways
+# and in the following priority order
+# - In this module using a decorator (eg: @visitstatus.field("snapshot"))
+# - As a property in the Node object (eg: resolvers.visit.BaseVisitNode.id)
+# - As an attribute/item in the object/dict returned by a backend (eg: Origin.url)
+
 from ariadne import ObjectType, UnionType
 from graphql.type import GraphQLResolveInfo
 

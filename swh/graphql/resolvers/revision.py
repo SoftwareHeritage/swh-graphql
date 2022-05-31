@@ -3,15 +3,23 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+from typing import Union
+
 from swh.graphql.backends import archive
 from swh.graphql.utils import utils
 from swh.model.swhids import CoreSWHID, ObjectType
 
 from .base_connection import BaseConnection
 from .base_node import BaseSWHNode
+from .release import BaseReleaseNode
+from .snapshot_branch import SnapshotBranchNode
 
 
 class BaseRevisionNode(BaseSWHNode):
+    """
+    Base resolver for all the revision nodes
+    """
+
     def _get_revision_by_id(self, revision_id):
         return (archive.Archive().get_revisions([revision_id]) or None)[0]
 
@@ -24,7 +32,6 @@ class BaseRevisionNode(BaseSWHNode):
 
     @property
     def directorySWHID(self):  # To support the schema naming convention
-        """ """
         return CoreSWHID(
             object_type=ObjectType.DIRECTORY, object_id=self._node.directory
         )
@@ -34,17 +41,14 @@ class BaseRevisionNode(BaseSWHNode):
         return self._node.type.value
 
     def is_type_of(self):
-        """
-        is_type_of is required only when resolving
-        a UNION type
-        This is for ariadne to return the right type
-        """
+        # is_type_of is required only when resolving a UNION type
+        # This is for ariadne to return the right type
         return "Revision"
 
 
 class RevisionNode(BaseRevisionNode):
     """
-    When the revision is requested directly with its SWHID
+    Node resolver for a revision requested directly with its SWHID
     """
 
     def _get_node_data(self):
@@ -53,28 +57,29 @@ class RevisionNode(BaseRevisionNode):
 
 class TargetRevisionNode(BaseRevisionNode):
     """
-    When a revision is requested as a target
-
-    self.obj could be a snapshotbranch or a release
-    self.obj.targetHash is the requested revision id here
+    Node resolver for a revision requested as a target
     """
 
+    obj: Union[SnapshotBranchNode, BaseReleaseNode]
+
     def _get_node_data(self):
+        # self.obj.targetHash is the requested revision id
         return self._get_revision_by_id(self.obj.targetHash)
 
 
 class ParentRevisionConnection(BaseConnection):
     """
-    When parent revisions is requested from a
-    revision
-    self.obj is the current(child) revision
-    self.obj.parentSWHIDs is the list of
-    parent SWHIDs
+    Connection resolver for parent revisions in a revision
     """
+
+    obj: BaseRevisionNode
 
     _node_class = BaseRevisionNode
 
     def _get_paged_result(self):
+        # self.obj is the current(child) revision
+        # self.obj.parentSWHIDs is the list of parent SWHIDs
+
         # FIXME, using dummy(local) pagination, move pagination to backend
         # To remove localpagination, just drop the paginated call
         # STORAGE-TODO (pagination)
@@ -86,14 +91,16 @@ class ParentRevisionConnection(BaseConnection):
 
 class LogRevisionConnection(BaseConnection):
     """
-    When revisionslog is requested from a
-    revision
-    self.obj is the current revision id
+    Connection resolver for the log (list of revisions) in a revision
     """
+
+    obj: BaseRevisionNode
 
     _node_class = BaseRevisionNode
 
     def _get_paged_result(self):
+        # self.obj is the current revision id
+
         # STORAGE-TODO (date in revisionlog is a dict)
         log = archive.Archive().get_revision_log([self.obj.swhid.object_id])
         # FIXME, using dummy(local) pagination, move pagination to backend

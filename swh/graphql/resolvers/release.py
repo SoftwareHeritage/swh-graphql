@@ -3,12 +3,19 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+from typing import Union
+
 from swh.graphql.backends import archive
 
 from .base_node import BaseSWHNode
+from .snapshot_branch import SnapshotBranchNode
 
 
 class BaseReleaseNode(BaseSWHNode):
+    """
+    Base resolver for all the release nodes
+    """
+
     def _get_release_by_id(self, release_id):
         return (archive.Archive().get_releases([release_id]) or None)[0]
 
@@ -21,17 +28,14 @@ class BaseReleaseNode(BaseSWHNode):
         return self._node.target_type.value
 
     def is_type_of(self):
-        """
-        is_type_of is required only when resolving
-        a UNION type
-        This is for ariadne to return the right type
-        """
+        # is_type_of is required only when resolving a UNION type
+        # This is for ariadne to return the right type
         return "Release"
 
 
 class ReleaseNode(BaseReleaseNode):
     """
-    When the release is requested directly with its SWHID
+    Node resolver for a release requested directly with its SWHID
     """
 
     def _get_node_data(self):
@@ -40,11 +44,11 @@ class ReleaseNode(BaseReleaseNode):
 
 class TargetReleaseNode(BaseReleaseNode):
     """
-    When a release is requested as a target
-
-    self.obj could be a snapshotbranch or a release
-    self.obj.targetHash is the requested release id here
+    Node resolver for a release requested as a target
     """
 
+    obj: Union[SnapshotBranchNode, BaseReleaseNode]
+
     def _get_node_data(self):
+        # self.obj.targetHash is the requested release id
         return self._get_release_by_id(self.obj.targetHash)

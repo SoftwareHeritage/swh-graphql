@@ -11,7 +11,7 @@ from swh.graphql.errors import ObjectNotFoundError
 
 class BaseNode(ABC):
     """
-    Base class for all the Node resolvers
+    Base resolver for all the nodes
     """
 
     def __init__(self, obj, info, node_data=None, **kwargs):
@@ -76,6 +76,10 @@ class BaseNode(ABC):
 
 
 class BaseSWHNode(BaseNode):
+    """
+    Base resolver for all the nodes with a SWHID field
+    """
+
     @property
     def swhid(self):
         return self._node.swhid()

@@ -8,10 +8,13 @@ from swh.graphql.utils import utils
 
 from .base_connection import BaseConnection
 from .base_node import BaseNode
+from .directory import BaseDirectoryNode
 
 
 class DirectoryEntryNode(BaseNode):
-    """ """
+    """
+    Node resolver for a directory entry
+    """
 
     @property
     def targetHash(self):  # To support the schema naming convention
@@ -19,17 +22,15 @@ class DirectoryEntryNode(BaseNode):
 
 
 class DirectoryEntryConnection(BaseConnection):
+    """
+    Connection resolver for entries in a directory
+    """
+
+    obj: BaseDirectoryNode
+
     _node_class = DirectoryEntryNode
 
     def _get_paged_result(self):
-        """
-        When entries requested from a directory
-        self.obj.swhid is the directory SWHID here
-
-        This is not paginated from swh-storgae
-        using dummy pagination
-        """
-
         # FIXME, using dummy(local) pagination, move pagination to backend
         # To remove localpagination, just drop the paginated call
         # STORAGE-TODO

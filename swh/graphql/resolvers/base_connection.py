@@ -20,7 +20,7 @@ class PageInfo:
 
 class BaseConnection(ABC):
     """
-    Base class for all the connection resolvers
+    Base resolver for all the connections
     """
 
     _node_class: Optional[Type[BaseNode]] = None

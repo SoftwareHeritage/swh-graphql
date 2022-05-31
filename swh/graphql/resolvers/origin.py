@@ -10,11 +10,19 @@ from .base_node import BaseSWHNode
 
 
 class OriginNode(BaseSWHNode):
+    """
+    Node resolver for an origin requested directly with its URL
+    """
+
     def _get_node_data(self):
         return archive.Archive().get_origin(self.kwargs.get("url"))
 
 
 class OriginConnection(BaseConnection):
+    """
+    Connection resolver for the origins
+    """
+
     _node_class = OriginNode
 
     def _get_paged_result(self):

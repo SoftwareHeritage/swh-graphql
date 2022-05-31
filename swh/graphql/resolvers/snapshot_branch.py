@@ -11,19 +11,20 @@ from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
 from .base_node import BaseNode
+from .snapshot import SnapshotNode
 
 
 class SnapshotBranchNode(BaseNode):
     """
-    target field for this Node is a UNION in the schema
-    It is resolved in resolvers.resolvers.py
+    Node resolver for a snapshot branch
     """
 
+    # target field for this Node is a UNION type
+    # It is resolved in the top level (resolvers.resolvers.py)
+
     def _get_node_from_data(self, node_data):
-        """
-        node_data is not a dict in this case
-        overriding to support this special data structure
-        """
+        # node_data is not a dict in this case
+        # overriding to support this special data structure
 
         # STORAGE-TODO; return an object in the normal format
         branch_name, branch_obj = node_data
@@ -40,15 +41,16 @@ class SnapshotBranchNode(BaseNode):
 
 
 class SnapshotBranchConnection(BaseConnection):
+    """
+    Connection resolver for the branches in a snapshot
+    """
+
+    obj: SnapshotNode
+
     _node_class = SnapshotBranchNode
 
     def _get_paged_result(self):
-        """
-        When branches requested from a snapshot
-        self.obj.swhid is the snapshot SWHID here
-        (as returned from resolvers/snapshot.py)
-        """
-
+        # self.obj.swhid is the snapshot SWHID
         result = archive.Archive().get_snapshot_branches(
             self.obj.swhid.object_id,
             after=self._get_after_arg(),
@@ -69,9 +71,8 @@ class SnapshotBranchConnection(BaseConnection):
         )
 
     def _get_after_arg(self):
-        """
-        Snapshot branch is using a different cursor; logic to handle that
-        """
+        # Snapshot branch is using a different cursor; logic to handle that
+
         # FIXME Cursor must be a hex to be consistent with
         # the base class, hack to make that work
         after = utils.get_decoded_cursor(self.kwargs.get("after", ""))

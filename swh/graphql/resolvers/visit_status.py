@@ -8,10 +8,13 @@ from swh.model.swhids import CoreSWHID, ObjectType
 
 from .base_connection import BaseConnection
 from .base_node import BaseNode
+from .visit import BaseVisitNode
 
 
 class BaseVisitStatusNode(BaseNode):
-    """ """
+    """
+    Base resolver for all the visit-status nodes
+    """
 
     @property
     def snapshotSWHID(self):  # To support the schema naming convention
@@ -20,12 +23,13 @@ class BaseVisitStatusNode(BaseNode):
 
 class LatestVisitStatusNode(BaseVisitStatusNode):
     """
-    Get the latest visit status for a visit
-    self.obj is the visit object here
-    self.obj.origin is the origin URL
+    Node resolver for a visit-status requested from a visit
     """
 
+    obj: BaseVisitNode
+
     def _get_node_data(self):
+        # self.obj.origin is the origin URL
         return archive.Archive().get_latest_visit_status(
             self.obj.origin, self.obj.visitId
         )
@@ -33,13 +37,14 @@ class LatestVisitStatusNode(BaseVisitStatusNode):
 
 class VisitStatusConnection(BaseConnection):
     """
-    self.obj is the visit object
-    self.obj.origin is the origin URL
+    Connection resolver for the visit-status objects in a visit
     """
 
+    obj: BaseVisitNode
     _node_class = BaseVisitStatusNode
 
     def _get_paged_result(self):
+        # self.obj.origin is the origin URL
         return archive.Archive().get_visit_status(
             self.obj.origin,
             self.obj.visitId,
