@@ -11,4 +11,4 @@ ENV PYTHONPATH=/usr/src/app/
 
 COPY requirements*.txt /usr/src/app/
 RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt -r requirements-swh.txt
+RUN pip install --no-cache-dir -r requirements.txt -r requirements-swh.txt -r requirements-dev.txt

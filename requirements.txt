@@ -1,8 +1,1 @@
 ariadne
-asgiref
-click
-graphql-core
-h11
-starlette
-typing-extensions
-uvicorn
