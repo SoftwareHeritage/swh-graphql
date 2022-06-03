@@ -99,8 +99,6 @@ class LogRevisionConnection(BaseConnection):
     _node_class = BaseRevisionNode
 
     def _get_paged_result(self):
-        # self.obj is the current revision id
-
         # STORAGE-TODO (date in revisionlog is a dict)
         log = archive.Archive().get_revision_log([self.obj.swhid.object_id])
         # FIXME, using dummy(local) pagination, move pagination to backend
