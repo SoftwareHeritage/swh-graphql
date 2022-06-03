@@ -97,6 +97,5 @@ def test_edge_cursor(client):
     """
     data, _ = get_query_response(client, query_str)
     origins = data["origins"]
-    # nodes in list node fields in edges must be the same
     assert [edge["node"] for edge in origins["edges"]] == origins["nodes"]
     assert origins["edges"][0]["cursor"] == end_cursor
