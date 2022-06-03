@@ -77,3 +77,7 @@ class SnapshotBranchConnection(BaseConnection):
         # the base class, hack to make that work
         after = utils.get_decoded_cursor(self.kwargs.get("after", ""))
         return bytes.fromhex(after)
+
+    def _get_index_cursor(self, index: int, node: SnapshotBranchNode):
+        # Snapshot branch is using a different cursor, hence the override
+        return utils.get_encoded_cursor(node.name.hex())

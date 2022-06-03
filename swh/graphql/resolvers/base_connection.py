@@ -5,7 +5,7 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Optional, Type
+from typing import Any, Optional, Type
 
 from swh.graphql.utils import utils
 
@@ -16,6 +16,12 @@ from .base_node import BaseNode
 class PageInfo:
     hasNextPage: bool
     endCursor: str
+
+
+@dataclass
+class ConnectionEdge:
+    node: Any
+    cursor: str
 
 
 class BaseConnection(ABC):
@@ -94,9 +100,13 @@ class BaseConnection(ABC):
         return None
 
     def _get_edges(self):
-        # FIXME, make cursor work per item
-        # Cursor can't be None here
-        return [{"cursor": "dummy", "node": node} for node in self.nodes]
+        """
+        Return the list of connection edges, each with a cursor
+        """
+        return [
+            ConnectionEdge(node=node, cursor=self._get_index_cursor(index, node))
+            for (index, node) in enumerate(self.nodes)
+        ]
 
     def _get_after_arg(self):
         """
@@ -110,3 +120,13 @@ class BaseConnection(ABC):
         page_size is set to 50 by default
         """
         return self.kwargs.get("first", self._page_size)
+
+    def _get_index_cursor(self, index: int, node: Any):
+        """
+        Get the cursor to the given item index
+        """
+        # default implementation which works with swh-storage pagaination
+        # override this function to support other types (eg: SnapshotBranchConnection)
+        offset_index = self._get_after_arg() or "0"
+        index_cursor = int(offset_index) + index
+        return utils.get_encoded_cursor(str(index_cursor))
