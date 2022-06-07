@@ -55,7 +55,7 @@ class BaseConnection(ABC):
         """
         if self._node_class is not None:
             return [
-                self._node_class(self.obj, self.info, node_data=result, **self.kwargs)
+                self._node_class(self, self.info, node_data=result, **self.kwargs)
                 for result in self.get_paged_data().results
             ]
         return self.get_paged_data().results
