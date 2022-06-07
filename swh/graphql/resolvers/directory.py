@@ -3,11 +3,15 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+from typing import Union
+
 from swh.graphql.backends import archive
 from swh.model.model import Directory
 
 from .base_node import BaseSWHNode
+from .release import BaseReleaseNode
 from .revision import BaseRevisionNode
+from .snapshot_branch import SnapshotBranchNode
 
 
 class BaseDirectoryNode(BaseSWHNode):
@@ -57,6 +61,10 @@ class TargetDirectoryNode(BaseDirectoryNode):
     """
     Node resolver for a directory requested as a target
     """
+
+    from .directory_entry import DirectoryEntryNode
+
+    obj: Union[SnapshotBranchNode, BaseReleaseNode, DirectoryEntryNode]
 
     def _get_node_data(self):
         return self._get_directory_by_id(self.obj.targetHash)

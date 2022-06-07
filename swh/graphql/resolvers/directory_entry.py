@@ -8,7 +8,6 @@ from swh.graphql.utils import utils
 
 from .base_connection import BaseConnection
 from .base_node import BaseNode
-from .directory import BaseDirectoryNode
 
 
 class DirectoryEntryNode(BaseNode):
@@ -25,6 +24,8 @@ class DirectoryEntryConnection(BaseConnection):
     """
     Connection resolver for entries in a directory
     """
+
+    from .directory import BaseDirectoryNode
 
     obj: BaseDirectoryNode
 

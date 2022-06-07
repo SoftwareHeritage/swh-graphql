@@ -3,6 +3,8 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+from typing import Union
+
 from swh.graphql.backends import archive
 from swh.graphql.utils import utils
 from swh.model.model import Snapshot
@@ -23,6 +25,11 @@ class BaseSnapshotNode(BaseSWHNode):
         # branches is initialized as empty
         # Same pattern is used in directory
         return Snapshot(id=snapshot_id, branches={})
+
+    def is_type_of(self):
+        # is_type_of is required only when resolving a UNION type
+        # This is for ariadne to return the right type
+        return "Snapshot"
 
 
 class SnapshotNode(BaseSnapshotNode):
@@ -48,6 +55,20 @@ class VisitSnapshotNode(BaseSnapshotNode):
     def _get_node_data(self):
         # self.obj.snapshotSWHID is the requested snapshot SWHID
         snapshot_id = self.obj.snapshotSWHID.object_id
+        return self._get_snapshot_by_id(snapshot_id)
+
+
+class TargetSnapshotNode(BaseSnapshotNode):
+    """
+    Node resolver for a snapshot requested as a target
+    """
+
+    from .snapshot_branch import SnapshotBranchNode
+
+    obj: Union[BaseVisitStatusNode, SnapshotBranchNode]
+
+    def _get_node_data(self):
+        snapshot_id = self.obj.targetHash
         return self._get_snapshot_by_id(snapshot_id)
 
 

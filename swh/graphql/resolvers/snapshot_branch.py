@@ -11,7 +11,6 @@ from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
 from .base_node import BaseNode
-from .snapshot import SnapshotNode
 
 
 class SnapshotBranchNode(BaseNode):
@@ -45,6 +44,8 @@ class SnapshotBranchConnection(BaseConnection):
     Connection resolver for the branches in a snapshot
     """
 
+    from .snapshot import SnapshotNode
+
     obj: SnapshotNode
 
     _node_class = SnapshotBranchNode
@@ -56,12 +57,12 @@ class SnapshotBranchConnection(BaseConnection):
             after=self._get_after_arg(),
             first=self._get_first_arg(),
             target_types=self.kwargs.get("types"),
-            name_include=self.kwargs.get("nameInclude"),
+            name_include=self._get_name_include_arg(),
         )
         # FIXME Cursor must be a hex to be consistent with
         # the base class, hack to make that work
         end_cusrsor = (
-            result["next_branch"].hex() if result["next_branch"] is not None else None
+            result["next_branch"] if result["next_branch"] is not None else None
         )
         # FIXME, this pagination is not consistent with other connections
         # FIX in swh-storage to return PagedResult
@@ -72,11 +73,12 @@ class SnapshotBranchConnection(BaseConnection):
 
     def _get_after_arg(self):
         # Snapshot branch is using a different cursor; logic to handle that
-
-        # FIXME Cursor must be a hex to be consistent with
-        # the base class, hack to make that work
         after = utils.get_decoded_cursor(self.kwargs.get("after", ""))
-        return bytes.fromhex(after)
+        return after.encode() if after else b""
+
+    def _get_name_include_arg(self):
+        name_include = self.kwargs.get("nameInclude", None)
+        return name_include.encode() if name_include else None
 
     def _get_index_cursor(self, index: int, node: SnapshotBranchNode):
         # Snapshot branch is using a different cursor, hence the override

@@ -14,7 +14,12 @@ from .revision import (
     RevisionNode,
     TargetRevisionNode,
 )
-from .snapshot import OriginSnapshotConnection, SnapshotNode, VisitSnapshotNode
+from .snapshot import (
+    OriginSnapshotConnection,
+    SnapshotNode,
+    TargetSnapshotNode,
+    VisitSnapshotNode,
+)
 from .snapshot_branch import SnapshotBranchConnection
 from .visit import LatestVisitNode, OriginVisitConnection, OriginVisitNode
 from .visit_status import LatestVisitStatusNode, VisitStatusConnection
@@ -31,6 +36,9 @@ def get_node_resolver(resolver_type):
         "snapshot": SnapshotNode,
         "branch-revision": TargetRevisionNode,
         "branch-release": TargetReleaseNode,
+        "branch-directory": TargetDirectoryNode,
+        "branch-content": TargetContentNode,
+        "branch-snapshot": TargetSnapshotNode,
         "revision": RevisionNode,
         "revision-directory": RevisionDirectoryNode,
         "release": ReleaseNode,

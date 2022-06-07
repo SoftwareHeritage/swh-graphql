@@ -46,7 +46,9 @@ class Archive:
     def is_snapshot_available(self, snapshot_ids):
         return not self.storage.snapshot_missing(snapshot_ids)
 
-    def get_snapshot_branches(self, snapshot, after, first, target_types, name_include):
+    def get_snapshot_branches(
+        self, snapshot, after=b"", first=50, target_types=[], name_include=None
+    ):
         return self.storage.snapshot_get_branches(
             snapshot,
             branches_from=after,

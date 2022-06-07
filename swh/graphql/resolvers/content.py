@@ -10,6 +10,7 @@ from swh.graphql.backends import archive
 from .base_node import BaseSWHNode
 from .directory_entry import DirectoryEntryNode
 from .release import BaseReleaseNode
+from .snapshot_branch import SnapshotBranchNode
 
 
 class BaseContentNode(BaseSWHNode):
@@ -51,7 +52,7 @@ class TargetContentNode(BaseContentNode):
     directory entry or from a release target
     """
 
-    obj: Union[DirectoryEntryNode, BaseReleaseNode]
+    obj: Union[DirectoryEntryNode, BaseReleaseNode, SnapshotBranchNode]
 
     def _get_node_data(self):
         content_id = self.obj.targetHash
