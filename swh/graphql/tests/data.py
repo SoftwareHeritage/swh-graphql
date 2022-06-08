@@ -18,3 +18,7 @@ def get_origins():
 
 def get_snapshots():
     return swh_model_data.SNAPSHOTS
+
+
+def get_releases():
+    return swh_model_data.RELEASES
