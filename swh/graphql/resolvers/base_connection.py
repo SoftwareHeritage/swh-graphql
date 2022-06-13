@@ -4,9 +4,11 @@
 # See top-level LICENSE file for more information
 
 from abc import ABC, abstractmethod
+import binascii
 from dataclasses import dataclass
 from typing import Any, Optional, Type
 
+from swh.graphql.errors import PaginationError
 from swh.graphql.utils import utils
 
 from .base_node import BaseNode
@@ -30,7 +32,8 @@ class BaseConnection(ABC):
     """
 
     _node_class: Optional[Type[BaseNode]] = None
-    _page_size = 50  # default page size
+    _page_size: int = 50  # default page size (default value for the first arg)
+    _max_page_size: int = 1000  # maximum page size(max value for the first arg)
 
     def __init__(self, obj, info, paged_data=None, **kwargs):
         self.obj = obj
@@ -108,18 +111,28 @@ class BaseConnection(ABC):
             for (index, node) in enumerate(self.nodes)
         ]
 
-    def _get_after_arg(self):
+    def _get_after_arg(self) -> str:
         """
-        Return the decoded next page token
-        override to use a specific token
+        Return the decoded next page token. Override to support a different
+        cursor type
         """
-        return utils.get_decoded_cursor(self.kwargs.get("after"))
+        # different implementation is used in SnapshotBranchConnection
+        try:
+            cursor = utils.get_decoded_cursor(self.kwargs.get("after"))
+        except (UnicodeDecodeError, binascii.Error, Exception) as e:
+            raise PaginationError("Invalid value for argument 'after'", errors=e)
+        return cursor
 
-    def _get_first_arg(self):
-        """
-        page_size is set to 50 by default
-        """
-        return self.kwargs.get("first", self._page_size)
+    def _get_first_arg(self) -> int:
+        """ """
+        # page_size is set to 50 by default
+        # Input type check is not required; It is defined in schema as an int
+        first = self.kwargs.get("first", self._page_size)
+        if first < 0 or first > self._max_page_size:
+            raise PaginationError(
+                f"Value for argument 'first' is invalid; it must be between 0 and {self._max_page_size}"  # noqa: B950
+            )
+        return first
 
     def _get_index_cursor(self, index: int, node: Any):
         """

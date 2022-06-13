@@ -51,7 +51,6 @@ class SnapshotBranchConnection(BaseConnection):
     _node_class = SnapshotBranchNode
 
     def _get_paged_result(self):
-        # self.obj.swhid is the snapshot SWHID
         result = archive.Archive().get_snapshot_branches(
             self.obj.swhid.object_id,
             after=self._get_after_arg(),
@@ -59,8 +58,8 @@ class SnapshotBranchConnection(BaseConnection):
             target_types=self.kwargs.get("types"),
             name_include=self._get_name_include_arg(),
         )
-        # FIXME Cursor must be a hex to be consistent with
-        # the base class, hack to make that work
+
+        # endCursor is the last branch name, logic for that
         end_cusrsor = (
             result["next_branch"] if result["next_branch"] is not None else None
         )
@@ -72,8 +71,8 @@ class SnapshotBranchConnection(BaseConnection):
         )
 
     def _get_after_arg(self):
-        # Snapshot branch is using a different cursor; logic to handle that
-        after = utils.get_decoded_cursor(self.kwargs.get("after", ""))
+        # after argument must be an empty string by default
+        after = super()._get_after_arg()
         return after.encode() if after else b""
 
     def _get_name_include_arg(self):
@@ -82,4 +81,4 @@ class SnapshotBranchConnection(BaseConnection):
 
     def _get_index_cursor(self, index: int, node: SnapshotBranchNode):
         # Snapshot branch is using a different cursor, hence the override
-        return utils.get_encoded_cursor(node.name.hex())
+        return utils.get_encoded_cursor(node.name)

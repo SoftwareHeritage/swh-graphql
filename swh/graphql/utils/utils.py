@@ -27,7 +27,7 @@ def get_encoded_cursor(cursor: str) -> str:
 def get_decoded_cursor(cursor: str) -> str:
     if cursor is None:
         return None
-    return base64.b64decode(cursor).decode(ENCODING)
+    return base64.b64decode(cursor, validate=True).decode()
 
 
 def str_to_sha1(sha1: str) -> bytearray:
