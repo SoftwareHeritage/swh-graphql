@@ -71,6 +71,9 @@ class TestResolvers:
         [
             ("revision", resolvers.revision.TargetRevisionNode),
             ("release", resolvers.release.TargetReleaseNode),
+            ("directory", resolvers.directory.TargetDirectoryNode),
+            ("content", resolvers.content.TargetContentNode),
+            ("snapshot", resolvers.snapshot.TargetSnapshotNode),
         ],
     )
     def test_snapshot_branch_target_resolver(
