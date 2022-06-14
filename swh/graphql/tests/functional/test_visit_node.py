@@ -12,35 +12,33 @@ from .utils import assert_missing_object, get_query_response
 @pytest.mark.parametrize("origin", get_origins())
 def test_get_visit(client, storage, origin):
     query_str = """
-    {{
-      visit(originUrl: "{origin_url}", visitId: {visit_id}) {{
+    {
+      visit(originUrl: "%s", visitId: %s) {
         visitId
         date
         type
-        latestStatus {{
+        latestStatus {
           status
           date
           type
-          snapshot {{
+          snapshot {
             swhid
-          }}
-        }}
-        status {{
-          nodes {{
+          }
+        }
+        status {
+          nodes {
             status
-          }}
-        }}
-      }}
-    }}
+          }
+        }
+      }
+    }
     """
 
     visits_and_statuses = storage.origin_visit_get_with_statuses(origin.url).results
     for vws in visits_and_statuses:
         visit = vws.visit
         statuses = vws.statuses
-        data, _ = get_query_response(
-            client, query_str.format(origin_url=origin.url, visit_id=visit.visit)
-        )
+        data, _ = get_query_response(client, query_str % (origin.url, visit.visit))
         assert data["visit"] == {
             "visitId": visit.visit,
             "type": visit.type,

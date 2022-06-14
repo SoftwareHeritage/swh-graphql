@@ -11,23 +11,23 @@ from .utils import assert_missing_object, get_error_response, get_query_response
 
 @pytest.mark.parametrize("snapshot", get_snapshots())
 def test_get_snapshot(client, snapshot):
-    query_str = f"""
-    {{
-      snapshot(swhid: "{snapshot.swhid()}") {{
+    query_str = """
+    {
+      snapshot(swhid: "%s") {
         id
         swhid
-        branches(first:5) {{
-          nodes {{
+        branches(first:5) {
+          nodes {
             type
-            name {{
+            name {
               text
-            }}
-          }}
-        }}
-      }}
-    }}
+            }
+          }
+        }
+      }
+    }
     """
-    data, _ = get_query_response(client, query_str)
+    data, _ = get_query_response(client, query_str % snapshot.swhid())
     assert data["snapshot"]["swhid"] == str(snapshot.swhid())
     assert data["snapshot"]["id"] == snapshot.id.hex()
     assert len(data["snapshot"]["branches"]["nodes"]) == len(snapshot.branches)
