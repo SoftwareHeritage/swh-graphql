@@ -28,12 +28,6 @@ class TestUtils:
     def test_get_decoded_cursor(self):
         assert utils.get_decoded_cursor("dGVzdGluZw==") == "testing"
 
-    def test_str_to_sha1(self):
-        assert (
-            utils.str_to_sha1("208f61cc7a5dbc9879ae6e5c2f95891e270f09ef")
-            == b" \x8fa\xccz]\xbc\x98y\xaen\\/\x95\x89\x1e'\x0f\t\xef"
-        )
-
     def test_get_formatted_date(self):
         date = datetime.datetime(
             2015, 8, 4, 22, 26, 14, 804009, tzinfo=datetime.timezone.utc

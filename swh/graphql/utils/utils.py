@@ -30,11 +30,6 @@ def get_decoded_cursor(cursor: str) -> str:
     return base64.b64decode(cursor, validate=True).decode()
 
 
-def str_to_sha1(sha1: str) -> bytearray:
-    # FIXME, use core function
-    return bytearray.fromhex(sha1)
-
-
 def get_formatted_date(date: datetime) -> str:
     # FIXME, handle error + return other formats
     return date.isoformat()
