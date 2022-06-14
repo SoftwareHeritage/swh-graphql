@@ -3,13 +3,13 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+from . import utils
 from ..data import get_origins
-from .utils import get_query_response
 
 
 def get_origins_from_api(client, first: int, **args) -> tuple:
     args["first"] = first
-    params = ",".join([f"{key}: {val}" for (key, val) in args.items()])
+    params = utils.get_query_params_from_args(**args)
     query_str = """
     {
       origins(%s) {
@@ -25,7 +25,7 @@ def get_origins_from_api(client, first: int, **args) -> tuple:
     """ % (
         params,
     )
-    return get_query_response(client, query_str)
+    return utils.get_query_response(client, query_str)
 
 
 def test_get(client, storage):

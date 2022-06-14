@@ -29,3 +29,8 @@ def get_error_response(client, query_str: str, error_code: int = 400) -> Dict:
     response = get_response(client, query_str)
     assert response.status_code == error_code
     return json.loads(response.data)["errors"]
+
+
+def get_query_params_from_args(**args) -> str:
+    # build a GraphQL query parameters string from arguments
+    return ",".join([f"{key}: {val}" for (key, val) in args.items()])
