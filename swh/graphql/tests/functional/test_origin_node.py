@@ -22,27 +22,30 @@ def test_invalid_get(client):
 
 @pytest.mark.parametrize("origin", get_origins())
 def test_get(client, storage, origin):
-    query_str = f"""
-    {{
-      origin(url: "{origin.url}") {{
+    query_str = (
+        """
+    {
+      origin(url: "%s") {
         url
         id
-        visits(first: 10) {{
-          nodes {{
+        visits(first: 10) {
+          nodes {
             id
-          }}
-        }}
-        latestVisit {{
+          }
+        }
+        latestVisit {
           visitId
-        }}
-        snapshots(first: 2) {{
-          nodes {{
+        }
+        snapshots(first: 2) {
+          nodes {
             id
-          }}
-        }}
-      }}
-    }}
+          }
+        }
+      }
+    }
     """
+        % origin.url
+    )
 
     response, _ = get_query_response(client, query_str)
     data_origin = response["origin"]
