@@ -7,63 +7,43 @@ from ..data import get_origins
 from .utils import get_query_response
 
 
-def test_get(client, storage):
+def get_origins_from_api(client, first: int, **args) -> tuple:
+    args["first"] = first
+    params = ",".join([f"{key}: {val}" for (key, val) in args.items()])
     query_str = """
     {
-      origins(first: 10) {
+      origins(%s) {
         nodes {
           url
         }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
       }
     }
-    """
-    data, _ = get_query_response(client, query_str)
+    """ % (
+        params,
+    )
+    return get_query_response(client, query_str)
+
+
+def test_get(client, storage):
+    data, _ = get_origins_from_api(client, 10)
     assert len(data["origins"]["nodes"]) == len(get_origins())
 
 
 def test_get_filter_by_pattern(client):
-    query_str = """
-    {
-      origins(first: 10, urlPattern: "somewhere.org/den") {
-        nodes {
-          url
-        }
-      }
-    }
-    """
-    data, _ = get_query_response(client, query_str)
+    data, _ = get_origins_from_api(client, 10, urlPattern='"somewhere.org/den"')
     assert len(data["origins"]["nodes"]) == 1
 
 
 def test_get_filter_by_non_existing_pattern(client):
-    query_str = """
-    {
-      origins(first: 10, urlPattern: "somewhere.org/den/test/") {
-        nodes {
-          url
-        }
-      }
-    }
-    """
-    data, _ = get_query_response(client, query_str)
+    data, _ = get_origins_from_api(client, 10, urlPattern='"somewhere.org/den/test/"')
     assert len(data["origins"]["nodes"]) == 0
 
 
 def test_basic_pagination(client):
-    query_str = f"""
-    {{
-      origins(first: {len(get_origins())}) {{
-        nodes {{
-          id
-        }}
-        pageInfo {{
-          hasNextPage
-          endCursor
-        }}
-      }}
-    }}
-    """
-
-    data, _ = get_query_response(client, query_str)
+    data, _ = get_origins_from_api(client, first=len(get_origins()))
     assert len(data["origins"]["nodes"]) == len(get_origins())
     assert data["origins"]["pageInfo"] == {"hasNextPage": False, "endCursor": None}
