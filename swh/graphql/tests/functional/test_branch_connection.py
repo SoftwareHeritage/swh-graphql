@@ -193,12 +193,17 @@ def test_get_after_arg(client):
               text
             }
           }
+          edges {
+            cursor
+          }
         }
       }
     }"""
         % end_cursor
     )
     second_data, _ = get_query_response(client, query_str)
-    assert len(second_data["snapshot"]["branches"]["nodes"]) == 3
-    for node in second_data["snapshot"]["branches"]["nodes"]:
+    branches = second_data["snapshot"]["branches"]
+    assert len(branches["nodes"]) == 3
+    assert branches["edges"][0]["cursor"] == end_cursor
+    for node in branches["nodes"]:
         assert node["name"]["text"] > node_name
