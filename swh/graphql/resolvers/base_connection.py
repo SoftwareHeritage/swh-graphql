@@ -119,7 +119,7 @@ class BaseConnection(ABC):
         # different implementation is used in SnapshotBranchConnection
         try:
             cursor = utils.get_decoded_cursor(self.kwargs.get("after"))
-        except (UnicodeDecodeError, binascii.Error, Exception) as e:
+        except (UnicodeDecodeError, binascii.Error) as e:
             raise PaginationError("Invalid value for argument 'after'", errors=e)
         return cursor
 
