@@ -117,7 +117,7 @@ class TestResolvers:
         assert isinstance(node_obj, node_cls)
         assert mock_get.assert_called
 
-    def test_unit_resolver(self, mocker):
+    def test_union_resolver(self, mocker):
         obj = mocker.Mock()
         obj.is_type_of.return_value = "test"
         assert rs.union_resolver(obj) == "test"
