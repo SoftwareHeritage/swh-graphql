@@ -9,8 +9,11 @@ High level resolvers
 
 # Any schema attribute can be resolved by any of the following ways
 # and in the following priority order
-# - In this module using a decorator (eg: @visitstatus.field("snapshot"))
+# - In this module using a decorator (eg: @visitstatus.field("snapshot")
+#   Every object (type) is expected to resolve this way as they can accept arguments
+#   eg: origin.visits takes arguments to paginate
 # - As a property in the Node object (eg: resolvers.visit.BaseVisitNode.id)
+#   Every scalar is expected to resolve this way
 # - As an attribute/item in the object/dict returned by a backend (eg: Origin.url)
 
 from ariadne import ObjectType, UnionType
@@ -45,7 +48,7 @@ directory_entry_target: UnionType = UnionType("DirectoryEntryTarget")
 def origin_resolver(obj: None, info: GraphQLResolveInfo, **kw) -> rs.origin.OriginNode:
     """ """
     resolver = get_node_resolver("origin")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @origin.field("latestVisit")
@@ -54,7 +57,7 @@ def latest_visit_resolver(
 ) -> rs.visit.LatestVisitNode:
     """ """
     resolver = get_node_resolver("latest-visit")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @query.field("visit")
@@ -63,7 +66,7 @@ def visit_resolver(
 ) -> rs.visit.OriginVisitNode:
     """ """
     resolver = get_node_resolver("visit")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @visit.field("latestStatus")
@@ -72,7 +75,7 @@ def latest_visit_status_resolver(
 ) -> rs.visit_status.LatestVisitStatusNode:
     """ """
     resolver = get_node_resolver("latest-status")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @query.field("snapshot")
@@ -81,7 +84,7 @@ def snapshot_resolver(
 ) -> rs.snapshot.SnapshotNode:
     """ """
     resolver = get_node_resolver("snapshot")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @visit_status.field("snapshot")
@@ -89,7 +92,7 @@ def visit_snapshot_resolver(
     obj, info: GraphQLResolveInfo, **kw
 ) -> rs.snapshot.VisitSnapshotNode:
     resolver = get_node_resolver("visit-snapshot")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @snapshot_branch.field("target")
@@ -101,7 +104,7 @@ def snapshot_branch_target_resolver(
     """
     resolver_type = f"branch-{obj.type}"
     resolver = get_node_resolver(resolver_type)
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @query.field("revision")
@@ -109,7 +112,7 @@ def revision_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
 ) -> rs.revision.RevisionNode:
     resolver = get_node_resolver("revision")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @revision.field("directory")
@@ -117,7 +120,7 @@ def revision_directory_resolver(
     obj, info: GraphQLResolveInfo, **kw
 ) -> rs.directory.RevisionDirectoryNode:
     resolver = get_node_resolver("revision-directory")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @query.field("release")
@@ -125,7 +128,7 @@ def release_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
 ) -> rs.release.ReleaseNode:
     resolver = get_node_resolver("release")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @release.field("target")
@@ -138,7 +141,7 @@ def release_target_resolver(obj, info: GraphQLResolveInfo, **kw):
     """
     resolver_type = f"release-{obj.target_type.value}"
     resolver = get_node_resolver(resolver_type)
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @query.field("directory")
@@ -146,7 +149,7 @@ def directory_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
 ) -> rs.directory.DirectoryNode:
     resolver = get_node_resolver("directory")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @directory_entry.field("target")
@@ -158,7 +161,7 @@ def directory_entry_target_resolver(
     """
     resolver_type = f"dir-entry-{obj.type}"
     resolver = get_node_resolver(resolver_type)
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @query.field("content")
@@ -166,7 +169,7 @@ def content_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
 ) -> rs.content.ContentNode:
     resolver = get_node_resolver("content")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 # Connection resolvers
@@ -178,7 +181,7 @@ def origins_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
 ) -> rs.origin.OriginConnection:
     resolver = get_connection_resolver("origins")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @origin.field("visits")
@@ -186,7 +189,7 @@ def visits_resolver(
     obj: rs.origin.OriginNode, info: GraphQLResolveInfo, **kw
 ) -> rs.visit.OriginVisitConnection:
     resolver = get_connection_resolver("origin-visits")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @origin.field("snapshots")
@@ -195,7 +198,7 @@ def origin_snapshots_resolver(
 ) -> rs.snapshot.OriginSnapshotConnection:
     """ """
     resolver = get_connection_resolver("origin-snapshots")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @visit.field("status")
@@ -203,7 +206,7 @@ def visitstatus_resolver(
     obj, info: GraphQLResolveInfo, **kw
 ) -> rs.visit_status.VisitStatusConnection:
     resolver = get_connection_resolver("visit-status")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @snapshot.field("branches")
@@ -211,7 +214,7 @@ def snapshot_branches_resolver(
     obj, info: GraphQLResolveInfo, **kw
 ) -> rs.snapshot_branch.SnapshotBranchConnection:
     resolver = get_connection_resolver("snapshot-branches")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 @revision.field("parents")
@@ -219,13 +222,13 @@ def revision_parents_resolver(
     obj, info: GraphQLResolveInfo, **kw
 ) -> rs.revision.ParentRevisionConnection:
     resolver = get_connection_resolver("revision-parents")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 # @revision.field("revisionLog")
 # def revision_log_resolver(obj, info, **kw):
 #     resolver = get_connection_resolver("revision-log")
-#     return resolver(obj, info, **kw)()
+#     return resolver(obj, info, **kw)
 
 
 @directory.field("entries")
@@ -233,7 +236,7 @@ def directory_entry_resolver(
     obj, info: GraphQLResolveInfo, **kw
 ) -> rs.directory_entry.DirectoryEntryConnection:
     resolver = get_connection_resolver("directory-entries")
-    return resolver(obj, info, **kw)()
+    return resolver(obj, info, **kw)
 
 
 # Any other type of resolver

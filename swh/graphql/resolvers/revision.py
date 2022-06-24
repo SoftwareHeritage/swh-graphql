@@ -24,14 +24,14 @@ class BaseRevisionNode(BaseSWHNode):
         return (archive.Archive().get_revisions([revision_id]) or None)[0]
 
     @property
-    def parentSWHIDs(self):  # To support the schema naming convention
+    def parent_swhids(self):  # for ParentRevisionConnection resolver
         return [
             CoreSWHID(object_type=ObjectType.REVISION, object_id=parent_id)
             for parent_id in self._node.parents
         ]
 
     @property
-    def directorySWHID(self):  # To support the schema naming convention
+    def directory_swhid(self):  # for RevisionDirectoryNode resolver
         return CoreSWHID(
             object_type=ObjectType.DIRECTORY, object_id=self._node.directory
         )
@@ -63,8 +63,8 @@ class TargetRevisionNode(BaseRevisionNode):
     obj: Union[SnapshotBranchNode, BaseReleaseNode]
 
     def _get_node_data(self):
-        # self.obj.targetHash is the requested revision id
-        return self._get_revision_by_id(self.obj.targetHash)
+        # self.obj.target_hash is the requested revision id
+        return self._get_revision_by_id(self.obj.target_hash)
 
 
 class ParentRevisionConnection(BaseConnection):
@@ -78,13 +78,13 @@ class ParentRevisionConnection(BaseConnection):
 
     def _get_paged_result(self):
         # self.obj is the current(child) revision
-        # self.obj.parentSWHIDs is the list of parent SWHIDs
+        # self.obj.parent_swhids is the list of parent SWHIDs
 
         # FIXME, using dummy(local) pagination, move pagination to backend
         # To remove localpagination, just drop the paginated call
         # STORAGE-TODO (pagination)
         parents = archive.Archive().get_revisions(
-            [x.object_id for x in self.obj.parentSWHIDs]
+            [x.object_id for x in self.obj.parent_swhids]
         )
         return utils.paginated(parents, self._get_first_arg(), self._get_after_arg())
 

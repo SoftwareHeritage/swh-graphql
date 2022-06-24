@@ -52,8 +52,8 @@ class RevisionDirectoryNode(BaseDirectoryNode):
     obj: BaseRevisionNode
 
     def _get_node_data(self):
-        # self.obj.directorySWHID is the requested directory SWHID
-        directory_id = self.obj.directorySWHID.object_id
+        # self.obj.directory_swhid is the requested directory SWHID
+        directory_id = self.obj.directory_swhid.object_id
         return self._get_directory_by_id(directory_id)
 
 
@@ -67,4 +67,4 @@ class TargetDirectoryNode(BaseDirectoryNode):
     obj: Union[SnapshotBranchNode, BaseReleaseNode, DirectoryEntryNode]
 
     def _get_node_data(self):
-        return self._get_directory_by_id(self.obj.targetHash)
+        return self._get_directory_by_id(self.obj.target_hash)

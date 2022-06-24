@@ -16,7 +16,7 @@ class DirectoryEntryNode(BaseNode):
     """
 
     @property
-    def targetHash(self):  # To support the schema naming convention
+    def target_hash(self):  # for DirectoryNode
         return self._node.target
 
 

@@ -55,5 +55,5 @@ class TargetContentNode(BaseContentNode):
     obj: Union[DirectoryEntryNode, BaseReleaseNode, SnapshotBranchNode]
 
     def _get_node_data(self):
-        content_id = self.obj.targetHash
+        content_id = self.obj.target_hash
         return self._get_content_by_id(content_id)

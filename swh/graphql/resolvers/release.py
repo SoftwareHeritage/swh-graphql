@@ -20,7 +20,7 @@ class BaseReleaseNode(BaseSWHNode):
         return (archive.Archive().get_releases([release_id]) or None)[0]
 
     @property
-    def targetHash(self):  # To support the schema naming convention
+    def target_hash(self):
         return self._node.target
 
     @property
@@ -50,5 +50,5 @@ class TargetReleaseNode(BaseReleaseNode):
     obj: Union[SnapshotBranchNode, BaseReleaseNode]
 
     def _get_node_data(self):
-        # self.obj.targetHash is the requested release id
-        return self._get_release_by_id(self.obj.targetHash)
+        # self.obj.target_hash is the requested release id
+        return self._get_release_by_id(self.obj.target_hash)

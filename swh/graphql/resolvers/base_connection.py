@@ -41,9 +41,6 @@ class BaseConnection(ABC):
         self.kwargs = kwargs
         self._paged_data = paged_data
 
-    def __call__(self, *args, **kw):
-        return self
-
     @property
     def edges(self):
         return self._get_edges()
@@ -58,7 +55,9 @@ class BaseConnection(ABC):
         """
         if self._node_class is not None:
             return [
-                self._node_class(self, self.info, node_data=result, **self.kwargs)
+                self._node_class(
+                    obj=self, info=self.info, node_data=result, **self.kwargs
+                )
                 for result in self.get_paged_data().results
             ]
         return self.get_paged_data().results

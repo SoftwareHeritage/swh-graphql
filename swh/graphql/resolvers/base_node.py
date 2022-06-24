@@ -25,8 +25,8 @@ class BaseNode(ABC):
     def _get_node(self, node_data):
         """
         Get the node object from the given data
-        if the data (node_data) is none make
-        a function call to get data from backend
+        if the data (node_data) is none make a function call
+        to get data from backend
         """
         if node_data is None:
             node_data = self._get_node_data()
@@ -52,22 +52,18 @@ class BaseNode(ABC):
         if self._node is None:
             raise ObjectNotFoundError("Requested object is not available")
 
-    def __call__(self, *args, **kw):
-        return self
-
     def _get_node_data(self):
         """
         Override for desired behaviour
-        This will be called only when
-        node_data is None
+        This will be called only when node_data is None
         """
         # FIXME, make this call async (not for v1)
         return None
 
     def __getattr__(self, name):
         """
-        Any property defined in the sub-class
-        will get precedence over the _node attributes
+        Any property defined in the sub-class will get precedence over
+        the _node attributes
         """
         return getattr(self._node, name)
 

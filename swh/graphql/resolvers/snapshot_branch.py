@@ -35,7 +35,7 @@ class SnapshotBranchNode(BaseNode):
         return namedtuple("NodeObj", node.keys())(*node.values())
 
     @property
-    def targetHash(self):  # To support the schema naming convention
+    def target_hash(self):
         return self._node.target
 
 

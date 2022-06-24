@@ -68,7 +68,7 @@ class TargetSnapshotNode(BaseSnapshotNode):
     obj: Union[BaseVisitStatusNode, SnapshotBranchNode]
 
     def _get_node_data(self):
-        snapshot_id = self.obj.targetHash
+        snapshot_id = self.obj.target_hash
         return self._get_snapshot_by_id(snapshot_id)
 
 
