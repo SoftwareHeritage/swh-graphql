@@ -4,6 +4,7 @@
 # See top-level LICENSE file for more information
 
 from swh.graphql.backends import archive
+from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
 from .base_node import BaseSWHNode
@@ -25,7 +26,7 @@ class OriginConnection(BaseConnection):
 
     _node_class = OriginNode
 
-    def _get_paged_result(self):
+    def _get_paged_result(self) -> PagedResult:
         return archive.Archive().get_origins(
             after=self._get_after_arg(),
             first=self._get_first_arg(),

@@ -8,6 +8,7 @@ from typing import Union
 from swh.graphql.backends import archive
 from swh.graphql.utils import utils
 from swh.model.model import Snapshot
+from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
 from .base_node import BaseSWHNode
@@ -81,7 +82,7 @@ class OriginSnapshotConnection(BaseConnection):
 
     _node_class = BaseSnapshotNode
 
-    def _get_paged_result(self):
+    def _get_paged_result(self) -> PagedResult:
         results = archive.Archive().get_origin_snapshots(self.obj.url)
         snapshots = [Snapshot(id=snapshot, branches={}) for snapshot in results]
         # FIXME, using dummy(local) pagination, move pagination to backend

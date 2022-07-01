@@ -5,6 +5,7 @@
 
 from swh.graphql.backends import archive
 from swh.graphql.utils import utils
+from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
 from .base_node import BaseNode
@@ -31,7 +32,7 @@ class DirectoryEntryConnection(BaseConnection):
 
     _node_class = DirectoryEntryNode
 
-    def _get_paged_result(self):
+    def _get_paged_result(self) -> PagedResult:
         # FIXME, using dummy(local) pagination, move pagination to backend
         # To remove localpagination, just drop the paginated call
         # STORAGE-TODO

@@ -5,6 +5,7 @@
 
 from swh.graphql.backends import archive
 from swh.model.swhids import CoreSWHID, ObjectType
+from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
 from .base_node import BaseNode
@@ -43,7 +44,7 @@ class VisitStatusConnection(BaseConnection):
     obj: BaseVisitNode
     _node_class = BaseVisitStatusNode
 
-    def _get_paged_result(self):
+    def _get_paged_result(self) -> PagedResult:
         # self.obj.origin is the origin URL
         return archive.Archive().get_visit_status(
             self.obj.origin,

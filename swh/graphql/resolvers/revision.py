@@ -8,6 +8,7 @@ from typing import Union
 from swh.graphql.backends import archive
 from swh.graphql.utils import utils
 from swh.model.swhids import CoreSWHID, ObjectType
+from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
 from .base_node import BaseSWHNode
@@ -76,7 +77,7 @@ class ParentRevisionConnection(BaseConnection):
 
     _node_class = BaseRevisionNode
 
-    def _get_paged_result(self):
+    def _get_paged_result(self) -> PagedResult:
         # self.obj is the current(child) revision
         # self.obj.parent_swhids is the list of parent SWHIDs
 
@@ -98,7 +99,7 @@ class LogRevisionConnection(BaseConnection):
 
     _node_class = BaseRevisionNode
 
-    def _get_paged_result(self):
+    def _get_paged_result(self) -> PagedResult:
         # STORAGE-TODO (date in revisionlog is a dict)
         log = archive.Archive().get_revision_log([self.obj.swhid.object_id])
         # FIXME, using dummy(local) pagination, move pagination to backend

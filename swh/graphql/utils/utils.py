@@ -5,7 +5,7 @@
 
 import base64
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from swh.storage.interface import PagedResult
 
@@ -18,7 +18,7 @@ def get_b64_string(source) -> str:
     return base64.b64encode(source).decode("ascii")
 
 
-def get_encoded_cursor(cursor: str) -> str:
+def get_encoded_cursor(cursor: Optional[str]) -> Optional[str]:
     if cursor is None:
         return None
     return get_b64_string(cursor)

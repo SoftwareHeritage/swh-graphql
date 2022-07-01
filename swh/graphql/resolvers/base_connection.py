@@ -6,10 +6,11 @@
 from abc import ABC, abstractmethod
 import binascii
 from dataclasses import dataclass
-from typing import Any, Optional, Type
+from typing import Any, List, Optional, Type, Union
 
 from swh.graphql.errors import PaginationError
 from swh.graphql.utils import utils
+from swh.storage.interface import PagedResult
 
 from .base_node import BaseNode
 
@@ -17,13 +18,13 @@ from .base_node import BaseNode
 @dataclass
 class PageInfo:
     hasNextPage: bool
-    endCursor: str
+    endCursor: Optional[str]
 
 
 @dataclass
 class ConnectionEdge:
     node: Any
-    cursor: str
+    cursor: Optional[str]
 
 
 class BaseConnection(ABC):
@@ -36,17 +37,23 @@ class BaseConnection(ABC):
     _max_page_size: int = 1000  # maximum page size(max value for the first arg)
 
     def __init__(self, obj, info, paged_data=None, **kwargs):
-        self.obj = obj
+        self.obj: Optional[Any] = obj
         self.info = info
         self.kwargs = kwargs
-        self._paged_data = paged_data
+        self._paged_data: PagedResult = paged_data
 
     @property
-    def edges(self):
-        return self._get_edges()
+    def edges(self) -> List[ConnectionEdge]:
+        """
+        Return the list of connection edges, each with a cursor
+        """
+        return [
+            ConnectionEdge(node=node, cursor=self._get_index_cursor(index, node))
+            for (index, node) in enumerate(self.nodes)
+        ]
 
     @property
-    def nodes(self):
+    def nodes(self) -> List[Union[BaseNode, object]]:
         """
         Override if needed; return a list of objects
 
@@ -63,7 +70,7 @@ class BaseConnection(ABC):
         return self.get_paged_data().results
 
     @property
-    def pageInfo(self):  # To support the schema naming convention
+    def pageInfo(self) -> PageInfo:  # To support the schema naming convention
         # FIXME, add more details like startCursor
         return PageInfo(
             hasNextPage=bool(self.get_paged_data().next_page_token),
@@ -71,20 +78,17 @@ class BaseConnection(ABC):
         )
 
     @property
-    def totalCount(self):  # To support the schema naming convention
-        return self._get_total_count()
-
-    def _get_total_count(self):
+    def totalCount(self) -> Optional[int]:  # To support the schema naming convention
         """
         Will be None for most of the connections
         override if needed/possible
         """
+
         return None
 
-    def get_paged_data(self):
+    def get_paged_data(self) -> PagedResult:
         """
-        Cache to avoid multiple calls to
-        the backend (_get_paged_result)
+        Cache to avoid multiple calls to the backend :meth:`_get_paged_result`
         return a PagedResult object
         """
         if self._paged_data is None:
@@ -100,15 +104,6 @@ class BaseConnection(ABC):
         """
         # FIXME, make this call async (not for v1)
         return None
-
-    def _get_edges(self):
-        """
-        Return the list of connection edges, each with a cursor
-        """
-        return [
-            ConnectionEdge(node=node, cursor=self._get_index_cursor(index, node))
-            for (index, node) in enumerate(self.nodes)
-        ]
 
     def _get_after_arg(self) -> str:
         """
@@ -133,7 +128,7 @@ class BaseConnection(ABC):
             )
         return first
 
-    def _get_index_cursor(self, index: int, node: Any):
+    def _get_index_cursor(self, index: int, node: Any) -> Optional[str]:
         """
         Get the cursor to the given item index
         """

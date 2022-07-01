@@ -50,7 +50,7 @@ class SnapshotBranchConnection(BaseConnection):
 
     _node_class = SnapshotBranchNode
 
-    def _get_paged_result(self):
+    def _get_paged_result(self) -> PagedResult:
         result = archive.Archive().get_snapshot_branches(
             self.obj.swhid.object_id,
             after=self._get_after_arg(),
