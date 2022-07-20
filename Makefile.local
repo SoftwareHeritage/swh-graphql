@@ -6,7 +6,7 @@ IMAGE_LABEL=dummy
 # can be overridden by ci
 REGISTRY_URL=registry-1.docker.io
 
-.PHONY: run-dev
+.PHONY: run-dev test
 run-dev:
 	export SWH_CONFIG_FILENAME=config/dev.yml; uvicorn swh.graphql.server:make_app_from_configfile --reload --factory
 
@@ -42,6 +42,9 @@ build:
 push:
 	docker tag $(IMAGE_NAME) $(REGISTRY_URL)/$(IMAGE_NAME)
 	docker push $(REGISTRY_URL)/$(IMAGE_NAME)
+
+test:
+	# noop for now
 
 clean:
 	docker image ls -q --filter label=$(IMAGE_LABEL) \
