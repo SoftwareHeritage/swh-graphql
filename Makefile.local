@@ -42,3 +42,7 @@ build:
 push:
 	docker tag $(IMAGE_NAME) $(REGISTRY_URL)/$(IMAGE_NAME)
 	docker push $(REGISTRY_URL)/$(IMAGE_NAME)
+
+clean:
+	docker image ls -q --filter label=$(IMAGE_LABEL) \
+		| uniq | xargs -r -t docker rmi --force
