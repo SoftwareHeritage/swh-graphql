@@ -69,10 +69,6 @@ class Archive:
             directory_id, limit=first, page_token=after
         )
 
-    def get_content(self, content_id):
-        # FIXME, only for tests
-        return self.storage.content_find({"sha1_git": content_id})
-
     def is_object_available(self, object_id: str, object_type: ObjectType) -> bool:
         mapping = {
             ObjectType.CONTENT: self.storage.content_missing_per_sha1_git,
@@ -82,3 +78,9 @@ class Archive:
             ObjectType.SNAPSHOT: self.storage.snapshot_missing,
         }
         return not list(mapping[object_type]([object_id]))
+
+    def get_contents(self, checksums: dict):
+        return self.storage.content_find(checksums)
+
+    def get_content_data(self, content_sha1):
+        return self.storage.content_get_data(content_sha1)

@@ -3,7 +3,7 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from .content import ContentNode, TargetContentNode
+from .content import ContentNode, HashContentNode, TargetContentNode
 from .directory import DirectoryNode, RevisionDirectoryNode, TargetDirectoryNode
 from .directory_entry import DirectoryEntryConnection
 from .origin import OriginConnection, OriginNode
@@ -49,6 +49,7 @@ def get_node_resolver(resolver_type):
         "release-content": TargetContentNode,
         "directory": DirectoryNode,
         "content": ContentNode,
+        "content-by-hash": HashContentNode,
         "dir-entry-dir": TargetDirectoryNode,
         "dir-entry-file": TargetContentNode,
         "search-result-snapshot": TargetSnapshotNode,

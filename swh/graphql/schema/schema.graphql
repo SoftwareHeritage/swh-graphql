@@ -9,6 +9,11 @@ ISO-8601 encoded date string
 scalar DateTime
 
 """
+Content identifier in the form hash-type:hash-value
+"""
+scalar ContentHash
+
+"""
 Object with an id
 """
 interface Node {
@@ -755,24 +760,49 @@ type Directory implements MerkleNode & Node {
 }
 
 """
-An object with different checksums
+An object with different content checksums
 """
 type ContentChecksum {
-  """
-  """
   blake2s256: String
-
-  """
-  """
   sha1: String
-
-  """
-  """
   sha1_git: String
+  sha256: String
+}
+
+"""
+Object with different content data representations
+"""
+type ContentData {
+  """
+  URL to download the file data
+  """
+  url: String
+}
+
+type ContentFileType {
+  """
+  Detected content encoding
+  """
+  encoding: String
 
   """
+  Detected MIME type of the content
   """
-  sha256: String
+  mimetype: String
+}
+
+type ContentLanguage {
+  """
+  Detected programming language if any
+  """
+  lang: String
+}
+
+type ContentLicense {
+  """
+  Array of strings containing the detected license names
+  """
+  licenses: [String]
 }
 
 """
@@ -803,6 +833,26 @@ type Content implements MerkleNode & Node {
   Content status, visible or hidden
   """
   status: String
+
+  """
+  File content
+  """
+  data: ContentData
+
+  """
+  Information about the content MIME type
+  """
+  fileType: ContentFileType
+
+  """
+  Information about the programming language used in the content
+  """
+  language: ContentLanguage
+
+  """
+  Information about the license of the content
+  """
+  license: ContentLicense
 }
 
 """
@@ -968,6 +1018,17 @@ type Query {
     SWHID of the content object
     """
     swhid: SWHID!
+  ): Content
+
+  """
+  Get the content by one or more hashes
+  Use multiple hashes for an accurate result
+  """
+  contentByHash(
+    """
+    List of hashType:hashValue strings
+    """
+    checksums: [ContentHash]!
   ): Content
 
   """

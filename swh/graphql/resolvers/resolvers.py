@@ -183,6 +183,14 @@ def search_result_target_resolver(
     return resolver(obj, info, **kw)
 
 
+@query.field("contentByHash")
+def content_by_hash_resolver(
+    obj: None, info: GraphQLResolveInfo, **kw
+) -> rs.content.ContentNode:
+    resolver = get_node_resolver("content-by-hash")
+    return resolver(obj, info, **kw)
+
+
 # Connection resolvers
 # A connection resolver should return an instance of BaseConnection
 
