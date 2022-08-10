@@ -4,6 +4,7 @@
 # See top-level LICENSE file for more information
 
 from swh.graphql import server
+from swh.model.swhids import ObjectType
 
 
 class Archive:
@@ -43,9 +44,6 @@ class Archive:
     def get_origin_snapshots(self, origin_url):
         return self.storage.origin_snapshot_get_all(origin_url)
 
-    def is_snapshot_available(self, snapshot_ids):
-        return not self.storage.snapshot_missing(snapshot_ids)
-
     def get_snapshot_branches(
         self, snapshot, after=b"", first=50, target_types=[], name_include=None
     ):
@@ -66,9 +64,6 @@ class Archive:
     def get_releases(self, release_ids):
         return self.storage.release_get(releases=release_ids)
 
-    def is_directory_available(self, directory_ids):
-        return not self.storage.directory_missing(directory_ids)
-
     def get_directory_entries(self, directory_id, after=None, first=50):
         return self.storage.directory_get_entries(
             directory_id, limit=first, page_token=after
@@ -77,3 +72,13 @@ class Archive:
     def get_content(self, content_id):
         # FIXME, only for tests
         return self.storage.content_find({"sha1_git": content_id})
+
+    def is_object_available(self, object_id: str, object_type: ObjectType) -> bool:
+        mapping = {
+            ObjectType.CONTENT: self.storage.content_missing_per_sha1_git,
+            ObjectType.DIRECTORY: self.storage.directory_missing,
+            ObjectType.RELEASE: self.storage.release_missing,
+            ObjectType.REVISION: self.storage.revision_missing,
+            ObjectType.SNAPSHOT: self.storage.snapshot_missing,
+        }
+        return not mapping[object_type]([object_id])

@@ -8,6 +8,7 @@ from typing import Union
 from swh.graphql.backends import archive
 from swh.graphql.utils import utils
 from swh.model.model import Snapshot
+from swh.model.swhids import ObjectType
 from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
@@ -40,9 +41,14 @@ class SnapshotNode(BaseSnapshotNode):
 
     def _get_node_data(self):
         """ """
-        snapshot_id = self.kwargs.get("swhid").object_id
-        if archive.Archive().is_snapshot_available([snapshot_id]):
-            return self._get_snapshot_by_id(snapshot_id)
+        swhid = self.kwargs.get("swhid")
+        if (
+            swhid.object_type == ObjectType.SNAPSHOT
+            and archive.Archive().is_object_available(
+                swhid.object_id, swhid.object_type
+            )
+        ):
+            return self._get_snapshot_by_id(swhid.object_id)
         return None
 
 

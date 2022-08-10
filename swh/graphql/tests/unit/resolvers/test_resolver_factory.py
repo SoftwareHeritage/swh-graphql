@@ -34,6 +34,11 @@ class TestFactory:
             ("content", "ContentNode"),
             ("dir-entry-dir", "TargetDirectoryNode"),
             ("dir-entry-file", "TargetContentNode"),
+            ("search-result-snapshot", "TargetSnapshotNode"),
+            ("search-result-revision", "TargetRevisionNode"),
+            ("search-result-release", "TargetReleaseNode"),
+            ("search-result-directory", "TargetDirectoryNode"),
+            ("search-result-content", "TargetContentNode"),
         ],
     )
     def test_get_node_resolver(self, input_type, expected):
@@ -55,6 +60,7 @@ class TestFactory:
             ("revision-parents", "ParentRevisionConnection"),
             ("revision-log", "LogRevisionConnection"),
             ("directory-entries", "DirectoryEntryConnection"),
+            ("resolve-swhid", "ResolveSwhidConnection"),
         ],
     )
     def test_get_connection_resolver(self, input_type, expected):

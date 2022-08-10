@@ -34,11 +34,13 @@ revision: ObjectType = ObjectType("Revision")
 release: ObjectType = ObjectType("Release")
 directory: ObjectType = ObjectType("Directory")
 directory_entry: ObjectType = ObjectType("DirectoryEntry")
+search_result: ObjectType = ObjectType("SearchResult")
 binary_string: ObjectType = ObjectType("BinaryString")
 
 branch_target: UnionType = UnionType("BranchTarget")
 release_target: UnionType = UnionType("ReleaseTarget")
 directory_entry_target: UnionType = UnionType("DirectoryEntryTarget")
+search_result_target: UnionType = UnionType("SearchResultTarget")
 
 # Node resolvers
 # A node resolver should return an instance of BaseNode
@@ -172,6 +174,15 @@ def content_resolver(
     return resolver(obj, info, **kw)
 
 
+@search_result.field("target")
+def search_result_target_resolver(
+    obj: rs.search.SearchResultNode, info: GraphQLResolveInfo, **kw
+):
+    resolver_type = f"search-result-{obj.type}"
+    resolver = get_node_resolver(resolver_type)
+    return resolver(obj, info, **kw)
+
+
 # Connection resolvers
 # A connection resolver should return an instance of BaseConnection
 
@@ -239,12 +250,21 @@ def directory_entry_resolver(
     return resolver(obj, info, **kw)
 
 
+@query.field("resolveSwhid")
+def search_swhid_resolver(
+    obj, info: GraphQLResolveInfo, **kw
+) -> rs.search.ResolveSwhidConnection:
+    resolver = get_connection_resolver("resolve-swhid")
+    return resolver(obj, info, **kw)
+
+
 # Any other type of resolver
 
 
 @release_target.type_resolver
 @directory_entry_target.type_resolver
 @branch_target.type_resolver
+@search_result_target.type_resolver
 def union_resolver(obj, *_) -> str:
     """
     Generic resolver for all the union types

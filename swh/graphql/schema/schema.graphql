@@ -806,6 +806,72 @@ type Content implements MerkleNode & Node {
 }
 
 """
+Connection to SearchResults
+"""
+type SearchResultConnection {
+  """
+  List of SearchResult edges
+  """
+  edges: [SearchResultEdge]
+
+  """
+  List of SearchResult objects
+  """
+  nodes: [SearchResult]
+
+  """
+  Information for pagination
+  """
+  pageInfo: PageInfo!
+
+  """
+  Total number of result objects in the connection
+  """
+  totalCount: Int
+}
+
+"""
+Edge in SearchResult connection
+"""
+type SearchResultEdge {
+  """
+  Cursor to request the next page after the item
+  """
+  cursor: String!
+
+  """
+  SearchResult object
+  """
+  node: SearchResult
+}
+
+union SearchResultTarget = Origin | Revision | Release | Content | Directory | Snapshot
+
+enum SearchResultTargetType {
+  origin
+  revision
+  release
+  content
+  directory
+  snapshot
+}
+
+"""
+A SearchResult object
+"""
+type SearchResult {
+  """
+  Result target type
+  """
+  type: SearchResultTargetType
+
+  """
+  Result target object
+  """
+  target: SearchResultTarget
+}
+
+"""
 The query root of the GraphQL interface.
 """
 type Query {
@@ -903,4 +969,14 @@ type Query {
     """
     swhid: SWHID!
   ): Content
+
+  """
+  Resolve the given SWHID to an object
+  """
+  resolveSwhid(
+    """
+    SWHID to look for
+    """
+    swhid: SWHID!
+  ): SearchResultConnection!
 }

@@ -22,3 +22,15 @@ def get_snapshots():
 
 def get_releases():
     return swh_model_data.RELEASES
+
+
+def get_revisions():
+    return swh_model_data.REVISIONS
+
+
+def get_contents():
+    return swh_model_data.CONTENTS
+
+
+def get_directories():
+    return swh_model_data.DIRECTORIES
