@@ -81,4 +81,4 @@ class Archive:
             ObjectType.REVISION: self.storage.revision_missing,
             ObjectType.SNAPSHOT: self.storage.snapshot_missing,
         }
-        return not mapping[object_type]([object_id])
+        return not list(mapping[object_type]([object_id]))

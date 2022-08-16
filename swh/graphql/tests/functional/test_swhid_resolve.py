@@ -6,7 +6,13 @@
 import pytest
 
 from . import utils
-from ..data import get_directories, get_releases, get_revisions, get_snapshots
+from ..data import (
+    get_contents,
+    get_directories,
+    get_releases,
+    get_revisions,
+    get_snapshots,
+)
 
 
 def test_invalid_swhid(client):
@@ -176,6 +182,39 @@ def test_directory_swhid_resolve(client, directory):
                         "swhid": str(directory.swhid()),
                     },
                     "type": "directory",
+                }
+            ]
+        }
+    }
+
+
+@pytest.mark.parametrize("content", get_contents())
+def test_content_swhid_resolve(client, content):
+    query_str = """
+    {
+      resolveSwhid(swhid: "%s") {
+        nodes {
+          type
+          target {
+            __typename
+            ... on Content {
+              swhid
+            }
+          }
+        }
+      }
+    }
+    """
+    data, _ = utils.get_query_response(client, query_str % content.swhid())
+    assert data == {
+        "resolveSwhid": {
+            "nodes": [
+                {
+                    "target": {
+                        "__typename": "Content",
+                        "swhid": str(content.swhid()),
+                    },
+                    "type": "content",
                 }
             ]
         }
