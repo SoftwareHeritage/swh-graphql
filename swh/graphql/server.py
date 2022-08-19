@@ -7,17 +7,26 @@ import os
 from typing import Any, Dict, Optional
 
 from swh.core import config
-from swh.storage import get_storage as get_swhstorage
+from swh.search import get_search as get_swh_search
+from swh.storage import get_storage as get_swh_storage
 
 graphql_cfg = None
 storage = None
+search = None
 
 
 def get_storage():
     global storage
     if not storage:
-        storage = get_swhstorage(**graphql_cfg["storage"])
+        storage = get_swh_storage(**graphql_cfg["storage"])
     return storage
+
+
+def get_search():
+    global search
+    if not search:
+        search = get_swh_search(**graphql_cfg["search"])
+    return search
 
 
 def load_and_check_config(config_path: Optional[str]) -> Dict[str, Any]:

@@ -3,7 +3,7 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from swh.graphql.backends import archive
+from swh.graphql.backends import archive, search
 from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
@@ -29,3 +29,21 @@ class ResolveSwhidConnection(BaseConnection):
                 }
             ]
         return PagedResult(results=results)
+
+
+class SearchConnection(BaseConnection):
+
+    _node_class = SearchResultNode
+
+    def _get_paged_result(self) -> PagedResult:
+        origins = search.Search().get_origins(
+            query=self.kwargs.get("query"),
+            after=self._get_after_arg(),
+            first=self._get_first_arg(),
+        )
+
+        # FIXME hard coding type to origin for now, as it is the only searchable object
+        results = [
+            {"target_url": ori["url"], "type": "origin"} for ori in origins.results
+        ]
+        return PagedResult(results=results, next_page_token=origins.next_page_token)

@@ -266,6 +266,14 @@ def search_swhid_resolver(
     return resolver(obj, info, **kw)
 
 
+@query.field("search")
+def search_resolver(
+    obj, info: GraphQLResolveInfo, **kw
+) -> rs.search.ResolveSwhidConnection:
+    resolver = get_connection_resolver("search")
+    return resolver(obj, info, **kw)
+
+
 # Any other type of resolver
 
 

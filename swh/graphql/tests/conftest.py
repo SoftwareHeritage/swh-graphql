@@ -10,14 +10,15 @@ import pytest
 
 from swh.graphql import server as app_server
 from swh.graphql.app import schema
-from swh.storage import get_storage as get_swhstorage
+from swh.search import get_search as get_swh_search
+from swh.storage import get_storage as get_swh_storage
 
-from .data import populate_dummy_data
+from .data import populate_dummy_data, populate_search_data
 
 
 @pytest.fixture
 def storage():
-    storage = get_swhstorage(cls="memory")
+    storage = get_swh_storage(cls="memory")
     # set the global var to use the in-memory storage
     app_server.storage = storage
     # populate the in-memory storage
@@ -26,7 +27,18 @@ def storage():
 
 
 @pytest.fixture
-def test_app(storage):
+def search():
+    search = get_swh_search("memory")
+    # set the global var to use the in-memory search
+    app_server.search = search
+    search.initialize()
+    # populate the in-memory search
+    populate_search_data(search)
+    return search
+
+
+@pytest.fixture
+def test_app(storage, search):
     app = Flask(__name__)
 
     @app.route("/", methods=["POST"])

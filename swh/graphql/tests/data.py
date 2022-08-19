@@ -12,6 +12,10 @@ def populate_dummy_data(storage):
         method(objects)
 
 
+def populate_search_data(search):
+    search.origin_update({"url": origin.url} for origin in get_origins())
+
+
 def get_origins():
     return swh_model_data.ORIGINS
 

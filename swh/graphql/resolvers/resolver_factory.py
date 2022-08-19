@@ -6,7 +6,7 @@
 from .content import ContentNode, HashContentNode, TargetContentNode
 from .directory import DirectoryNode, RevisionDirectoryNode, TargetDirectoryNode
 from .directory_entry import DirectoryEntryConnection
-from .origin import OriginConnection, OriginNode
+from .origin import OriginConnection, OriginNode, TargetOriginNode
 from .release import ReleaseNode, TargetReleaseNode
 from .revision import (
     LogRevisionConnection,
@@ -14,7 +14,7 @@ from .revision import (
     RevisionNode,
     TargetRevisionNode,
 )
-from .search import ResolveSwhidConnection
+from .search import ResolveSwhidConnection, SearchConnection
 from .snapshot import (
     OriginSnapshotConnection,
     SnapshotNode,
@@ -52,6 +52,7 @@ def get_node_resolver(resolver_type):
         "content-by-hash": HashContentNode,
         "dir-entry-dir": TargetDirectoryNode,
         "dir-entry-file": TargetContentNode,
+        "search-result-origin": TargetOriginNode,
         "search-result-snapshot": TargetSnapshotNode,
         "search-result-revision": TargetRevisionNode,
         "search-result-release": TargetReleaseNode,
@@ -75,6 +76,7 @@ def get_connection_resolver(resolver_type):
         "revision-log": LogRevisionConnection,
         "directory-entries": DirectoryEntryConnection,
         "resolve-swhid": ResolveSwhidConnection,
+        "search": SearchConnection,
     }
     if resolver_type not in mapping:
         raise AttributeError(f"Invalid connection type: {resolver_type}")

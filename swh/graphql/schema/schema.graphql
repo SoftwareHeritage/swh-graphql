@@ -1040,4 +1040,24 @@ type Query {
     """
     swhid: SWHID!
   ): SearchResultConnection!
+
+  """
+  Search in SWH
+  """
+  search(
+    """
+    String to search for
+    """
+    query: String!
+
+    """
+    Returns the first _n_ elements from the list
+    """
+    first: Int!
+
+    """
+    Returns the page after the cursor
+    """
+    after: String
+  ): SearchResultConnection!
 }
