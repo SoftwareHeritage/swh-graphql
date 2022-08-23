@@ -28,6 +28,11 @@ def get_branches(client, swhid: str, first: int, **args) -> tuple:
             }
             target {
               __typename
+              ...on Branch {
+                name {
+                  text
+                }
+              }
               ...on Revision {
                 swhid
               }
@@ -55,15 +60,6 @@ def get_branches(client, swhid: str, first: int, **args) -> tuple:
     return utils.get_query_response(client, query_str)
 
 
-def test_get(client):
-    swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
-    data, errors = get_branches(client, swhid, 10)
-    # Alias type is not handled at the moment, hence the error
-    assert len(errors) == 1
-    assert errors[0]["message"] == "Invalid node type: branch-alias"
-    assert len(data["snapshot"]["branches"]["nodes"]) == 5
-
-
 def test_get_data(client):
     swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
     data, errors = get_branches(client, swhid, 10, types="[revision]")
@@ -77,6 +73,17 @@ def test_get_data(client):
             "swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c",
         },
         "type": "revision",
+    }
+
+
+def test_get_branches_with_alias(client):
+    swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
+    data, _ = get_branches(client, swhid, 10, types="[alias]")
+    node = data["snapshot"]["branches"]["nodes"][0]
+    assert node == {
+        "name": {"text": "target/alias"},
+        "target": {"__typename": "Branch", "name": {"text": "target/revision"}},
+        "type": "alias",
     }
 
 

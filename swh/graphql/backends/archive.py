@@ -38,7 +38,7 @@ class Archive:
         return self.storage.origin_snapshot_get_all(origin_url)
 
     def get_snapshot_branches(
-        self, snapshot, after=b"", first=50, target_types=[], name_include=None
+        self, snapshot, after=b"", first=50, target_types=None, name_include=None
     ):
         return self.storage.snapshot_get_branches(
             snapshot,

@@ -8,7 +8,7 @@ from typing import Union
 from swh.graphql.backends import archive
 
 from .base_node import BaseSWHNode
-from .snapshot_branch import SnapshotBranchNode
+from .snapshot_branch import BaseSnapshotBranchNode
 
 
 class BaseReleaseNode(BaseSWHNode):
@@ -47,7 +47,7 @@ class TargetReleaseNode(BaseReleaseNode):
     Node resolver for a release requested as a target
     """
 
-    obj: Union[SnapshotBranchNode, BaseReleaseNode]
+    obj: Union[BaseSnapshotBranchNode, BaseReleaseNode]
 
     def _get_node_data(self):
         # self.obj.target_hash is the requested release id

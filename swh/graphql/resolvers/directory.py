@@ -12,7 +12,7 @@ from swh.model.swhids import ObjectType
 from .base_node import BaseSWHNode
 from .release import BaseReleaseNode
 from .revision import BaseRevisionNode
-from .snapshot_branch import SnapshotBranchNode
+from .snapshot_branch import BaseSnapshotBranchNode
 
 
 class BaseDirectoryNode(BaseSWHNode):
@@ -69,7 +69,7 @@ class TargetDirectoryNode(BaseDirectoryNode):
 
     from .directory_entry import DirectoryEntryNode
 
-    obj: Union[SnapshotBranchNode, BaseReleaseNode, DirectoryEntryNode]
+    obj: Union[BaseSnapshotBranchNode, BaseReleaseNode, DirectoryEntryNode]
 
     def _get_node_data(self):
         return self._get_directory_by_id(self.obj.target_hash)

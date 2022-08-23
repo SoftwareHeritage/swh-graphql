@@ -99,10 +99,11 @@ def visit_snapshot_resolver(
 
 @snapshot_branch.field("target")
 def snapshot_branch_target_resolver(
-    obj: rs.snapshot_branch.SnapshotBranchNode, info: GraphQLResolveInfo, **kw
+    obj: rs.snapshot_branch.BaseSnapshotBranchNode, info: GraphQLResolveInfo, **kw
 ):
     """
-    Snapshot branch target can be a revision or a release
+    Snapshot branch target can be a revision, release, directory,
+    content, snapshot or a branch itself (alias type)
     """
     resolver_type = f"branch-{obj.type}"
     resolver = get_node_resolver(resolver_type)
