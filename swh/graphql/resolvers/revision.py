@@ -32,10 +32,8 @@ class BaseRevisionNode(BaseSWHNode):
         ]
 
     @property
-    def directory_swhid(self):  # for RevisionDirectoryNode resolver
-        return CoreSWHID(
-            object_type=ObjectType.DIRECTORY, object_id=self._node.directory
-        )
+    def directory_hash(self):  # for RevisionDirectoryNode resolver
+        return self._node.directory
 
     @property
     def type(self):

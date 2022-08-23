@@ -58,9 +58,8 @@ class RevisionDirectoryNode(BaseDirectoryNode):
     obj: BaseRevisionNode
 
     def _get_node_data(self):
-        # self.obj.directory_swhid is the requested directory SWHID
-        directory_id = self.obj.directory_swhid.object_id
-        return self._get_directory_by_id(directory_id)
+        # self.obj.directory_hash is the requested directory Id
+        return self._get_directory_by_id(self.obj.directory_hash)
 
 
 class TargetDirectoryNode(BaseDirectoryNode):
