@@ -4,7 +4,7 @@
 # See top-level LICENSE file for more information
 
 from swh.model.hashutil import hash_to_bytes
-from swh.model.model import ObjectType, Release
+from swh.model.model import ObjectType, Release, Revision, RevisionType
 from swh.model.tests import swh_model_data
 
 
@@ -78,7 +78,30 @@ def get_releases_with_target():
     return [with_revision, with_release, with_directory, with_content]
 
 
-GRAPHQL_EXTRA_TEST_OBJECTS = {"release": get_releases_with_target()}
+def get_revisions_with_parents():
+    """
+    Revisions with real revisions as parents
+    """
+    return [
+        Revision(
+            id=hash_to_bytes("37580d63b8dcc0ec73e74994e66896858542844c"),
+            message=b"hello",
+            date=swh_model_data.DATES[0],
+            committer=swh_model_data.COMMITTERS[0],
+            author=swh_model_data.COMMITTERS[0],
+            committer_date=swh_model_data.DATES[0],
+            type=RevisionType.GIT,
+            directory=b"\x01" * 20,
+            synthetic=False,
+            parents=(get_revisions()[0].id, get_revisions()[1].id),
+        )
+    ]
+
+
+GRAPHQL_EXTRA_TEST_OBJECTS = {
+    "release": get_releases_with_target(),
+    "revision": get_revisions_with_parents(),
+}
 
 
 def populate_dummy_data(storage):

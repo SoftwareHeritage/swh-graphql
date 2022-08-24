@@ -110,3 +110,50 @@ def test_get_revision_as_target(client):
     assert revision_obj == {
         "swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c"
     }
+
+
+def test_get_revision_log(client):
+    revision_swhid = "swh:1:rev:37580d63b8dcc0ec73e74994e66896858542844c"
+    query_str = """
+    {
+      revision(swhid: "%s") {
+        swhid
+        revisionLog(first: 3) {
+          nodes {
+            swhid
+          }
+        }
+      }
+    }
+    """
+    data, _ = utils.get_query_response(client, query_str % revision_swhid)
+    assert data["revision"]["revisionLog"] == {
+        "nodes": [
+            {"swhid": "swh:1:rev:37580d63b8dcc0ec73e74994e66896858542844c"},
+            {"swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c"},
+            {"swhid": "swh:1:rev:c7f96242d73c267adc77c2908e64e0c1cb6a4431"},
+        ]
+    }
+
+
+def test_get_revision_parents(client):
+    revision_swhid = "swh:1:rev:37580d63b8dcc0ec73e74994e66896858542844c"
+    query_str = """
+    {
+      revision(swhid: "%s") {
+        swhid
+        parents {
+          nodes {
+            swhid
+          }
+        }
+      }
+    }
+    """
+    data, _ = utils.get_query_response(client, query_str % revision_swhid)
+    assert data["revision"]["parents"] == {
+        "nodes": [
+            {"swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c"},
+            {"swhid": "swh:1:rev:c7f96242d73c267adc77c2908e64e0c1cb6a4431"},
+        ]
+    }

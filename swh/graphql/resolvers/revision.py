@@ -7,6 +7,7 @@ from typing import Union
 
 from swh.graphql.backends import archive
 from swh.graphql.utils import utils
+from swh.model.model import Revision
 from swh.model.swhids import CoreSWHID, ObjectType
 from swh.storage.interface import PagedResult
 
@@ -98,8 +99,11 @@ class LogRevisionConnection(BaseConnection):
     _node_class = BaseRevisionNode
 
     def _get_paged_result(self) -> PagedResult:
-        # STORAGE-TODO (date in revisionlog is a dict)
         log = archive.Archive().get_revision_log([self.obj.swhid.object_id])
+        # Storage is returning a list of dicts instead of model objects
+        # Following loop is to reverse that operation
+        # STORAGE-TODO; remove to_dict from storage.revision_log
+        log = [Revision.from_dict(rev) for rev in log]
         # FIXME, using dummy(local) pagination, move pagination to backend
         # To remove localpagination, just drop the paginated call
         # STORAGE-TODO (pagination)
