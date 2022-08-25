@@ -16,7 +16,7 @@ from swh.storage import get_storage as get_swh_storage
 from .data import populate_dummy_data, populate_search_data
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def storage():
     storage = get_swh_storage(cls="memory")
     # set the global var to use the in-memory storage
@@ -26,7 +26,7 @@ def storage():
     return storage
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def search():
     search = get_swh_search("memory")
     # set the global var to use the in-memory search
@@ -37,7 +37,7 @@ def search():
     return search
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def test_app(storage, search):
     app = Flask(__name__)
 
@@ -54,7 +54,7 @@ def test_app(storage, search):
     yield app
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def client(test_app):
     with test_app.test_client() as client:
         yield client
