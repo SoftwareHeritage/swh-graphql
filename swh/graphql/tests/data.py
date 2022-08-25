@@ -3,13 +3,9 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+from swh.model.hashutil import hash_to_bytes
+from swh.model.model import ObjectType, Release
 from swh.model.tests import swh_model_data
-
-
-def populate_dummy_data(storage):
-    for object_type, objects in swh_model_data.TEST_OBJECTS.items():
-        method = getattr(storage, object_type + "_add")
-        method(objects)
 
 
 def populate_search_data(search):
@@ -38,3 +34,57 @@ def get_contents():
 
 def get_directories():
     return swh_model_data.DIRECTORIES
+
+
+def get_releases_with_target():
+    """
+    GraphQL will not return a target object unless the target id
+    is present in the DB.
+    Return release objects with real targets instead of dummy
+    targets in swh.model.tests.swh_model_data
+    """
+    with_revision = Release(
+        id=hash_to_bytes("9129dc4e14acd0e51ca3bcd6b80f4577d281fd25"),
+        name=b"v0.0.1",
+        target_type=ObjectType.REVISION,
+        target=get_revisions()[0].id,
+        message=b"foo",
+        synthetic=False,
+    )
+    with_release = Release(
+        id=hash_to_bytes("6429dc4e14acd0e51ca3bcd6b80f4577d281fd32"),
+        name=b"v0.0.1",
+        target_type=ObjectType.RELEASE,
+        target=get_releases()[0].id,
+        message=b"foo",
+        synthetic=False,
+    )
+    with_directory = Release(
+        id=hash_to_bytes("3129dc4e14acd0e51ca3bcd6b80f4577d281fd42"),
+        name=b"v0.0.1",
+        target_type=ObjectType.DIRECTORY,
+        target=get_directories()[0].id,
+        message=b"foo",
+        synthetic=False,
+    )
+    with_content = Release(
+        id=hash_to_bytes("7589dc4e14acd0e51ca3bcd6b80f4577d281fd34"),
+        name=b"v0.0.1",
+        target_type=ObjectType.CONTENT,
+        target=get_contents()[0].sha1_git,
+        message=b"foo",
+        synthetic=False,
+    )
+    return [with_revision, with_release, with_directory, with_content]
+
+
+GRAPHQL_EXTRA_TEST_OBJECTS = {"release": get_releases_with_target()}
+
+
+def populate_dummy_data(storage):
+    for object_type, objects in swh_model_data.TEST_OBJECTS.items():
+        method = getattr(storage, object_type + "_add")
+        method(objects)
+    for object_type, objects in GRAPHQL_EXTRA_TEST_OBJECTS.items():
+        method = getattr(storage, object_type + "_add")
+        method(objects)
