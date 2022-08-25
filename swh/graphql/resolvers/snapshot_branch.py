@@ -35,39 +35,33 @@ class BaseSnapshotBranchNode(BaseNode):
         return "Branch"
 
     def snapshot_swhid(self):
-        raise NotImplementedError("Implement snapshot_swhid")
+        """
+        Logic to handle multiple branch alias redirects
+        Alias redirects can be any level deep. Hence the parent snapshot can be
+        reached only by a loop
 
+        This code expects every BranchNode to have a Snapshot parent in the GraphQL query
+        at some level.
+        """
+        from .snapshot import BaseSnapshotNode
 
-class ConnectionSnapshotBranchNode(BaseSnapshotBranchNode):
-    """
-    Node resolver for a snapshot branch requested from a snapshot branch connection
-    """
-
-    # obj: SnapshotBranchConnection
-
-    def snapshot_swhid(self):
-        # self.obj is SnapshotBranchConnection.
-        # hence self.obj.obj is always of type BaseSnapshotNode
-
-        # This will fail when this node is used for a connection that directly
-        # requests snapshot branches with a snapshot SWHID. Create a new node object
-        # in that case
-        return self.obj.obj.swhid
+        parent = self.obj
+        while parent:
+            if isinstance(
+                parent, BaseSnapshotNode
+            ):  # Reached the nearest SnapshotNode object
+                return parent.swhid
+            parent = parent.obj
+        # Reached the root query node. This will never happen with the current entrypoints
+        raise ObjectNotFoundError("There is no snapshot associated with the branch")
 
 
 class AliasSnapshotBranchNode(BaseSnapshotBranchNode):
 
-    obj: ConnectionSnapshotBranchNode
+    obj: BaseSnapshotBranchNode
 
     def _get_node_data(self):
-        # snapshot_swhid will be provided by the parent object (self.obj)
-        # As of now ConnectionSnapshotBranchNode is the only possible parent
-        # implement snapshot_swhid in each of them if you are planning to add more parents.
-        # eg for another possible parent: A node class that can get a snapshot branch directly
-        # using snapshot id and branch name, snapshot_swhid will be available in the
-        # user input (kwargs) in that case
-
-        snapshot_swhid = self.obj.snapshot_swhid()
+        snapshot_swhid = self.snapshot_swhid()
         target_branch = self.obj.target_hash
 
         alias_branch = archive.Archive().get_snapshot_branches(
@@ -90,7 +84,7 @@ class SnapshotBranchConnection(BaseConnection):
 
     obj: BaseSnapshotNode
 
-    _node_class = ConnectionSnapshotBranchNode
+    _node_class = BaseSnapshotBranchNode
 
     def _get_paged_result(self) -> PagedResult:
         result = archive.Archive().get_snapshot_branches(
@@ -122,6 +116,6 @@ class SnapshotBranchConnection(BaseConnection):
         name_include = self.kwargs.get("nameInclude", None)
         return name_include.encode() if name_include else None
 
-    def _get_index_cursor(self, index: int, node: ConnectionSnapshotBranchNode):
+    def _get_index_cursor(self, index: int, node: BaseSnapshotBranchNode):
         # Snapshot branch is using a different cursor, hence the override
         return utils.get_encoded_cursor(node.name)
