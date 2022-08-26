@@ -3,7 +3,6 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from swh.model.hashutil import hash_to_bytes
 from swh.model.model import ObjectType, Release, Revision, RevisionType
 from swh.model.tests import swh_model_data
 
@@ -44,7 +43,6 @@ def get_releases_with_target():
     targets in swh.model.tests.swh_model_data
     """
     with_revision = Release(
-        id=hash_to_bytes("9129dc4e14acd0e51ca3bcd6b80f4577d281fd25"),
         name=b"v0.0.1",
         target_type=ObjectType.REVISION,
         target=get_revisions()[0].id,
@@ -52,7 +50,6 @@ def get_releases_with_target():
         synthetic=False,
     )
     with_release = Release(
-        id=hash_to_bytes("6429dc4e14acd0e51ca3bcd6b80f4577d281fd32"),
         name=b"v0.0.1",
         target_type=ObjectType.RELEASE,
         target=get_releases()[0].id,
@@ -60,7 +57,6 @@ def get_releases_with_target():
         synthetic=False,
     )
     with_directory = Release(
-        id=hash_to_bytes("3129dc4e14acd0e51ca3bcd6b80f4577d281fd42"),
         name=b"v0.0.1",
         target_type=ObjectType.DIRECTORY,
         target=get_directories()[0].id,
@@ -68,7 +64,6 @@ def get_releases_with_target():
         synthetic=False,
     )
     with_content = Release(
-        id=hash_to_bytes("7589dc4e14acd0e51ca3bcd6b80f4577d281fd34"),
         name=b"v0.0.1",
         target_type=ObjectType.CONTENT,
         target=get_contents()[0].sha1_git,
@@ -84,7 +79,6 @@ def get_revisions_with_parents():
     """
     return [
         Revision(
-            id=hash_to_bytes("37580d63b8dcc0ec73e74994e66896858542844c"),
             message=b"hello",
             date=swh_model_data.DATES[0],
             committer=swh_model_data.COMMITTERS[0],

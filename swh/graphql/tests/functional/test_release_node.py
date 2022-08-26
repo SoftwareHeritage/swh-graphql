@@ -7,8 +7,16 @@ import base64
 
 import pytest
 
+from swh.model.model import ObjectType
+
 from . import utils
-from ..data import get_releases
+from ..data import (
+    get_contents,
+    get_directories,
+    get_releases,
+    get_releases_with_target,
+    get_revisions,
+)
 
 
 @pytest.mark.parametrize("release", get_releases())
@@ -77,8 +85,8 @@ def test_get_release_with_invalid_swhid(client):
     assert len(errors) == 1
 
 
-def test_get_release_target_revision(client):
-    swhid = "swh:1:rel:9129dc4e14acd0e51ca3bcd6b80f4577d281fd25"
+@pytest.mark.parametrize("release_with_target", get_releases_with_target())
+def test_get_release_targets(client, release_with_target):
     query_str = """
     {
       release(swhid: "%s") {
@@ -87,66 +95,12 @@ def test_get_release_target_revision(client):
           ...on Revision {
             swhid
           }
-        }
-      }
-    }
-    """
-    data, _ = utils.get_query_response(client, query_str % swhid)
-    assert data["release"] == {
-        "target": {"swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c"},
-        "targetType": "revision",
-    }
-
-
-def test_get_release_target_release(client):
-    swhid = "swh:1:rel:6429dc4e14acd0e51ca3bcd6b80f4577d281fd32"
-    query_str = """
-    {
-      release(swhid: "%s") {
-        targetType
-        target {
           ...on Release {
             swhid
           }
-        }
-      }
-    }
-    """
-    data, _ = utils.get_query_response(client, query_str % swhid)
-    assert data["release"] == {
-        "target": {"swhid": "swh:1:rel:8059dc4e17fcd0e51ca3bcd6b80f4577d281fd08"},
-        "targetType": "release",
-    }
-
-
-def test_get_release_target_directory(client):
-    swhid = "swh:1:rel:3129dc4e14acd0e51ca3bcd6b80f4577d281fd42"
-    query_str = """
-    {
-      release(swhid: "%s") {
-        targetType
-        target {
           ...on Directory {
             swhid
           }
-        }
-      }
-    }
-    """
-    data, _ = utils.get_query_response(client, query_str % swhid)
-    assert data["release"] == {
-        "target": {"swhid": "swh:1:dir:4b825dc642cb6eb9a060e54bf8d69288fbee4904"},
-        "targetType": "directory",
-    }
-
-
-def test_get_release_target_content(client):
-    swhid = "swh:1:rel:7589dc4e14acd0e51ca3bcd6b80f4577d281fd34"
-    query_str = """
-    {
-      release(swhid: "%s") {
-        targetType
-        target {
           ...on Content {
             swhid
           }
@@ -154,10 +108,19 @@ def test_get_release_target_content(client):
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str % swhid)
+    data, _ = utils.get_query_response(client, query_str % release_with_target.swhid())
+
+    if release_with_target.target_type == ObjectType.REVISION:
+        target_swhid = get_revisions()[0].swhid()
+    elif release_with_target.target_type == ObjectType.RELEASE:
+        target_swhid = get_releases()[0].swhid()
+    elif release_with_target.target_type == ObjectType.DIRECTORY:
+        target_swhid = get_directories()[0].swhid()
+    elif release_with_target.target_type == ObjectType.CONTENT:
+        target_swhid = get_contents()[0].swhid()
     assert data["release"] == {
-        "target": {"swhid": "swh:1:cnt:86bc6b377e9d25f9d26777a4a28d08e63e7c5779"},
-        "targetType": "content",
+        "targetType": release_with_target.target_type.value,
+        "target": {"swhid": str(target_swhid)},
     }
 
 
@@ -167,7 +130,7 @@ def test_get_release_target_unknown(client):
 
     # The target is of type Revision in this case
     # ie: both swhid and message will be available in the response
-    swhid = "swh:1:rel:9129dc4e14acd0e51ca3bcd6b80f4577d281fd25"
+    swhid = get_releases_with_target()[0].swhid()
     query_str = """
     {
       release(swhid: "%s") {
@@ -196,7 +159,7 @@ def test_get_release_target_unknown(client):
     assert data["release"] == {
         "target": {
             "message": {"text": "hello"},
-            "swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c",
+            "swhid": str(get_revisions()[0].swhid()),
         },
         "targetType": "revision",
     }

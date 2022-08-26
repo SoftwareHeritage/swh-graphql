@@ -8,7 +8,7 @@ import pytest
 from swh.model.swhids import CoreSWHID
 
 from . import utils
-from ..data import get_revisions
+from ..data import get_revisions, get_revisions_with_parents
 
 
 @pytest.mark.parametrize("revision", get_revisions())
@@ -113,7 +113,7 @@ def test_get_revision_as_target(client):
 
 
 def test_get_revision_log(client):
-    revision_swhid = "swh:1:rev:37580d63b8dcc0ec73e74994e66896858542844c"
+    revision_swhid = get_revisions_with_parents()[0].swhid()
     query_str = """
     {
       revision(swhid: "%s") {
@@ -129,15 +129,15 @@ def test_get_revision_log(client):
     data, _ = utils.get_query_response(client, query_str % revision_swhid)
     assert data["revision"]["revisionLog"] == {
         "nodes": [
-            {"swhid": "swh:1:rev:37580d63b8dcc0ec73e74994e66896858542844c"},
-            {"swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c"},
-            {"swhid": "swh:1:rev:c7f96242d73c267adc77c2908e64e0c1cb6a4431"},
+            {"swhid": str(revision_swhid)},
+            {"swhid": str(get_revisions()[0].swhid())},
+            {"swhid": str(get_revisions()[1].swhid())},
         ]
     }
 
 
 def test_get_revision_parents(client):
-    revision_swhid = "swh:1:rev:37580d63b8dcc0ec73e74994e66896858542844c"
+    revision_swhid = get_revisions_with_parents()[0].swhid()
     query_str = """
     {
       revision(swhid: "%s") {
@@ -151,9 +151,10 @@ def test_get_revision_parents(client):
     }
     """
     data, _ = utils.get_query_response(client, query_str % revision_swhid)
+
     assert data["revision"]["parents"] == {
         "nodes": [
-            {"swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c"},
-            {"swhid": "swh:1:rev:c7f96242d73c267adc77c2908e64e0c1cb6a4431"},
+            {"swhid": str(get_revisions()[0].swhid())},
+            {"swhid": str(get_revisions()[1].swhid())},
         ]
     }
