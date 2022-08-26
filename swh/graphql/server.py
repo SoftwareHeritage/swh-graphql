@@ -57,12 +57,10 @@ def load_and_check_config(config_path: Optional[str]) -> Dict[str, Any]:
 
 
 def make_app_from_configfile():
-    """Loading the configuration from
-    a configuration file.
+    """Loading the configuration from a configuration file.
 
     SWH_CONFIG_FILENAME environment variable defines the
     configuration path to load.
-
     """
     from .app import schema
 
@@ -75,8 +73,14 @@ def make_app_from_configfile():
     server_type = graphql_cfg.get("server-type")
     if server_type == "asgi":
         from ariadne.asgi import GraphQL
+        from starlette.middleware.cors import CORSMiddleware
 
-        application = GraphQL(schema)
+        # Enable cors in the asgi version
+        application = CORSMiddleware(
+            GraphQL(schema),
+            allow_origins=["*"],
+            allow_methods=("GET", "POST", "OPTIONS"),
+        )
     else:
         from ariadne.wsgi import GraphQL
 
