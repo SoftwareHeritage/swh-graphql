@@ -9,7 +9,7 @@ from flask import Flask, jsonify, request
 import pytest
 
 from swh.graphql import server as app_server
-from swh.graphql.app import schema
+from swh.graphql.app import schema, validation_rules
 from swh.graphql.errors import format_error
 from swh.search import get_search as get_swh_search
 from swh.storage import get_storage as get_swh_storage
@@ -38,6 +38,16 @@ def search():
     return search
 
 
+@pytest.fixture(autouse=True)
+def max_query_cost_config():
+    app_server.graphql_cfg = {"max_query_cost": {"anonymous": 100}}
+
+
+@pytest.fixture
+def max_query_cost_none_config():
+    app_server.graphql_cfg = {"max_query_cost": {"anonymous": 0}}
+
+
 @pytest.fixture(scope="session")
 def test_app(storage, search):
     app = Flask(__name__)
@@ -51,6 +61,7 @@ def test_app(storage, search):
             data,
             context_value=request,
             debug=app.debug,
+            validation_rules=validation_rules,
             error_formatter=format_error,
         )
         status_code = 200 if success else 400

@@ -67,7 +67,7 @@ def make_app_from_configfile():
     from ariadne.asgi import GraphQL
     from starlette.middleware.cors import CORSMiddleware
 
-    from .app import schema
+    from .app import schema, validation_rules
     from .errors import format_error
 
     global graphql_cfg
@@ -80,8 +80,9 @@ def make_app_from_configfile():
         GraphQL(
             schema,
             debug=graphql_cfg["debug"],
-            error_formatter=format_error,
             introspection=graphql_cfg["introspection"],
+            validation_rules=validation_rules,
+            error_formatter=format_error,
         ),
         # FIXME, restrict origins after deploying the JS client
         allow_origins=["*"],

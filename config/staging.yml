@@ -9,3 +9,7 @@ search:
 debug: no
 
 introspection: yes
+
+max_query_cost:
+  anonymous: 500
+

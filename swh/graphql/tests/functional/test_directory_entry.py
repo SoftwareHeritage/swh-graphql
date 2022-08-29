@@ -107,7 +107,7 @@ def test_get_directory_entry_connection(client, directory):
     query getDirectory($swhid: SWHID!) {
       directory(swhid: $swhid) {
         swhid
-        entries {
+        entries(first: 10) {
           nodes {
             targetType
             name {

@@ -9,10 +9,12 @@ from typing import Dict, Tuple
 from ariadne import gql
 
 
-def get_query_response(client, query_str: str, **kwargs) -> Tuple[Dict, Dict]:
+def get_query_response(
+    client, query_str: str, response_code: int = 200, **kwargs
+) -> Tuple[Dict, Dict]:
     query = gql(query_str)
     response = client.post("/", json={"query": query, "variables": kwargs})
-    assert response.status_code == 200, response.data
+    assert response.status_code == response_code, response.data
     result = json.loads(response.data)
     return result.get("data"), result.get("errors")
 
@@ -25,7 +27,11 @@ def assert_missing_object(client, query_str: str, obj_type: str, **kwargs) -> No
     assert errors[0]["path"] == [obj_type]
 
 
-def get_error_response(client, query_str: str, **kwargs) -> Dict:
-    data, errors = get_query_response(client, query_str, **kwargs)
+def get_error_response(
+    client, query_str: str, response_code: int = 200, **kwargs
+) -> Dict:
+    data, errors = get_query_response(
+        client, query_str, response_code=response_code, **kwargs
+    )
     assert len(errors) > 0
     return errors

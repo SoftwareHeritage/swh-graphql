@@ -96,7 +96,7 @@ def test_get_release_with_invalid_swhid(client):
     errors = utils.get_error_response(client, query_str, swhid="swh:1:rel:invalid")
     # API will throw an error in case of an invalid SWHID
     assert len(errors) == 1
-    assert "Expected type 'SWHID'. Input error: Invalid SWHID" in errors[0]["message"]
+    assert "Input error: Invalid SWHID" in errors[0]["message"]
 
 
 @pytest.mark.parametrize("release_with_target", get_releases_with_target())

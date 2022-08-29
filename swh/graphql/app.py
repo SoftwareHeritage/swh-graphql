@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 
 from ariadne import gql, load_schema_from_path, make_executable_schema
+from ariadne.validation import cost_validator
 
 from .resolvers import resolvers, scalars
 
@@ -41,3 +42,16 @@ schema = make_executable_schema(
     scalars.datetime_scalar,
     scalars.swhid_scalar,
 )
+
+
+def validation_rules(context_value, document, data):
+    from .server import graphql_cfg
+
+    # add logic to set max_query_cost depending on user type
+    max_query_cost = graphql_cfg["max_query_cost"]["anonymous"]
+    if max_query_cost:
+        return [
+            cost_validator(maximum_cost=max_query_cost, variables=data.get("variables"))
+        ]
+    # no limit is applied when max_query_cost is set to 0 or None
+    return None

@@ -1,3 +1,5 @@
+directive @cost(complexity: Int, multipliers: [String!], useMultipliers: Boolean) on FIELD | FIELD_DEFINITION
+
 """
 SoftWare Heritage persistent Identifier
 """
@@ -129,7 +131,7 @@ type Origin implements Node {
     Returns the page after this cursor
     """
     after: String
-  ): VisitConnection
+  ): VisitConnection! @cost(complexity: 1, multipliers: ["first"])
 
   """
   Latest visit object for the origin
@@ -149,7 +151,7 @@ type Origin implements Node {
     If True, the latest visit with a snapshot will be returned
     """
     requireSnapshot: Boolean
-  ): Visit
+  ): Visit @cost(complexity: 1)
 
   """
   Connection to all the snapshots for the origin
@@ -164,7 +166,7 @@ type Origin implements Node {
     Returns the page after this cursor
     """
     after: String
-  ): SnapshotConnection
+  ): SnapshotConnection @cost(complexity: 2, multipliers: ["first"])  # This costs more because of local (graphql level) pagination
 }
 
 """
@@ -259,7 +261,7 @@ type Visit implements Node {
     Returns the page after this cursor
     """
     after: String
-  ): VisitStatusConnection
+  ): VisitStatusConnection @cost(complexity: 3)  # here first is optional, hence adding a higher value for cost
 
   """
   Latest status object for the Visit
@@ -274,7 +276,7 @@ type Visit implements Node {
     Filter by the availability of a snapshot in the status
     """
     requireSnapshot: Boolean
-  ): VisitStatus
+  ): VisitStatus @cost(complexity: 1)
 }
 
 """
@@ -337,7 +339,7 @@ type VisitStatus {
   """
   Snapshot object
   """
-  snapshot: Snapshot
+  snapshot: Snapshot @cost(complexity: 1)
 
   """
   Type of the origin visited. Eg: git/hg/svn/tar/deb
@@ -427,7 +429,7 @@ type Snapshot implements SWHNode & Node {
     Do not return branches whose name contains the given prefix
     """
     nameExcludePrefix: String
-  ): BranchConnection
+  ): BranchConnection @cost(complexity: 2, multipliers: ["first"]) # This costs more because of local (graphql level) pagination
 }
 
 """
@@ -527,7 +529,7 @@ type Branch {
   """
   Branch target object
   """
-  target: BranchTarget
+  target: BranchTarget @cost(complexity: 1)
 }
 
 """
@@ -632,7 +634,7 @@ type Revision implements SWHNode & Node {
   """
   The unique directory object that revision points to
   """
-  directory: Directory
+  directory: Directory @cost(complexity: 1)
 
   """
   Connection to all the parents of the revision
@@ -647,7 +649,7 @@ type Revision implements SWHNode & Node {
     Returns the page after this cursor
     """
     after: String
-  ): RevisionConnection
+  ): RevisionConnection @cost(complexity: 3) # here first is not mandatory, hence adding a higher value for cost
 
   """
   Connection to all the revisions heading to this one
@@ -663,7 +665,7 @@ type Revision implements SWHNode & Node {
     Returns the page after the cursor
     """
     after: String
-  ): RevisionConnection
+  ): RevisionConnection @cost(complexity: 2, multipliers: ["first"]) # This costs more because of local (graphql level) pagination
 }
 
 """
@@ -723,7 +725,7 @@ type Release implements SWHNode & Node {
   """
   Release target object
   """
-  target: ReleaseTarget
+  target: ReleaseTarget @cost(complexity: 1)
 }
 
 """
@@ -797,7 +799,7 @@ type DirectoryEntry {
   """
   Directory entry target object
   """
-  target: DirectoryEntryTarget
+  target: DirectoryEntryTarget @cost(complexity: 1)
 }
 
 """
@@ -832,7 +834,7 @@ type Directory implements SWHNode & Node {
     Filter by entry name
     """
     nameInclude: String
-  ): DirectoryEntryConnection
+  ): DirectoryEntryConnection @cost(complexity: 2, multipliers: ["first"]) # pagination is local, hence adding a higher value for cost
 }
 
 """
@@ -997,7 +999,7 @@ type SearchResult {
   """
   Result target object
   """
-  target: SearchResultTarget
+  target: SearchResultTarget @cost(complexity: 1)
 }
 
 """
@@ -1012,7 +1014,7 @@ type Query {
     URL of the Origin
     """
     url: String!
-  ): Origin
+  ): Origin @cost(complexity: 1)
 
   """
   Get a Connection to all the origins
@@ -1032,7 +1034,7 @@ type Query {
     Filter origins with a URL pattern
     """
     urlPattern: String
-  ): OriginConnection
+  ): OriginConnection @cost(complexity: 1, multipliers: ["first"])
 
   """
   Get the visit object with an origin URL and a visit id
@@ -1047,7 +1049,7 @@ type Query {
     Visit id to get
     """
     visitId: Int!
-  ): Visit
+  ): Visit @cost(complexity: 1)
 
   """
   Get the snapshot with a SWHID
@@ -1057,7 +1059,7 @@ type Query {
     SWHID of the snapshot object
     """
     swhid: SWHID!
-  ): Snapshot
+  ): Snapshot @cost(complexity: 1)
 
   """
   Get the revision with a SWHID
@@ -1067,7 +1069,7 @@ type Query {
     SWHID of the revision object
     """
     swhid: SWHID!
-  ): Revision
+  ): Revision @cost(complexity: 1)
 
   """
   Get the release with a SWHID
@@ -1077,7 +1079,7 @@ type Query {
     SWHID of the release object
     """
     swhid: SWHID!
-  ): Release
+  ): Release @cost(complexity: 1)
 
   """
   Get the directory with a SWHID
@@ -1087,7 +1089,7 @@ type Query {
     SWHID of the directory object
     """
     swhid: SWHID!
-  ): Directory
+  ): Directory @cost(complexity: 1)
 
   """
   Get a directory entry with directory SWHID and a path
@@ -1102,7 +1104,7 @@ type Query {
     Relative path to the requested object
     """
     path: String!
-  ): DirectoryEntry
+  ): DirectoryEntry @cost(complexity: 2)  # This costs more because path can be any level deep
 
   """
   Get a list of contents for the given SWHID
@@ -1112,7 +1114,7 @@ type Query {
     SWHID to look for
     """
     swhid: SWHID!
-  ): [Content]
+  ): [Content] @cost(complexity: 1)
 
   """
   Get contents with hashes
@@ -1126,7 +1128,7 @@ type Query {
     sha1_git: String
 
     blake2s256: String
-  ): [Content]
+  ): [Content]  @cost(complexity: 1)
 
   """
   Get a content that match all the given hashes.
@@ -1142,7 +1144,7 @@ type Query {
     sha1_git: String!
 
     blake2s256: String!
-  ): Content
+  ): Content @cost(complexity: 1)
 
   """
   Resolve the given SWHID to an object
@@ -1152,7 +1154,7 @@ type Query {
     SWHID to look for
     """
     swhid: SWHID!
-  ): [SearchResult]
+  ): [SearchResult] @cost(complexity: 1)
 
   """
   Search in SWH
@@ -1172,5 +1174,5 @@ type Query {
     Returns the page after the cursor
     """
     after: String
-  ): SearchResultConnection
+  ): SearchResultConnection! @cost(complexity: 1, multipliers: ["first"])
 }
