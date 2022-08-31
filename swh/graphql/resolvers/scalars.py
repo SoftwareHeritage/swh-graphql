@@ -7,6 +7,7 @@ from datetime import datetime
 
 from ariadne import ScalarType
 
+from swh.graphql.errors import InvalidInputError
 from swh.graphql.utils import utils
 from swh.model import hashutil
 from swh.model.model import TimestampWithTimezone
@@ -51,10 +52,7 @@ def validate_content_hash(value):
         hash_type, hash_string = value.split(":")
         hash_value = hashutil.hash_to_bytes(hash_string)
     except ValueError as e:
-        # FIXME, log this error
-        raise AttributeError("Invalid content checksum", e)
-    except Exception as e:
-        # FIXME, log this error
-        raise AttributeError("Invalid content checksum", e)
-    # FIXME, add validation for the hash_type
+        raise InvalidInputError("Invalid content checksum", e)
+    if hash_type not in hashutil.ALGORITHMS:
+        raise InvalidInputError("Invalid hash algorithm")
     return hash_type, hash_value

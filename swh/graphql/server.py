@@ -63,6 +63,7 @@ def make_app_from_configfile():
     configuration path to load.
     """
     from .app import schema
+    from .errors.handlers import format_error
 
     global graphql_cfg
 
@@ -77,12 +78,14 @@ def make_app_from_configfile():
 
         # Enable cors in the asgi version
         application = CORSMiddleware(
-            GraphQL(schema),
+            GraphQL(schema, debug=graphql_cfg["debug"], error_formatter=format_error),
             allow_origins=["*"],
             allow_methods=("GET", "POST", "OPTIONS"),
         )
     else:
         from ariadne.wsgi import GraphQL
 
-        application = GraphQL(schema)
+        application = GraphQL(
+            schema, debug=graphql_cfg["debug"], error_formatter=format_error
+        )
     return application

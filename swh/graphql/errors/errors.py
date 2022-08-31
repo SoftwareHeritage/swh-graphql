@@ -7,6 +7,11 @@
 class ObjectNotFoundError(Exception):
     """ """
 
+    msg: str = "Object error"
+
+    def __init__(self, message, errors=None):
+        super().__init__(f"{self.msg}: {message}")
+
 
 class PaginationError(Exception):
     """ """
@@ -14,5 +19,13 @@ class PaginationError(Exception):
     msg: str = "Pagination error"
 
     def __init__(self, message, errors=None):
-        # FIXME, log this error
+        super().__init__(f"{self.msg}: {message}")
+
+
+class InvalidInputError(Exception):
+    """ """
+
+    msg: str = "Input error"
+
+    def __init__(self, message, errors=None):
         super().__init__(f"{self.msg}: {message}")

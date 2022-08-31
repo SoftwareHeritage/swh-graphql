@@ -117,7 +117,21 @@ def test_get_content_with_invalid_hashes(client):
     )
     # API will throw an error in case of an invalid content hash
     assert len(errors) == 1
-    assert "Invalid content checksum" in errors[0]["message"]
+    assert "Input error: Invalid content checksum" in errors[0]["message"]
+
+
+def test_get_content_with_invalid_hash_algorithm(client):
+    content = get_contents()[0]
+    query_str = """
+    {
+      contentByHash(checksums: ["test:%s"]) {
+        swhid
+      }
+    }
+    """
+    errors = utils.get_error_response(client, query_str % content.sha1.hex())
+    assert len(errors) == 1
+    assert "Input error: Invalid hash algorithm" in errors[0]["message"]
 
 
 def test_get_content_as_target(client):

@@ -6,6 +6,6 @@ search:
   cls: remote
   url: http://webapp.internal.staging.swh.network:5010
 
-debug: yes
+debug: no
 
 server-type: wsgi
