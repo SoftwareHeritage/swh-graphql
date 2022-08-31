@@ -1,3 +1,0 @@
-"""
-For adding ASGI middleware
-"""
