@@ -8,4 +8,4 @@ search:
 
 debug: no
 
-server-type: wsgi
+server-type: asgi
