@@ -54,4 +54,4 @@ def test_get_snapshot_invalid_swhid(client):
     """
     errors = get_error_response(client, query_str)
     assert len(errors) == 1
-    assert "Invalid SWHID: invalid syntax" in errors[0]["message"]
+    assert "Input error: Invalid SWHID" in errors[0]["message"]

@@ -83,7 +83,7 @@ def test_get_revision_with_invalid_swhid(client):
     errors = utils.get_error_response(client, query_str)
     # API will throw an error in case of an invalid SWHID
     assert len(errors) == 1
-    assert "Invalid SWHID: invalid syntax" in errors[0]["message"]
+    assert "Input error: Invalid SWHID" in errors[0]["message"]
 
 
 def test_get_revision_as_target(client):

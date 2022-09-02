@@ -10,6 +10,7 @@ import pytest
 
 from swh.graphql import server as app_server
 from swh.graphql.app import schema
+from swh.graphql.errors import format_error
 from swh.search import get_search as get_swh_search
 from swh.storage import get_storage as get_swh_storage
 
@@ -46,7 +47,11 @@ def test_app(storage, search):
         # GraphQL queries are always sent as POST
         data = request.get_json()
         success, result = graphql_sync(
-            schema, data, context_value=request, debug=app.debug
+            schema,
+            data,
+            context_value=request,
+            debug=app.debug,
+            error_formatter=format_error,
         )
         status_code = 200 if success else 400
         return jsonify(result), status_code

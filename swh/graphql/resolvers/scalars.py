@@ -10,6 +10,7 @@ from ariadne import ScalarType
 from swh.graphql.errors import InvalidInputError
 from swh.graphql.utils import utils
 from swh.model import hashutil
+from swh.model.exceptions import ValidationError
 from swh.model.model import TimestampWithTimezone
 from swh.model.swhids import CoreSWHID
 
@@ -38,7 +39,11 @@ def serialize_datetime(value):
 
 @swhid_scalar.value_parser
 def validate_swhid(value):
-    return CoreSWHID.from_string(value)
+    try:
+        swhid = CoreSWHID.from_string(value)
+    except ValidationError as e:
+        raise InvalidInputError("Invalid SWHID", e)
+    return swhid
 
 
 @swhid_scalar.serializer

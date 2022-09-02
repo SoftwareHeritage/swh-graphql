@@ -65,7 +65,7 @@ def make_app_from_configfile():
     from starlette.middleware.cors import CORSMiddleware
 
     from .app import schema
-    from .errors.handlers import format_error
+    from .errors import format_error
 
     global graphql_cfg
 
