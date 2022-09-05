@@ -474,7 +474,7 @@ type Branch {
   """
   Type of Branch target
   """
-  type: BranchTargetType
+  targetType: BranchTargetType
 
   """
   Branch target object
@@ -703,7 +703,7 @@ union DirectoryEntryTarget = Directory | Content
 """
 Possible directory entry types
 """
-enum DirectoryEntryType {
+enum DirectoryEntryTargetType {
   dir
   file
   rev
@@ -721,7 +721,7 @@ type DirectoryEntry {
   """
   Directory entry object type; can be file, dir or rev
   """
-  type: DirectoryEntryType
+  targetType: DirectoryEntryTargetType
 
   """
   Directory entry target object
@@ -913,7 +913,7 @@ type SearchResult {
   """
   Result target type
   """
-  type: SearchResultTargetType
+  targetType: SearchResultTargetType
 
   """
   Result target object

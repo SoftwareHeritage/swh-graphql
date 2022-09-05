@@ -34,6 +34,10 @@ class BaseSnapshotBranchNode(BaseNode):
     def is_type_of(self):
         return "Branch"
 
+    @property
+    def targetType(self):  # To support the schema naming convention
+        return self._node.type
+
     def snapshot_swhid(self):
         """
         Logic to handle multiple branch alias redirects

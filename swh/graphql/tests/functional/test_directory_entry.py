@@ -17,7 +17,7 @@ def test_get_directory_entry_connection(client, directory):
         swhid
         entries {
           nodes {
-            type
+            targetType
             name {
               text
             }
@@ -30,7 +30,7 @@ def test_get_directory_entry_connection(client, directory):
     directory_entries = data["directory"]["entries"]["nodes"]
     assert len(directory_entries) == len(directory.entries)
     output = [
-        {"name": {"text": de.name.decode()}, "type": de.type}
+        {"name": {"text": de.name.decode()}, "targetType": de.type}
         for de in directory.entries
     ]
     for each_entry in output:

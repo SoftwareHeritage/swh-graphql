@@ -13,6 +13,10 @@ from .base_node import BaseNode
 class SearchResultNode(BaseNode):
     """ """
 
+    @property
+    def targetType(self):  # To support the schema naming convention
+        return self._node.type
+
 
 class ResolveSwhidConnection(BaseConnection):
 

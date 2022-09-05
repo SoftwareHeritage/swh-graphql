@@ -11,7 +11,7 @@ def test_search_origins(client):
     {
       search(query: "fox", first: 1) {
         nodes {
-          type
+          targetType
           target {
             ...on Origin {
               url
@@ -38,7 +38,7 @@ def test_search_origins(client):
                         "url": "https://somewhere.org/den/fox",
                         "latestVisit": {"date": "2018-11-27T17:20:39+00:00"},
                     },
-                    "type": "origin",
+                    "targetType": "origin",
                 }
             ],
             "pageInfo": {"endCursor": "MQ==", "hasNextPage": True},
@@ -51,7 +51,7 @@ def test_search_missing_url(client):
     {
       search(query: "missing-fox", first: 1) {
         nodes {
-          type
+          targetType
         }
         pageInfo {
           hasNextPage

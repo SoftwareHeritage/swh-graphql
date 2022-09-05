@@ -22,7 +22,7 @@ def get_branches(client, swhid: str, first: int, **args) -> tuple:
             cursor
           }
           nodes {
-            type
+            targetType
             name {
               text
             }
@@ -72,7 +72,7 @@ def test_get_data(client):
             "__typename": "Revision",
             "swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c",
         },
-        "type": "revision",
+        "targetType": "revision",
     }
 
 
@@ -83,7 +83,7 @@ def test_get_branches_with_alias(client):
     assert node == {
         "name": {"text": "target/alias"},
         "target": {"__typename": "Branch", "name": {"text": "target/revision"}},
-        "type": "alias",
+        "targetType": "alias",
     }
 
 

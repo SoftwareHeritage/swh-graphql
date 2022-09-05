@@ -143,7 +143,7 @@ def test_get_content_as_target(client):
         swhid
         entries(first: 2) {
           nodes {
-            type
+            targetType
             target {
               ...on Content {
                 swhid

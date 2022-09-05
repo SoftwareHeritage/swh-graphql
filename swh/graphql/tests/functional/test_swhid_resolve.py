@@ -20,7 +20,7 @@ def test_invalid_swhid(client):
     {
       resolveSwhid(swhid: "swh:1:dir:dae0d245988b472abd30a4f968b919d0019b6c7") {
         nodes {
-          type
+          targetType
         }
       }
     }
@@ -46,7 +46,7 @@ def test_missing_swhid(client, swhid):
     {
       resolveSwhid(swhid: "%s") {
         nodes {
-          type
+          targetType
         }
       }
     }
@@ -62,7 +62,7 @@ def test_snapshot_swhid_resolve(client, snapshot):
     {
       resolveSwhid(swhid: "%s") {
         nodes {
-          type
+          targetType
           target {
             __typename
             ... on Snapshot {
@@ -82,7 +82,7 @@ def test_snapshot_swhid_resolve(client, snapshot):
                         "__typename": "Snapshot",
                         "swhid": str(snapshot.swhid()),
                     },
-                    "type": "snapshot",
+                    "targetType": "snapshot",
                 }
             ]
         }
@@ -95,7 +95,7 @@ def test_revision_swhid_resolve(client, revision):
     {
       resolveSwhid(swhid: "%s") {
         nodes {
-          type
+          targetType
           target {
             __typename
             ... on Revision {
@@ -115,7 +115,7 @@ def test_revision_swhid_resolve(client, revision):
                         "__typename": "Revision",
                         "swhid": str(revision.swhid()),
                     },
-                    "type": "revision",
+                    "targetType": "revision",
                 }
             ]
         }
@@ -128,7 +128,7 @@ def test_release_swhid_resolve(client, release):
     {
       resolveSwhid(swhid: "%s") {
         nodes {
-          type
+          targetType
           target {
             __typename
             ... on Release {
@@ -148,7 +148,7 @@ def test_release_swhid_resolve(client, release):
                         "__typename": "Release",
                         "swhid": str(release.swhid()),
                     },
-                    "type": "release",
+                    "targetType": "release",
                 }
             ]
         }
@@ -161,7 +161,7 @@ def test_directory_swhid_resolve(client, directory):
     {
       resolveSwhid(swhid: "%s") {
         nodes {
-          type
+          targetType
           target {
             __typename
             ... on Directory {
@@ -181,7 +181,7 @@ def test_directory_swhid_resolve(client, directory):
                         "__typename": "Directory",
                         "swhid": str(directory.swhid()),
                     },
-                    "type": "directory",
+                    "targetType": "directory",
                 }
             ]
         }
@@ -194,7 +194,7 @@ def test_content_swhid_resolve(client, content):
     {
       resolveSwhid(swhid: "%s") {
         nodes {
-          type
+          targetType
           target {
             __typename
             ... on Content {
@@ -214,7 +214,7 @@ def test_content_swhid_resolve(client, content):
                         "__typename": "Content",
                         "swhid": str(content.swhid()),
                     },
-                    "type": "content",
+                    "targetType": "content",
                 }
             ]
         }

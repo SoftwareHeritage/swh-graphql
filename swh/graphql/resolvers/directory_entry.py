@@ -20,6 +20,10 @@ class DirectoryEntryNode(BaseNode):
     def target_hash(self):  # for DirectoryNode
         return self._node.target
 
+    @property
+    def targetType(self):  # To support the schema naming convention
+        return self._node.type
+
 
 class DirectoryEntryConnection(BaseConnection):
     """

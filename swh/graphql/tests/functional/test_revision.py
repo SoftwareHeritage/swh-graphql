@@ -94,7 +94,7 @@ def test_get_revision_as_target(client):
       snapshot(swhid: "%s") {
         branches(first: 1, types: [revision]) {
           nodes {
-            type
+            targetType
             target {
               ...on Revision {
                 swhid
