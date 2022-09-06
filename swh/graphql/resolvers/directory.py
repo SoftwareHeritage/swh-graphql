@@ -5,7 +5,6 @@
 
 from typing import Union
 
-from swh.graphql.backends import archive
 from swh.model.model import Directory
 from swh.model.swhids import ObjectType
 
@@ -40,9 +39,7 @@ class DirectoryNode(BaseDirectoryNode):
         # path = ""
         if (
             swhid.object_type == ObjectType.DIRECTORY
-            and archive.Archive().is_object_available(
-                swhid.object_id, swhid.object_type
-            )
+            and self.archive.is_object_available(swhid.object_id, swhid.object_type)
         ):
             # _get_directory_by_id is not making any backend call
             # hence the is_directory_available validation

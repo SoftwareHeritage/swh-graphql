@@ -3,7 +3,6 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from swh.graphql.backends import archive, search
 from swh.model.model import Origin
 from swh.storage.interface import PagedResult
 
@@ -25,7 +24,7 @@ class OriginNode(BaseOriginNode):
     """
 
     def _get_node_data(self):
-        return archive.Archive().get_origin(self.kwargs.get("url"))
+        return self.archive.get_origin(self.kwargs.get("url"))
 
 
 class TargetOriginNode(BaseOriginNode):
@@ -52,7 +51,7 @@ class OriginConnection(BaseConnection):
     def _get_paged_result(self) -> PagedResult:
         # Use the search backend if a urlPattern is given
         if self.kwargs.get("urlPattern"):
-            origins = search.Search().get_origins(
+            origins = self.search.get_origins(
                 query=self.kwargs.get("urlPattern"),
                 after=self._get_after_arg(),
                 first=self._get_first_arg(),
@@ -60,6 +59,6 @@ class OriginConnection(BaseConnection):
             results = [Origin(ori["url"]) for ori in origins.results]
             return PagedResult(results=results, next_page_token=origins.next_page_token)
         # Use the archive backend by default
-        return archive.Archive().get_origins(
+        return self.archive.get_origins(
             after=self._get_after_arg(), first=self._get_first_arg()
         )

@@ -5,7 +5,6 @@
 
 from collections import namedtuple
 
-from swh.graphql.backends import archive
 from swh.graphql.errors import ObjectNotFoundError
 from swh.graphql.utils import utils
 from swh.storage.interface import PagedResult
@@ -68,7 +67,7 @@ class AliasSnapshotBranchNode(BaseSnapshotBranchNode):
         snapshot_swhid = self.snapshot_swhid()
         target_branch = self.obj.target_hash
 
-        alias_branch = archive.Archive().get_snapshot_branches(
+        alias_branch = self.archive.get_snapshot_branches(
             snapshot_swhid.object_id, first=1, name_include=target_branch
         )
         if target_branch not in alias_branch["branches"]:
@@ -91,7 +90,7 @@ class SnapshotBranchConnection(BaseConnection):
     _node_class = BaseSnapshotBranchNode
 
     def _get_paged_result(self) -> PagedResult:
-        result = archive.Archive().get_snapshot_branches(
+        result = self.archive.get_snapshot_branches(
             self.obj.swhid.object_id,
             after=self._get_after_arg(),
             first=self._get_first_arg(),

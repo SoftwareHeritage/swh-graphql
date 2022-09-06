@@ -5,8 +5,6 @@
 
 from typing import Union
 
-from swh.graphql.backends import archive
-
 from .base_node import BaseSWHNode
 from .directory_entry import DirectoryEntryNode
 from .release import BaseReleaseNode
@@ -19,7 +17,7 @@ class BaseContentNode(BaseSWHNode):
     """
 
     def _get_content_by_hash(self, checksums: dict):
-        content = archive.Archive().get_contents(checksums)
+        content = self.archive.get_contents(checksums)
         # in case of a conflict, return the first element
         return content[0] if content else None
 

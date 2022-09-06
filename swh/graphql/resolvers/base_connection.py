@@ -8,6 +8,8 @@ import binascii
 from dataclasses import dataclass
 from typing import Any, List, Optional, Type, Union
 
+from swh.graphql.backends.archive import Archive
+from swh.graphql.backends.search import Search
 from swh.graphql.errors import PaginationError
 from swh.graphql.utils import utils
 from swh.storage.interface import PagedResult
@@ -40,6 +42,8 @@ class BaseConnection(ABC):
         self.obj: Optional[Any] = obj
         self.info = info
         self.kwargs = kwargs
+        self.archive = Archive()
+        self.search = Search()
         self._paged_data: PagedResult = paged_data
 
     @property

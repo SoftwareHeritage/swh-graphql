@@ -3,7 +3,6 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from swh.graphql.backends import archive, search
 from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
@@ -25,7 +24,7 @@ class ResolveSwhidConnection(BaseConnection):
     def _get_paged_result(self) -> PagedResult:
         swhid = self.kwargs.get("swhid")
         results = []
-        if archive.Archive().is_object_available(swhid.object_id, swhid.object_type):
+        if self.archive.is_object_available(swhid.object_id, swhid.object_type):
             results = [
                 {
                     "target_hash": swhid.object_id,
@@ -40,7 +39,7 @@ class SearchConnection(BaseConnection):
     _node_class = SearchResultNode
 
     def _get_paged_result(self) -> PagedResult:
-        origins = search.Search().get_origins(
+        origins = self.search.get_origins(
             query=self.kwargs.get("query"),
             after=self._get_after_arg(),
             first=self._get_first_arg(),

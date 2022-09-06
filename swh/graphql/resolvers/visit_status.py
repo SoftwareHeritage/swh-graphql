@@ -3,7 +3,6 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from swh.graphql.backends import archive
 from swh.model.swhids import CoreSWHID, ObjectType
 from swh.storage.interface import PagedResult
 
@@ -31,9 +30,7 @@ class LatestVisitStatusNode(BaseVisitStatusNode):
 
     def _get_node_data(self):
         # self.obj.origin is the origin URL
-        return archive.Archive().get_latest_visit_status(
-            self.obj.origin, self.obj.visitId
-        )
+        return self.archive.get_latest_visit_status(self.obj.origin, self.obj.visitId)
 
 
 class VisitStatusConnection(BaseConnection):
@@ -46,7 +43,7 @@ class VisitStatusConnection(BaseConnection):
 
     def _get_paged_result(self) -> PagedResult:
         # self.obj.origin is the origin URL
-        return archive.Archive().get_visit_status(
+        return self.archive.get_visit_status(
             self.obj.origin,
             self.obj.visitId,
             after=self._get_after_arg(),

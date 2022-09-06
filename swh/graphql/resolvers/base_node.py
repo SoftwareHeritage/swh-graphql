@@ -6,6 +6,7 @@
 from abc import ABC
 from collections import namedtuple
 
+from swh.graphql.backends.archive import Archive
 from swh.graphql.errors import ObjectNotFoundError
 
 
@@ -18,6 +19,7 @@ class BaseNode(ABC):
         self.obj = obj
         self.info = info
         self.kwargs = kwargs
+        self.archive = Archive()
         self._node = self._get_node(node_data)
         # handle the errors, if any, after _node is set
         self._handle_node_errors()

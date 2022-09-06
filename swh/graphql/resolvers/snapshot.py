@@ -5,7 +5,6 @@
 
 from typing import Union
 
-from swh.graphql.backends import archive
 from swh.graphql.utils import utils
 from swh.model.model import Snapshot
 from swh.model.swhids import ObjectType
@@ -44,9 +43,7 @@ class SnapshotNode(BaseSnapshotNode):
         swhid = self.kwargs.get("swhid")
         if (
             swhid.object_type == ObjectType.SNAPSHOT
-            and archive.Archive().is_object_available(
-                swhid.object_id, swhid.object_type
-            )
+            and self.archive.is_object_available(swhid.object_id, swhid.object_type)
         ):
             return self._get_snapshot_by_id(swhid.object_id)
         return None
@@ -89,7 +86,7 @@ class OriginSnapshotConnection(BaseConnection):
     _node_class = BaseSnapshotNode
 
     def _get_paged_result(self) -> PagedResult:
-        results = archive.Archive().get_origin_snapshots(self.obj.url)
+        results = self.archive.get_origin_snapshots(self.obj.url)
         snapshots = [Snapshot(id=snapshot, branches={}) for snapshot in results]
         # FIXME, using dummy(local) pagination, move pagination to backend
         # To remove localpagination, just drop the paginated call
