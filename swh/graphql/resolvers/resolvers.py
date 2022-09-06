@@ -155,9 +155,17 @@ def directory_resolver(
     return resolver(obj, info, **kw)
 
 
+@query.field("directoryEntry")
+def directory_entry_resolver(
+    obj: None, info: GraphQLResolveInfo, **kw
+) -> rs.directory.DirectoryNode:
+    resolver = get_node_resolver("directory-entry")
+    return resolver(obj, info, **kw)
+
+
 @directory_entry.field("target")
 def directory_entry_target_resolver(
-    obj: rs.directory_entry.DirectoryEntryNode, info: GraphQLResolveInfo, **kw
+    obj: rs.directory_entry.BaseDirectoryEntryNode, info: GraphQLResolveInfo, **kw
 ):
     """
     directory entry target can be a directory or a content
@@ -252,7 +260,7 @@ def revision_log_resolver(obj, info, **kw):
 
 
 @directory.field("entries")
-def directory_entry_resolver(
+def directory_entries_resolver(
     obj, info: GraphQLResolveInfo, **kw
 ) -> rs.directory_entry.DirectoryEntryConnection:
     resolver = get_connection_resolver("directory-entries")

@@ -5,8 +5,86 @@
 
 import pytest
 
+from swh.graphql import server
+from swh.model.swhids import CoreSWHID, ObjectType
+
 from . import utils
-from ..data import get_directories
+from ..data import get_directories, get_directories_with_nested_path
+
+
+def test_get_directory_entry_missing_path(client):
+    directory = get_directories()[0]
+    path = "missing"
+    query_str = """
+    {
+      directoryEntry(swhid: "%s", path: "%s") {
+        name {
+          text
+        }
+        targetType
+        target {
+          ...on Content {
+            swhid
+          }
+        }
+      }
+    }
+    """ % (
+        directory.swhid(),
+        path,
+    )
+    utils.assert_missing_object(client, query_str, "directoryEntry")
+
+
+@pytest.mark.parametrize(
+    "directory", get_directories() + get_directories_with_nested_path()
+)
+def test_get_directory_entry(client, directory):
+    storage = server.get_storage()
+    query_str = """
+    {
+      directoryEntry(swhid: "%s", path: "%s") {
+        name {
+          text
+        }
+        targetType
+        target {
+          ...on Content {
+            swhid
+          }
+          ...on Directory {
+            swhid
+          }
+        }
+      }
+    }
+    """
+    for entry in storage.directory_ls(directory.id, recursive=True):
+        if entry["type"] == "rev":
+            # FIXME, Revision is not supported as a directory entry target yet
+            continue
+        query = query_str % (
+            directory.swhid(),
+            entry["name"].decode(),
+        )
+        data, _ = utils.get_query_response(
+            client,
+            query,
+        )
+        swhid = None
+        if entry["type"] == "file" and entry["sha1_git"] is not None:
+            swhid = CoreSWHID(
+                object_type=ObjectType.CONTENT, object_id=entry["sha1_git"]
+            )
+        elif entry["type"] == "dir" and entry["target"] is not None:
+            swhid = CoreSWHID(
+                object_type=ObjectType.DIRECTORY, object_id=entry["target"]
+            )
+        assert data["directoryEntry"] == {
+            "name": {"text": entry["name"].decode()},
+            "target": {"swhid": str(swhid)} if swhid else None,
+            "targetType": entry["type"],
+        }
 
 
 @pytest.mark.parametrize("directory", get_directories())

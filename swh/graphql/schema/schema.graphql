@@ -1011,6 +1011,21 @@ type Query {
   ): Directory
 
   """
+  Get a directory entry with directory SWHID and a path
+  """
+  directoryEntry(
+    """
+    SWHID of the directory object
+    """
+    swhid: SWHID!
+
+    """
+    Relative path to the requested object
+    """
+    path: String!
+  ): DirectoryEntry
+
+  """
   Get the content with a SWHID
   """
   content(

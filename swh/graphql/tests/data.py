@@ -3,7 +3,14 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from swh.model.model import ObjectType, Release, Revision, RevisionType
+from swh.model.model import (
+    Directory,
+    DirectoryEntry,
+    ObjectType,
+    Release,
+    Revision,
+    RevisionType,
+)
 from swh.model.tests import swh_model_data
 
 
@@ -92,9 +99,25 @@ def get_revisions_with_parents():
     ]
 
 
+def get_directories_with_nested_path():
+    return [
+        Directory(
+            entries=(
+                DirectoryEntry(
+                    name=b"sub-dir",
+                    perms=0o644,
+                    type="dir",
+                    target=get_directories()[1].id,
+                ),
+            )
+        )
+    ]
+
+
 GRAPHQL_EXTRA_TEST_OBJECTS = {
     "release": get_releases_with_target(),
     "revision": get_revisions_with_parents(),
+    "directory": get_directories_with_nested_path(),
 }
 
 

@@ -5,7 +5,7 @@
 
 from .content import ContentNode, HashContentNode, TargetContentNode
 from .directory import DirectoryNode, RevisionDirectoryNode, TargetDirectoryNode
-from .directory_entry import DirectoryEntryConnection
+from .directory_entry import DirectoryEntryConnection, DirectoryEntryNode
 from .origin import OriginConnection, OriginNode, TargetOriginNode
 from .release import ReleaseNode, TargetReleaseNode
 from .revision import (
@@ -49,6 +49,7 @@ def get_node_resolver(resolver_type):
         "release-directory": TargetDirectoryNode,
         "release-content": TargetContentNode,
         "directory": DirectoryNode,
+        "directory-entry": DirectoryEntryNode,
         "content": ContentNode,
         "content-by-hash": HashContentNode,
         "dir-entry-dir": TargetDirectoryNode,

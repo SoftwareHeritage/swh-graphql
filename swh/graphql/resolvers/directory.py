@@ -36,7 +36,6 @@ class DirectoryNode(BaseDirectoryNode):
 
     def _get_node_data(self):
         swhid = self.kwargs.get("swhid")
-        # path = ""
         if (
             swhid.object_type == ObjectType.DIRECTORY
             and self.archive.is_object_available(swhid.object_id, swhid.object_type)
@@ -64,9 +63,9 @@ class TargetDirectoryNode(BaseDirectoryNode):
     Node resolver for a directory requested as a target
     """
 
-    from .directory_entry import DirectoryEntryNode
+    from .directory_entry import BaseDirectoryEntryNode
 
-    obj: Union[BaseSnapshotBranchNode, BaseReleaseNode, DirectoryEntryNode]
+    obj: Union[BaseSnapshotBranchNode, BaseReleaseNode, BaseDirectoryEntryNode]
 
     def _get_node_data(self):
         return self._get_directory_by_id(self.obj.target_hash)

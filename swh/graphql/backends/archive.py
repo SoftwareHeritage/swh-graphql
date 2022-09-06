@@ -3,7 +3,11 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+import os
+from typing import Any, Dict, Optional
+
 from swh.graphql import server
+from swh.model.model import Sha1Git
 from swh.model.swhids import ObjectType
 
 
@@ -56,6 +60,14 @@ class Archive:
 
     def get_releases(self, release_ids):
         return self.storage.release_get(releases=release_ids)
+
+    def get_directory_entry_by_path(
+        self, directory_id: Sha1Git, path: str
+    ) -> Optional[Dict[str, Any]]:
+        paths = [x.encode() for x in path.strip(os.path.sep).split(os.path.sep)]
+        return self.storage.directory_entry_get_by_path(
+            directory=directory_id, paths=paths
+        )
 
     def get_directory_entries(self, directory_id, after=None, first=50):
         return self.storage.directory_get_entries(

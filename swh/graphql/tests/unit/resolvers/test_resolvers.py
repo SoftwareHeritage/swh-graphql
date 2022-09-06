@@ -56,7 +56,7 @@ class TestResolvers:
             (rs.revision_parents_resolver, resolvers.revision.ParentRevisionConnection),
             # (rs.revision_log_resolver, resolvers.revision.LogRevisionConnection),
             (
-                rs.directory_entry_resolver,
+                rs.directory_entries_resolver,
                 resolvers.directory_entry.DirectoryEntryConnection,
             ),
         ],

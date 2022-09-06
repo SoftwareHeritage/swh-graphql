@@ -10,11 +10,7 @@ from .base_connection import BaseConnection
 from .base_node import BaseNode
 
 
-class DirectoryEntryNode(BaseNode):
-    """
-    Node resolver for a directory entry
-    """
-
+class BaseDirectoryEntryNode(BaseNode):
     @property
     def target_hash(self):  # for DirectoryNode
         return self._node.target
@@ -22,6 +18,21 @@ class DirectoryEntryNode(BaseNode):
     @property
     def targetType(self):  # To support the schema naming convention
         return self._node.type
+
+
+class DirectoryEntryNode(BaseDirectoryEntryNode):
+    """
+    Node resolver for a directory entry requested with a
+    directory SWHID and a relative path
+    """
+
+    def _get_node_data(self):
+        # STORAGE-TODO, archive is returning a dict
+        # return DirectoryEntry object instead
+        return self.archive.get_directory_entry_by_path(
+            directory_id=self.kwargs.get("swhid").object_id,
+            path=self.kwargs.get("path"),
+        )
 
 
 class DirectoryEntryConnection(BaseConnection):
@@ -33,7 +44,7 @@ class DirectoryEntryConnection(BaseConnection):
 
     obj: BaseDirectoryNode
 
-    _node_class = DirectoryEntryNode
+    _node_class = BaseDirectoryEntryNode
 
     def _get_paged_result(self) -> PagedResult:
         # FIXME, using dummy(local) pagination, move pagination to backend
