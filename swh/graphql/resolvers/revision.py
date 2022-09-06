@@ -12,6 +12,7 @@ from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection
 from .base_node import BaseSWHNode
+from .directory_entry import BaseDirectoryEntryNode
 from .release import BaseReleaseNode
 from .snapshot_branch import BaseSnapshotBranchNode
 
@@ -59,7 +60,7 @@ class TargetRevisionNode(BaseRevisionNode):
     Node resolver for a revision requested as a target
     """
 
-    obj: Union[BaseSnapshotBranchNode, BaseReleaseNode]
+    obj: Union[BaseSnapshotBranchNode, BaseReleaseNode, BaseDirectoryEntryNode]
 
     def _get_node_data(self):
         # self.obj.target_hash is the requested revision id

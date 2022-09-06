@@ -55,14 +55,14 @@ def test_get_directory_entry(client, directory):
           ...on Directory {
             swhid
           }
+          ...on Revision {
+            swhid
+          }
         }
       }
     }
     """
     for entry in storage.directory_ls(directory.id, recursive=True):
-        if entry["type"] == "rev":
-            # FIXME, Revision is not supported as a directory entry target yet
-            continue
         query = query_str % (
             directory.swhid(),
             entry["name"].decode(),
@@ -79,6 +79,10 @@ def test_get_directory_entry(client, directory):
         elif entry["type"] == "dir" and entry["target"] is not None:
             swhid = CoreSWHID(
                 object_type=ObjectType.DIRECTORY, object_id=entry["target"]
+            )
+        elif entry["type"] == "rev" and entry["target"] is not None:
+            swhid = CoreSWHID(
+                object_type=ObjectType.REVISION, object_id=entry["target"]
             )
         assert data["directoryEntry"] == {
             "name": {"text": entry["name"].decode()},

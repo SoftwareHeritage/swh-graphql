@@ -698,7 +698,7 @@ type DirectoryEntryEdge {
 """
 Possible directory entry target objects
 """
-union DirectoryEntryTarget = Directory | Content
+union DirectoryEntryTarget = Directory | Content | Revision
 
 """
 Possible directory entry types
