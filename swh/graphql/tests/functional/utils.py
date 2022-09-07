@@ -23,6 +23,7 @@ def assert_missing_object(client, query_str: str, obj_type: str) -> None:
     assert data[obj_type] is None
     assert len(errors) == 1
     assert errors[0]["message"] == "Object error: Requested object is not available"
+    assert errors[0]["path"] == [obj_type]
 
 
 def get_error_response(client, query_str: str, error_code: int = 400) -> Dict:

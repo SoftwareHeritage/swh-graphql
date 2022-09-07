@@ -75,7 +75,7 @@ def test_get_release(client, release):
 def test_get_release_with_invalid_swhid(client):
     query_str = """
     {
-      content(swhid: "swh:1:rel:invalid") {
+      release(swhid: "swh:1:rel:invalid") {
         swhid
       }
     }
@@ -163,3 +163,15 @@ def test_get_release_target_unknown(client):
         },
         "targetType": "revision",
     }
+
+
+def test_get_release_with_unknown_swhid(client):
+    unknown_sha1 = "1" * 40
+    query_str = """
+    {
+      release(swhid: "swh:1:rel:%s") {
+        swhid
+      }
+    }
+    """
+    utils.assert_missing_object(client, query_str % unknown_sha1, "release")

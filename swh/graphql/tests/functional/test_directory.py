@@ -72,3 +72,15 @@ def test_get_target_directory(client):
     assert data["release"]["target"] == {
         "swhid": "swh:1:dir:0505050505050505050505050505050505050505"
     }
+
+
+def test_get_directory_with_unknown_swhid(client):
+    unknown_sha1 = "1" * 40
+    query_str = """
+    {
+      directory(swhid: "swh:1:dir:%s") {
+        swhid
+      }
+    }
+    """
+    utils.assert_missing_object(client, query_str % unknown_sha1, "directory")

@@ -158,3 +158,15 @@ def test_get_revision_parents(client):
             {"swhid": str(get_revisions()[1].swhid())},
         ]
     }
+
+
+def test_get_revision_with_unknown_swhid(client):
+    unknown_sha1 = "1" * 40
+    query_str = """
+    {
+      revision(swhid: "swh:1:rev:%s") {
+        swhid
+      }
+    }
+    """
+    utils.assert_missing_object(client, query_str % unknown_sha1, "revision")

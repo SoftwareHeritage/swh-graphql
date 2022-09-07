@@ -15,7 +15,7 @@ class BaseReleaseNode(BaseSWHNode):
     """
 
     def _get_release_by_id(self, release_id):
-        return (self.archive.get_releases([release_id]) or None)[0]
+        return self.archive.get_releases([release_id])[0]
 
     @property
     def target_hash(self):

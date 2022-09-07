@@ -161,3 +161,15 @@ def test_get_content_as_target(client):
         "length": 4,
         "swhid": "swh:1:cnt:86bc6b377e9d25f9d26777a4a28d08e63e7c5779",
     }
+
+
+def test_get_content_with_unknown_swhid(client):
+    unknown_sha1 = "1" * 40
+    query_str = """
+    {
+      content(swhid: "swh:1:cnt:%s") {
+        swhid
+      }
+    }
+    """
+    utils.assert_missing_object(client, query_str % unknown_sha1, "content")

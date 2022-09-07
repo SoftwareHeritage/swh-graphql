@@ -22,7 +22,7 @@ class BaseRevisionNode(BaseSWHNode):
     """
 
     def _get_revision_by_id(self, revision_id):
-        return (self.archive.get_revisions([revision_id]) or None)[0]
+        return self.archive.get_revisions([revision_id])[0]
 
     @property
     def parent_swhids(self):  # for ParentRevisionConnection resolver
