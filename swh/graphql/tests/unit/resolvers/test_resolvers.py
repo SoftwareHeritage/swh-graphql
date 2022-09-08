@@ -27,7 +27,6 @@ class TestResolvers:
                 resolvers.visit_status.LatestVisitStatusNode,
             ),
             (rs.snapshot_resolver, resolvers.snapshot.SnapshotNode),
-            (rs.visit_snapshot_resolver, resolvers.snapshot.VisitSnapshotNode),
             (rs.revision_resolver, resolvers.revision.RevisionNode),
             (rs.revision_directory_resolver, resolvers.directory.RevisionDirectoryNode),
             (rs.release_resolver, resolvers.release.ReleaseNode),

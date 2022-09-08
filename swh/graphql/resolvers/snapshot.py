@@ -57,7 +57,6 @@ class VisitSnapshotNode(BaseSnapshotNode):
     obj: BaseVisitStatusNode
 
     def _get_node_data(self):
-        # self.obj.snapshotSWHID is the requested snapshot SWHID
         snapshot_id = self.obj.snapshotSWHID.object_id
         return self._get_snapshot_by_id(snapshot_id)
 

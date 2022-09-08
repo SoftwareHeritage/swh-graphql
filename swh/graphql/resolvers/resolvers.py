@@ -16,6 +16,8 @@ High level resolvers
 #   Every scalar is expected to resolve this way
 # - As an attribute/item in the object/dict returned by a backend (eg: Origin.url)
 
+from typing import Optional
+
 from ariadne import ObjectType, UnionType
 from graphql.type import GraphQLResolveInfo
 
@@ -91,8 +93,10 @@ def snapshot_resolver(
 
 @visit_status.field("snapshot")
 def visit_snapshot_resolver(
-    obj, info: GraphQLResolveInfo, **kw
-) -> rs.snapshot.VisitSnapshotNode:
+    obj: rs.visit_status.BaseVisitStatusNode, info: GraphQLResolveInfo, **kw
+) -> Optional[rs.snapshot.VisitSnapshotNode]:
+    if obj.snapshotSWHID is None:
+        return None
     resolver = get_node_resolver("visit-snapshot")
     return resolver(obj, info, **kw)
 

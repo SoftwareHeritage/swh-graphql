@@ -22,6 +22,14 @@ def get_origins():
     return swh_model_data.ORIGINS
 
 
+def get_visits():
+    return swh_model_data.ORIGIN_VISITS
+
+
+def get_visit_status():
+    return swh_model_data.ORIGIN_VISIT_STATUSES
+
+
 def get_snapshots():
     return swh_model_data.SNAPSHOTS
 

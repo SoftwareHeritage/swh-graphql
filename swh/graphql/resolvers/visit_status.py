@@ -18,6 +18,8 @@ class BaseVisitStatusNode(BaseNode):
 
     @property
     def snapshotSWHID(self):  # To support the schema naming convention
+        if self._node.snapshot is None:
+            return None
         return CoreSWHID(object_type=ObjectType.SNAPSHOT, object_id=self._node.snapshot)
 
 
