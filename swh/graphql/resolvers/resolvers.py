@@ -16,6 +16,7 @@ High level resolvers
 #   Every scalar is expected to resolve this way
 # - As an attribute/item in the object/dict returned by a backend (eg: Origin.url)
 
+import datetime
 from typing import Optional, Union
 
 from ariadne import ObjectType, UnionType
@@ -23,6 +24,7 @@ from graphql.type import GraphQLResolveInfo
 
 from swh.graphql import resolvers as rs
 from swh.graphql.utils import utils
+from swh.model.model import TimestampWithTimezone
 
 from .resolver_factory import ConnectionObjectFactory, NodeObjectFactory
 
@@ -38,6 +40,7 @@ directory: ObjectType = ObjectType("Directory")
 directory_entry: ObjectType = ObjectType("DirectoryEntry")
 search_result: ObjectType = ObjectType("SearchResult")
 binary_string: ObjectType = ObjectType("BinaryString")
+date: ObjectType = ObjectType("Date")
 
 branch_target: UnionType = UnionType("BranchTarget")
 release_target: UnionType = UnionType("ReleaseTarget")
@@ -312,3 +315,22 @@ def binary_string_text_resolver(obj: bytes, *args, **kw) -> str:
 @binary_string.field("base64")
 def binary_string_base64_resolver(obj: bytes, *args, **kw) -> str:
     return utils.get_b64_string(obj)
+
+
+# Date object resolver
+
+
+@date.field("date")
+def date_date_resolver(
+    obj: TimestampWithTimezone, *args: GraphQLResolveInfo, **kw
+) -> datetime.datetime:
+    # This will be serialised as a DateTime Scalar
+    return obj.to_datetime()
+
+
+@date.field("offset")
+def date_offset_resolver(
+    obj: TimestampWithTimezone, *args: GraphQLResolveInfo, **kw
+) -> bytes:
+    # This will be serialised as a Binary string
+    return obj.offset_bytes

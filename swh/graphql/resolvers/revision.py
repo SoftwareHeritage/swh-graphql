@@ -38,6 +38,10 @@ class BaseRevisionNode(BaseSWHNode):
         return self._node.directory
 
     @property
+    def committerDate(self):  # To support the schema naming convention
+        return self._node.committer_date
+
+    @property
     def type(self):
         return self._node.type.value
 

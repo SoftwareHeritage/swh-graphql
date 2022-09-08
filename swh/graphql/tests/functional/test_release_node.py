@@ -43,7 +43,13 @@ def test_get_release(client, release):
             text
           }
         }
-        date
+        date {
+          date
+          offset {
+            text
+            base64
+          }
+        }
         targetType
       }
     }
@@ -64,7 +70,15 @@ def test_get_release(client, release):
         }
         if release.author
         else None,
-        "date": release.date.to_datetime().isoformat() if release.date else None,
+        "date": {
+            "date": release.date.to_datetime().isoformat(),
+            "offset": {
+                "text": release.date.offset_bytes.decode(),
+                "base64": base64.b64encode(release.date.offset_bytes).decode("ascii"),
+            },
+        }
+        if release.date
+        else None,
         "targetType": release.target_type.value,
     }
 

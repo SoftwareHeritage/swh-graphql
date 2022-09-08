@@ -112,6 +112,22 @@ def get_revisions_with_parents():
     ]
 
 
+def get_revisions_with_none_date():
+    return [
+        Revision(
+            message=b"hello",
+            date=None,
+            committer=swh_model_data.COMMITTERS[0],
+            author=swh_model_data.COMMITTERS[0],
+            committer_date=swh_model_data.DATES[0],
+            type=RevisionType.GIT,
+            directory=b"\x01" * 20,
+            synthetic=False,
+            parents=(get_revisions()[0].id, get_revisions()[1].id),
+        )
+    ]
+
+
 def get_directories_with_nested_path():
     return [
         Directory(
@@ -158,7 +174,7 @@ def get_visit_with_multiple_status():
 
 GRAPHQL_EXTRA_TEST_OBJECTS = {
     "release": get_releases_with_target(),
-    "revision": get_revisions_with_parents(),
+    "revision": get_revisions_with_parents() + get_revisions_with_none_date(),
     "directory": get_directories_with_nested_path()
     + get_directories_with_special_name_entries(),
     "origin_visit_status": get_visit_with_multiple_status(),

@@ -3,14 +3,14 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from datetime import datetime
+import datetime
+from typing import Optional
 
 from ariadne import ScalarType
 
 from swh.graphql.errors import InvalidInputError
 from swh.graphql.utils import utils
 from swh.model.exceptions import ValidationError
-from swh.model.model import TimestampWithTimezone
 from swh.model.swhids import CoreSWHID
 
 datetime_scalar = ScalarType("DateTime")
@@ -26,13 +26,8 @@ def serialize_id(value) -> str:
 
 
 @datetime_scalar.serializer
-def serialize_datetime(value):
-    # FIXME, handle error and return None
-    if type(value) == TimestampWithTimezone:
-        value = value.to_datetime()
-    if type(value) == datetime:
-        return utils.get_formatted_date(value)
-    return None
+def serialize_datetime(value: Optional[datetime.datetime]) -> Optional[str]:
+    return utils.get_formatted_date(value) if type(value) == datetime.datetime else None
 
 
 @swhid_scalar.value_parser

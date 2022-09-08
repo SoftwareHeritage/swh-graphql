@@ -571,6 +571,21 @@ type RevisionEdge {
 }
 
 """
+Object with Date values
+"""
+type Date {
+  """
+  ISO-8601 encoded date string.
+  """
+  date: DateTime
+
+  """
+  UTC offset
+  """
+  offset: BinaryString
+}
+
+"""
 A revision object
 """
 type Revision implements SWHNode & Node {
@@ -600,9 +615,14 @@ type Revision implements SWHNode & Node {
   committer: Person
 
   """
-  Revision date ISO-8601 encoded
+  Commit date
   """
-  date: DateTime
+  committerDate: Date
+
+  """
+  Revision date
+  """
+  date: Date
 
   """
   Type of the revision, eg: git/hg
@@ -691,9 +711,9 @@ type Release implements SWHNode & Node {
   author: Person
 
   """
-  Release date ISO-8601 encoded
+  Release date
   """
-  date: DateTime
+  date: Date
 
   """
   Type of release target

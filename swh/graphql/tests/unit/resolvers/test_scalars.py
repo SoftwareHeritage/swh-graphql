@@ -16,14 +16,6 @@ def test_serialize_id():
     assert scalars.serialize_id(b"test") == "74657374"
 
 
-def test_serialize_datetime():
-    assert scalars.serialize_datetime("invalid") is None
-    # python datetime
-    date = datetime.datetime(2020, 5, 17)
-    assert scalars.serialize_datetime(date) == date.isoformat()
-    # FIXME, Timestamp with timezone
-
-
 def test_validate_swhid_invalid():
     with pytest.raises(InvalidInputError):
         scalars.validate_swhid("invalid")
@@ -32,3 +24,12 @@ def test_validate_swhid_invalid():
 def test_validate_swhid():
     swhid = scalars.validate_swhid(f"swh:1:rev:{'1' * 40}")
     assert str(swhid) == "swh:1:rev:1111111111111111111111111111111111111111"
+
+
+def test_serialize_datetime_from_datetime():
+    dt = datetime.datetime(2010, 1, 15, 2, 12, 10, 2, datetime.timezone.utc)
+    assert scalars.serialize_datetime(dt) == "2010-01-15T02:12:10.000002+00:00"
+
+
+def test_serialize_datetime_invalid_input():
+    assert scalars.serialize_datetime("test") is None

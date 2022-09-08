@@ -36,6 +36,7 @@ schema = make_executable_schema(
     resolvers.directory_entry_target,
     resolvers.search_result_target,
     resolvers.binary_string,
+    resolvers.date,
     scalars.id_scalar,
     scalars.datetime_scalar,
     scalars.swhid_scalar,

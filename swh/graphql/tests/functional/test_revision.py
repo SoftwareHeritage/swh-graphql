@@ -3,12 +3,18 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+import base64
+
 import pytest
 
 from swh.model.swhids import CoreSWHID
 
 from . import utils
-from ..data import get_revisions, get_revisions_with_parents
+from ..data import (
+    get_revisions,
+    get_revisions_with_none_date,
+    get_revisions_with_parents,
+)
 
 
 @pytest.mark.parametrize("revision", get_revisions())
@@ -42,7 +48,20 @@ def test_get_revision(client, revision):
             text
           }
         }
-        date
+        date {
+          date
+          offset {
+            text
+            base64
+          }
+        }
+        committerDate {
+          date
+          offset {
+            text
+            base64
+          }
+        }
         type
         directory {
           swhid
@@ -51,6 +70,7 @@ def test_get_revision(client, revision):
     }
     """
     data, _ = utils.get_query_response(client, query_str, swhid=str(revision.swhid()))
+
     assert data["revision"] == {
         "swhid": str(revision.swhid()),
         "message": {"text": revision.message.decode()},
@@ -64,7 +84,26 @@ def test_get_revision(client, revision):
             "name": {"text": revision.committer.name.decode()},
             "email": {"text": revision.committer.email.decode()},
         },
-        "date": revision.date.to_datetime().isoformat(),
+        "date": {
+            "date": revision.date.to_datetime().isoformat(),
+            "offset": {
+                "text": revision.date.offset_bytes.decode(),
+                "base64": base64.b64encode(revision.date.offset_bytes).decode("ascii"),
+            },
+        }
+        if revision.date
+        else None,
+        "committerDate": {
+            "date": revision.committer_date.to_datetime().isoformat(),
+            "offset": {
+                "text": revision.committer_date.offset_bytes.decode(),
+                "base64": base64.b64encode(revision.committer_date.offset_bytes).decode(
+                    "ascii"
+                ),
+            },
+        }
+        if revision.committer_date
+        else None,
         "type": revision.type.value,
         "directory": {
             "swhid": str(CoreSWHID(object_id=revision.directory, object_type="dir"))
@@ -175,3 +214,23 @@ def test_get_revision_with_unknown_swhid(client):
         obj_type="revision",
         swhid=f"swh:1:rev:{unknown_sha1}",
     )
+
+
+def test_get_revisions_with_none_date(client):
+    revision_swhid = get_revisions_with_none_date()[0].swhid()
+    query_str = """
+    query getRevision($swhid: SWHID!) {
+      revision(swhid: $swhid) {
+        swhid
+        date {
+          date
+          offset {
+            text
+            base64
+          }
+        }
+      }
+    }
+    """
+    data, _ = utils.get_query_response(client, query_str, swhid=str(revision_swhid))
+    assert data == {"revision": {"swhid": str(revision_swhid), "date": None}}
