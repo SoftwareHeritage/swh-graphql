@@ -8,21 +8,23 @@ from typing import Any, Dict, Optional
 
 from swh.core import config
 from swh.search import get_search as get_swh_search
+from swh.search.interface import SearchInterface
 from swh.storage import get_storage as get_swh_storage
+from swh.storage.interface import StorageInterface
 
-graphql_cfg = None
-storage = None
-search = None
+graphql_cfg: Dict[str, Any] = {}
+storage: Optional[StorageInterface] = None
+search: Optional[SearchInterface] = None
 
 
-def get_storage():
+def get_storage() -> StorageInterface:
     global storage
     if not storage:
         storage = get_swh_storage(**graphql_cfg["storage"])
     return storage
 
 
-def get_search():
+def get_search() -> SearchInterface:
     global search
     if not search:
         search = get_swh_search(**graphql_cfg["search"])
