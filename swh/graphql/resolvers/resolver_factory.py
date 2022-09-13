@@ -52,7 +52,6 @@ def get_node_resolver(resolver_type: str):
         "directory-entry": DirectoryEntryNode,
         "content": ContentNode,
         "content-by-hash": HashContentNode,
-        "dir-entry-dir": TargetDirectoryNode,
         "dir-entry-file": TargetContentNode,
         "dir-entry-dir": TargetDirectoryNode,
         "dir-entry-rev": TargetRevisionNode,

@@ -9,7 +9,7 @@ High level resolvers
 
 # Any schema attribute can be resolved by any of the following ways
 # and in the following priority order
-# - In this module using a decorator (eg: @visitstatus.field("snapshot")
+# - In this module using a decorator (eg: @visit_status.field("snapshot"))
 #   Every object (type) is expected to resolve this way as they can accept arguments
 #   eg: origin.visits takes arguments to paginate
 # - As a property in the Node object (eg: resolvers.visit.BaseVisitNode.id)
