@@ -8,6 +8,8 @@ import binascii
 from dataclasses import dataclass
 from typing import Any, List, Optional, Type, Union
 
+from graphql.type import GraphQLResolveInfo
+
 from swh.graphql.backends.archive import Archive
 from swh.graphql.backends.search import Search
 from swh.graphql.errors import PaginationError
@@ -39,9 +41,10 @@ class BaseConnection(ABC):
     _max_page_size: int = 1000  # maximum page size(max value for the first arg)
 
     def __init__(self, obj, info, paged_data=None, **kwargs):
-        self.obj: Optional[Any] = obj
-        self.info = info
+        self.obj: Optional[BaseNode] = obj
+        self.info: GraphQLResolveInfo = info
         self.kwargs = kwargs
+        # initialize commonly used vars
         self.archive = Archive()
         self.search = Search()
         self._paged_data: PagedResult = paged_data
@@ -109,7 +112,7 @@ class BaseConnection(ABC):
         # FIXME, make this call async (not for v1)
         return None
 
-    def _get_after_arg(self) -> str:
+    def _get_after_arg(self):
         """
         Return the decoded next page token. Override to support a different
         cursor type

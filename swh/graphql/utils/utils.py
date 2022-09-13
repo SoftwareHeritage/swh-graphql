@@ -24,7 +24,7 @@ def get_encoded_cursor(cursor: Optional[str]) -> Optional[str]:
     return get_b64_string(cursor)
 
 
-def get_decoded_cursor(cursor: str) -> str:
+def get_decoded_cursor(cursor: Optional[str]) -> Optional[str]:
     if cursor is None:
         return None
     return base64.b64decode(cursor, validate=True).decode()

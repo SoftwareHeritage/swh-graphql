@@ -3,28 +3,32 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from abc import ABC
 from collections import namedtuple
+from typing import Any, Optional, Union
 
+from graphql.type import GraphQLResolveInfo
+
+from swh.graphql import resolvers as rs
 from swh.graphql.backends.archive import Archive
 from swh.graphql.errors import ObjectNotFoundError
 
 
-class BaseNode(ABC):
+class BaseNode:
     """
     Base resolver for all the nodes
     """
 
-    def __init__(self, obj, info, node_data=None, **kwargs):
-        self.obj = obj
-        self.info = info
+    def __init__(self, obj, info, node_data: Optional[Any] = None, **kwargs):
+        self.obj: Optional[Union[BaseNode, rs.base_connection.BaseConnection]] = obj
+        self.info: GraphQLResolveInfo = info
         self.kwargs = kwargs
+        # initialize commonly used vars
         self.archive = Archive()
-        self._node = self._get_node(node_data)
+        self._node: Optional[Any] = self._get_node(node_data)
         # handle the errors, if any, after _node is set
         self._handle_node_errors()
 
-    def _get_node(self, node_data):
+    def _get_node(self, node_data: Optional[Any]) -> Optional[Any]:
         """
         Get the node object from the given data
         if the data (node_data) is none make a function call
@@ -34,7 +38,7 @@ class BaseNode(ABC):
             node_data = self._get_node_data()
         return self._get_node_from_data(node_data)
 
-    def _get_node_from_data(self, node_data):
+    def _get_node_from_data(self, node_data: Any) -> Optional[Any]:
         """
         Get the object from node_data
         In case of a dict, convert it to an object
@@ -44,7 +48,7 @@ class BaseNode(ABC):
             return namedtuple("NodeObj", node_data.keys())(*node_data.values())
         return node_data
 
-    def _handle_node_errors(self):
+    def _handle_node_errors(self) -> None:
         """
         Handle any error related to node data
 
@@ -54,7 +58,7 @@ class BaseNode(ABC):
         if self._node is None:
             raise ObjectNotFoundError("Requested object is not available")
 
-    def _get_node_data(self):
+    def _get_node_data(self) -> Optional[Any]:
         """
         Override for desired behaviour
         This will be called only when node_data is None
@@ -62,14 +66,14 @@ class BaseNode(ABC):
         # FIXME, make this call async (not for v1)
         return None
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         """
         Any property defined in the sub-class will get precedence over
         the _node attributes
         """
         return getattr(self._node, name)
 
-    def is_type_of(self):
+    def is_type_of(self) -> str:
         return self.__class__.__name__
 
 

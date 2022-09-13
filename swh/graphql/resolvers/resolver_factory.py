@@ -26,7 +26,7 @@ from .visit import LatestVisitNode, OriginVisitConnection, OriginVisitNode
 from .visit_status import LatestVisitStatusNode, VisitStatusConnection
 
 
-def get_node_resolver(resolver_type):
+def get_node_resolver(resolver_type: str):
     # FIXME, replace with a proper factory method
     mapping = {
         "origin": OriginNode,
@@ -68,7 +68,7 @@ def get_node_resolver(resolver_type):
     return mapping[resolver_type]
 
 
-def get_connection_resolver(resolver_type):
+def get_connection_resolver(resolver_type: str):
     # FIXME, replace with a proper factory method
     mapping = {
         "origins": OriginConnection,
