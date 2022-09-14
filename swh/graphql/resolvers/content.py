@@ -8,6 +8,7 @@ from typing import Union
 from .base_node import BaseSWHNode
 from .directory_entry import BaseDirectoryEntryNode
 from .release import BaseReleaseNode
+from .search import SearchResultNode
 from .snapshot_branch import BaseSnapshotBranchNode
 
 
@@ -84,10 +85,14 @@ class HashContentNode(BaseContentNode):
 class TargetContentNode(BaseContentNode):
     """
     Node resolver for a content requested as a target
-    This request could be from directory entry, release or a branch
     """
 
-    obj: Union[BaseDirectoryEntryNode, BaseReleaseNode, BaseSnapshotBranchNode]
+    obj: Union[
+        SearchResultNode,
+        BaseDirectoryEntryNode,
+        BaseReleaseNode,
+        BaseSnapshotBranchNode,
+    ]
 
     def _get_node_data(self):
         return self._get_content_by_hash(checksums={"sha1_git": self.obj.target_hash})

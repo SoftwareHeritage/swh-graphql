@@ -6,6 +6,7 @@
 from typing import Union
 
 from .base_node import BaseSWHNode
+from .search import SearchResultNode
 from .snapshot_branch import BaseSnapshotBranchNode
 
 
@@ -45,7 +46,7 @@ class TargetReleaseNode(BaseReleaseNode):
     Node resolver for a release requested as a target
     """
 
-    obj: Union[BaseSnapshotBranchNode, BaseReleaseNode]
+    obj: Union[BaseSnapshotBranchNode, BaseReleaseNode, SearchResultNode]
 
     def _get_node_data(self):
         # self.obj.target_hash is the requested release id

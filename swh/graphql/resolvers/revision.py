@@ -14,6 +14,7 @@ from .base_connection import BaseConnection
 from .base_node import BaseSWHNode
 from .directory_entry import BaseDirectoryEntryNode
 from .release import BaseReleaseNode
+from .search import SearchResultNode
 from .snapshot_branch import BaseSnapshotBranchNode
 
 
@@ -60,7 +61,12 @@ class TargetRevisionNode(BaseRevisionNode):
     Node resolver for a revision requested as a target
     """
 
-    obj: Union[BaseSnapshotBranchNode, BaseReleaseNode, BaseDirectoryEntryNode]
+    obj: Union[
+        BaseSnapshotBranchNode,
+        BaseReleaseNode,
+        BaseDirectoryEntryNode,
+        SearchResultNode,
+    ]
 
     def _get_node_data(self):
         # self.obj.target_hash is the requested revision id

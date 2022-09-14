@@ -13,6 +13,7 @@ from swh.storage.interface import PagedResult
 from .base_connection import BaseConnection
 from .base_node import BaseSWHNode
 from .origin import OriginNode
+from .search import SearchResultNode
 from .visit_status import BaseVisitStatusNode
 
 
@@ -68,7 +69,7 @@ class TargetSnapshotNode(BaseSnapshotNode):
 
     from .snapshot_branch import BaseSnapshotBranchNode
 
-    obj: Union[BaseVisitStatusNode, BaseSnapshotBranchNode]
+    obj: Union[SearchResultNode, BaseSnapshotBranchNode]
 
     def _get_node_data(self):
         snapshot_id = self.obj.target_hash
