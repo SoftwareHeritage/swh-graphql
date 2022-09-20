@@ -17,7 +17,7 @@ def test_get_directory_entry_missing_path(client):
     path = "missing"
     query_str = """
     {
-      directoryEntry(swhid: "%s", path: "%s") {
+      directoryEntry(directorySwhid: "%s", path: "%s") {
         name {
           text
         }
@@ -43,7 +43,7 @@ def test_get_directory_entry(client, directory):
     storage = server.get_storage()
     query_str = """
     {
-      directoryEntry(swhid: "%s", path: "%s") {
+      directoryEntry(directorySwhid: "%s", path: "%s") {
         name {
           text
         }
