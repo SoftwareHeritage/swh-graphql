@@ -12,6 +12,11 @@ from . import utils
 from ..data import get_directories, get_directories_with_nested_path
 
 
+def get_target_type(target_type):
+    mapping = {"file": "content", "dir": "directory", "rev": "revision"}
+    return mapping.get(target_type)
+
+
 def test_get_directory_entry_missing_path(client):
     directory = get_directories()[0]
     path = "missing"
@@ -87,7 +92,7 @@ def test_get_directory_entry(client, directory):
         assert data["directoryEntry"] == {
             "name": {"text": entry["name"].decode()},
             "target": {"swhid": str(swhid)} if swhid else None,
-            "targetType": entry["type"],
+            "targetType": get_target_type(entry["type"]),
         }
 
 
@@ -112,8 +117,37 @@ def test_get_directory_entry_connection(client, directory):
     directory_entries = data["directory"]["entries"]["nodes"]
     assert len(directory_entries) == len(directory.entries)
     output = [
-        {"name": {"text": de.name.decode()}, "targetType": de.type}
+        {"name": {"text": de.name.decode()}, "targetType": get_target_type(de.type)}
         for de in directory.entries
     ]
     for each_entry in output:
         assert each_entry in directory_entries
+
+
+@pytest.mark.parametrize("directory", get_directories())
+def test_directory_entry_connection_filter_by_name(client, directory):
+    storage = server.get_storage()
+    for dir_entry in storage.directory_ls(directory.id):
+        name_include = dir_entry["name"][:-1].decode()
+        query_str = """
+        {
+          directory(swhid: "%s") {
+            swhid
+            entries(nameInclude: "%s") {
+              nodes {
+                targetType
+                name {
+                  text
+                }
+              }
+            }
+          }
+        }
+        """ % (
+            directory.swhid(),
+            name_include,
+        )
+        data, _ = utils.get_query_response(client, query_str)
+        for entry in data["directory"]["entries"]["nodes"]:
+            assert name_include in entry["name"]["text"]
+            assert entry["targetType"] == get_target_type(dir_entry["type"])

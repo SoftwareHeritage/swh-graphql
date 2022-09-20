@@ -17,7 +17,8 @@ class BaseDirectoryEntryNode(BaseNode):
 
     @property
     def targetType(self):  # To support the schema naming convention
-        return self._node.type
+        mapping = {"file": "content", "dir": "directory", "rev": "revision"}
+        return mapping.get(self._node.type)
 
 
 class DirectoryEntryNode(BaseDirectoryEntryNode):
@@ -51,4 +52,10 @@ class DirectoryEntryConnection(BaseConnection):
         # To remove localpagination, just drop the paginated call
         # STORAGE-TODO
         entries = self.archive.get_directory_entries(self.obj.swhid.object_id).results
+        name_include = self.kwargs.get("nameInclude")
+        if name_include is not None:
+            # STORAGE-TODO, move this filter to swh-storage
+            entries = [
+                x for x in entries if name_include.lower().encode() in x.name.lower()
+            ]
         return utils.paginated(entries, self._get_first_arg(), self._get_after_arg())

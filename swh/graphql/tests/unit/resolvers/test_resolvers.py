@@ -103,14 +103,15 @@ class TestResolvers:
     @pytest.mark.parametrize(
         "target_type, node_cls",
         [
-            ("dir", resolvers.directory.TargetDirectoryNode),
-            ("file", resolvers.content.TargetContentNode),
+            ("directory", resolvers.directory.TargetDirectoryNode),
+            ("content", resolvers.content.TargetContentNode),
+            ("revision", resolvers.revision.TargetRevisionNode),
         ],
     )
     def test_directory_entry_target_resolver(
         self, mocker, dummy_node, target_type, node_cls
     ):
-        obj = mocker.Mock(type=target_type)
+        obj = mocker.Mock(targetType=target_type)
         mock_get = mocker.patch.object(node_cls, "_get_node", return_value=dummy_node)
         node_obj = rs.directory_entry_target_resolver(obj, None)
         assert isinstance(node_obj, node_cls)

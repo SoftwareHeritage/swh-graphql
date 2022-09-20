@@ -192,7 +192,7 @@ def directory_entry_target_resolver(
     """
     directory entry target can be a directory, content or a revision
     """
-    resolver_type = f"dir-entry-{obj.type}"
+    resolver_type = f"dir-entry-{obj.targetType}"
     resolver = get_node_resolver(resolver_type)
     return resolver(obj, info, **kw)
 

@@ -704,9 +704,9 @@ union DirectoryEntryTarget = Directory | Content | Revision
 Possible directory entry types
 """
 enum DirectoryEntryTargetType {
-  dir
-  file
-  rev
+  directory
+  content
+  revision
 }
 
 """
@@ -756,6 +756,11 @@ type Directory implements MerkleNode & Node {
     Returns the page after this cursor
     """
     after: String
+
+    """
+    Filter by entry name
+    """
+    nameInclude: String
   ): DirectoryEntryConnection
 }
 
