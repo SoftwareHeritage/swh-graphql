@@ -53,7 +53,7 @@ class TestResolvers:
                 resolvers.snapshot_branch.SnapshotBranchConnection,
             ),
             (rs.revision_parents_resolver, resolvers.revision.ParentRevisionConnection),
-            # (rs.revision_log_resolver, resolvers.revision.LogRevisionConnection),
+            (rs.revision_log_resolver, resolvers.revision.LogRevisionConnection),
             (
                 rs.directory_entries_resolver,
                 resolvers.directory_entry.DirectoryEntryConnection,
@@ -78,7 +78,7 @@ class TestResolvers:
     def test_snapshot_branch_target_resolver(
         self, mocker, dummy_node, branch_type, node_cls
     ):
-        obj = mocker.Mock(type=branch_type)
+        obj = mocker.Mock(targetType=branch_type)
         mock_get = mocker.patch.object(node_cls, "_get_node", return_value=dummy_node)
         node_obj = rs.snapshot_branch_target_resolver(obj, None)
         assert isinstance(node_obj, node_cls)
@@ -94,7 +94,7 @@ class TestResolvers:
         ],
     )
     def test_release_target_resolver(self, mocker, dummy_node, target_type, node_cls):
-        obj = mocker.Mock(target_type=(mocker.Mock(value=target_type)))
+        obj = mocker.Mock(targetType=target_type)
         mock_get = mocker.patch.object(node_cls, "_get_node", return_value=dummy_node)
         node_obj = rs.release_target_resolver(obj, None)
         assert isinstance(node_obj, node_cls)

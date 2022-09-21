@@ -4,13 +4,13 @@
 # See top-level LICENSE file for more information
 
 from collections import namedtuple
-from typing import Any, Optional, Union
+from typing import Any, ClassVar, Optional, Union
 
 from graphql.type import GraphQLResolveInfo
 
 from swh.graphql import resolvers as rs
 from swh.graphql.backends.archive import Archive
-from swh.graphql.errors import ObjectNotFoundError
+from swh.graphql.errors import NullableObjectError, ObjectNotFoundError
 
 
 class BaseNode:
@@ -18,7 +18,9 @@ class BaseNode:
     Base resolver for all the nodes
     """
 
-    def __init__(self, obj, info, node_data: Optional[Any] = None, **kwargs):
+    _can_be_null: ClassVar[bool] = False
+
+    def __init__(self, obj, info, node_data: Optional[Any] = None, **kwargs) -> None:
         self.obj: Optional[Union[BaseNode, rs.base_connection.BaseConnection]] = obj
         self.info: GraphQLResolveInfo = info
         self.kwargs = kwargs
@@ -55,7 +57,11 @@ class BaseNode:
         raise an error in case the object returned is None
         override for specific behaviour
         """
-        if self._node is None:
+        if self._node is None and self._can_be_null:
+            # fail silently
+            raise NullableObjectError()
+        elif self._node is None:
+            # This will send this error to the client
             raise ObjectNotFoundError("Requested object is not available")
 
     def _get_node_data(self) -> Optional[Any]:

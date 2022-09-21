@@ -87,6 +87,7 @@ class TargetContentNode(BaseContentNode):
     Node resolver for a content requested as a target
     """
 
+    _can_be_null = True
     obj: Union[
         SearchResultNode,
         BaseDirectoryEntryNode,

@@ -5,6 +5,7 @@
 
 from typing import Union
 
+from swh.graphql.errors import NullableObjectError
 from swh.graphql.utils import utils
 from swh.model.model import Snapshot
 from swh.model.swhids import ObjectType
@@ -55,9 +56,12 @@ class VisitSnapshotNode(BaseSnapshotNode):
     Node resolver for a snapshot requested from a visit-status
     """
 
+    _can_be_null = True
     obj: BaseVisitStatusNode
 
     def _get_node_data(self):
+        if self.obj.snapshotSWHID is None:
+            raise NullableObjectError()
         snapshot_id = self.obj.snapshotSWHID.object_id
         return self._get_snapshot_by_id(snapshot_id)
 
@@ -69,6 +73,7 @@ class TargetSnapshotNode(BaseSnapshotNode):
 
     from .snapshot_branch import BaseSnapshotBranchNode
 
+    _can_be_null = True
     obj: Union[SearchResultNode, BaseSnapshotBranchNode]
 
     def _get_node_data(self):

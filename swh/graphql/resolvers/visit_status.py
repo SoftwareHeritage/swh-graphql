@@ -3,7 +3,6 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from swh.graphql.errors import NullableObjectError
 from swh.graphql.utils import utils
 from swh.model.swhids import CoreSWHID, ObjectType
 from swh.storage.interface import PagedResult
@@ -30,6 +29,7 @@ class LatestVisitStatusNode(BaseVisitStatusNode):
     Node resolver for a visit-status requested from a visit
     """
 
+    _can_be_null = True
     obj: BaseVisitNode
 
     def _get_node_data(self):
@@ -40,11 +40,6 @@ class LatestVisitStatusNode(BaseVisitStatusNode):
             allowed_statuses=self.kwargs.get("allowedStatuses"),
             require_snapshot=self.kwargs.get("requireSnapshot"),
         )
-
-    def _handle_node_errors(self) -> None:
-        # This object can be null
-        if self._node is None:
-            raise NullableObjectError("")
 
 
 class VisitStatusConnection(BaseConnection):

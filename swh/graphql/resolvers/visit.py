@@ -43,6 +43,7 @@ class LatestVisitNode(BaseVisitNode):
     Node resolver for the latest visit in an origin
     """
 
+    _can_be_null = True
     obj: OriginNode
 
     def _get_node_data(self):

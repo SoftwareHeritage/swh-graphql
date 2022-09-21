@@ -3,6 +3,12 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+from typing import ClassVar, Dict, Type
+
+from swh.graphql.errors import NullableObjectError
+
+from .base_connection import BaseConnection
+from .base_node import BaseNode
 from .content import ContentNode, HashContentNode, TargetContentNode
 from .directory import DirectoryNode, RevisionDirectoryNode, TargetDirectoryNode
 from .directory_entry import DirectoryEntryConnection, DirectoryEntryNode
@@ -26,9 +32,8 @@ from .visit import LatestVisitNode, OriginVisitConnection, OriginVisitNode
 from .visit_status import LatestVisitStatusNode, VisitStatusConnection
 
 
-def get_node_resolver(resolver_type: str):
-    # FIXME, replace with a proper factory method
-    mapping = {
+class NodeObjectFactory:
+    mapping: ClassVar[Dict[str, Type[BaseNode]]] = {
         "origin": OriginNode,
         "visit": OriginVisitNode,
         "latest-visit": LatestVisitNode,
@@ -62,14 +67,22 @@ def get_node_resolver(resolver_type: str):
         "search-result-directory": TargetDirectoryNode,
         "search-result-content": TargetContentNode,
     }
-    if resolver_type not in mapping:
-        raise AttributeError(f"Invalid node type: {resolver_type}")
-    return mapping[resolver_type]
+
+    @classmethod
+    def create(cls, node_type: str, obj, info, *args, **kw):
+        resolver = cls.mapping.get(node_type)
+        if not resolver:
+            raise AttributeError(f"Invalid node type: {node_type}")
+        try:
+            node_obj = resolver(obj, info, *args, **kw)
+        except NullableObjectError:
+            # Return None instead of the object
+            node_obj = None
+        return node_obj
 
 
-def get_connection_resolver(resolver_type: str):
-    # FIXME, replace with a proper factory method
-    mapping = {
+class ConnectionObjectFactory:
+    mapping: ClassVar[Dict[str, Type[BaseConnection]]] = {
         "origins": OriginConnection,
         "origin-visits": OriginVisitConnection,
         "origin-snapshots": OriginSnapshotConnection,
@@ -81,6 +94,10 @@ def get_connection_resolver(resolver_type: str):
         "resolve-swhid": ResolveSwhidConnection,
         "search": SearchConnection,
     }
-    if resolver_type not in mapping:
-        raise AttributeError(f"Invalid connection type: {resolver_type}")
-    return mapping[resolver_type]
+
+    @classmethod
+    def create(cls, connection_type: str, obj, info, *args, **kw):
+        resolver = cls.mapping.get(connection_type)
+        if not resolver:
+            raise AttributeError(f"Invalid connection type: {connection_type}")
+        return resolver(obj, info, *args, **kw)

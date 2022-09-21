@@ -46,6 +46,7 @@ class TargetReleaseNode(BaseReleaseNode):
     Node resolver for a release requested as a target
     """
 
+    _can_be_null = True
     obj: Union[BaseSnapshotBranchNode, BaseReleaseNode, SearchResultNode]
 
     def _get_node_data(self):

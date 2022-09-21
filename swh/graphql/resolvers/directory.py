@@ -52,6 +52,7 @@ class RevisionDirectoryNode(BaseDirectoryNode):
     Node resolver for a directory requested from a revision
     """
 
+    _can_be_null = True
     obj: BaseRevisionNode
 
     def _get_node_data(self):
@@ -66,6 +67,7 @@ class TargetDirectoryNode(BaseDirectoryNode):
 
     from .directory_entry import BaseDirectoryEntryNode
 
+    _can_be_null = True
     obj: Union[
         BaseSnapshotBranchNode,
         BaseReleaseNode,

@@ -61,6 +61,7 @@ class TargetRevisionNode(BaseRevisionNode):
     Node resolver for a revision requested as a target
     """
 
+    _can_be_null = True
     obj: Union[
         BaseSnapshotBranchNode,
         BaseReleaseNode,
