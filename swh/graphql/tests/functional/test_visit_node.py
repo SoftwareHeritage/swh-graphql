@@ -25,7 +25,7 @@ def test_get_visit(client, storage, origin):
             swhid
           }
         }
-        status {
+        statuses {
           nodes {
             status
           }
@@ -51,7 +51,7 @@ def test_get_visit(client, storage, origin):
                 if statuses[-1].snapshot
                 else None,
             },
-            "status": {"nodes": [{"status": status.status} for status in statuses]},
+            "statuses": {"nodes": [{"status": status.status} for status in statuses]},
         }
 
 
@@ -64,3 +64,101 @@ def test_invalid_get_visit(client):
     }
     """
     assert_missing_object(client, query_str, "visit")
+
+
+def test_get_latest_visit_status_filter_by_status_return_null(client):
+    query_str = """
+    {
+      visit(originUrl: "%s", visitId: %s) {
+        visitId
+        date
+        type
+        latestStatus(allowedStatuses: [full]) {
+          status
+        }
+      }
+    }
+    """ % (
+        get_origins()[0].url,
+        1,
+    )
+    data, err = get_query_response(client, query_str)
+    assert err is None
+    assert data == {
+        "visit": {
+            "date": "2013-05-07T04:20:39.369271+00:00",
+            "latestStatus": None,
+            "type": "git",
+            "visitId": 1,
+        }
+    }
+
+
+def test_get_latest_visit_status_filter_by_type(client):
+    query_str = """
+    {
+      visit(originUrl: "%s", visitId: %s) {
+        visitId
+        date
+        type
+        latestStatus(allowedStatuses: [ongoing]) {
+          status
+          date
+        }
+      }
+    }
+    """ % (
+        get_origins()[0].url,
+        1,
+    )
+    data, err = get_query_response(client, query_str)
+    assert err is None
+    assert data == {
+        "visit": {
+            "date": "2013-05-07T04:20:39.369271+00:00",
+            "latestStatus": {
+                "date": "2013-05-07T04:20:39.432222+00:00",
+                "status": "ongoing",
+            },
+            "type": "git",
+            "visitId": 1,
+        }
+    }
+
+
+def test_get_latest_visit_status_filter_by_snapshot(client):
+    query_str = """
+    {
+      visit(originUrl: "%s", visitId: %s) {
+        visitId
+        date
+        type
+        latestStatus(requireSnapshot: true) {
+          status
+          date
+          snapshot {
+            swhid
+          }
+        }
+      }
+    }
+    """ % (
+        get_origins()[1].url,
+        2,
+    )
+    data, err = get_query_response(client, query_str)
+    assert err is None
+    assert data == {
+        "visit": {
+            "date": "2015-11-27T17:20:39+00:00",
+            "latestStatus": {
+                "date": "2015-11-27T17:22:18+00:00",
+                "snapshot": {
+                    "swhid": "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
+                },
+                "status": "partial",
+            },
+            "type": "hg",
+            "visitId": 2,
+        }
+    }

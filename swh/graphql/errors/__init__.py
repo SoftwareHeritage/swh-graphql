@@ -3,12 +3,18 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from .errors import InvalidInputError, ObjectNotFoundError, PaginationError
+from .errors import (
+    InvalidInputError,
+    NullableObjectError,
+    ObjectNotFoundError,
+    PaginationError,
+)
 from .handlers import format_error
 
 __all__ = [
     "ObjectNotFoundError",
     "PaginationError",
     "InvalidInputError",
+    "NullableObjectError",
     "format_error",
 ]

@@ -16,7 +16,7 @@ def test_get_visit_status(client, visit, visit_status):
     query_str = """
     {
       visit(originUrl: "%s", visitId: %s) {
-        status(first: 3) {
+        statuses(first: 3) {
           nodes {
             status
             date
@@ -33,7 +33,7 @@ def test_get_visit_status(client, visit, visit_status):
         visit.visit,
     )
     data, _ = get_query_response(client, query_str)
-    assert data["visit"]["status"]["nodes"][0] == {
+    assert data["visit"]["statuses"]["nodes"][0] == {
         "date": visit_status.date.isoformat(),
         "snapshot": {"swhid": f"swh:1:snp:{visit_status.snapshot.hex()}"}
         if visit_status.snapshot is not None

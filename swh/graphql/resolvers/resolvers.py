@@ -22,6 +22,7 @@ from ariadne import ObjectType, UnionType
 from graphql.type import GraphQLResolveInfo
 
 from swh.graphql import resolvers as rs
+from swh.graphql.errors import NullableObjectError
 from swh.graphql.utils import utils
 
 from .resolver_factory import get_connection_resolver, get_node_resolver
@@ -76,10 +77,14 @@ def visit_resolver(
 @visit.field("latestStatus")
 def latest_visit_status_resolver(
     obj: rs.visit.BaseVisitNode, info: GraphQLResolveInfo, **kw
-) -> rs.visit_status.LatestVisitStatusNode:
+) -> Optional[rs.visit_status.LatestVisitStatusNode]:
     """ """
     resolver = get_node_resolver("latest-status")
-    return resolver(obj, info, **kw)
+    try:
+        return resolver(obj, info, **kw)
+    except NullableObjectError:
+        # FIXME, make this pattern generic for all the resolvers
+        return None
 
 
 @query.field("snapshot")
@@ -258,7 +263,7 @@ def origin_snapshots_resolver(
     return resolver(obj, info, **kw)
 
 
-@visit.field("status")
+@visit.field("statuses")
 def visitstatus_resolver(
     obj: rs.visit.BaseVisitNode, info: GraphQLResolveInfo, **kw
 ) -> rs.visit_status.VisitStatusConnection:

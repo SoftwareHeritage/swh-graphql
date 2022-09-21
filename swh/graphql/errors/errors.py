@@ -29,3 +29,7 @@ class InvalidInputError(Exception):
 
     def __init__(self, message, errors=None):
         super().__init__(f"{self.msg}: {message}")
+
+
+class NullableObjectError(Exception):
+    pass

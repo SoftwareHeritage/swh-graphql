@@ -196,6 +196,18 @@ type VisitEdge {
 }
 
 """
+Possible visit status states
+"""
+enum VisitStatusState {
+  created
+  ongoing
+  partial
+  full
+  not_found
+  failed
+}
+
+"""
 An origin visit object
 """
 type Visit implements Node {
@@ -222,7 +234,7 @@ type Visit implements Node {
   """
   Connection to all the status objects for the visit
   """
-  status(
+  statuses(
     """
     Returns the first _n_ elements from the list
     """
@@ -237,7 +249,17 @@ type Visit implements Node {
   """
   Latest status object for the Visit
   """
-  latestStatus: VisitStatus
+  latestStatus(
+    """
+    Filter by status state
+    """
+    allowedStatuses: [VisitStatusState]
+
+    """
+    Filter by the availability of a snapshot in the status
+    """
+    requireSnapshot: Boolean
+  ): VisitStatus
 }
 
 """
@@ -287,7 +309,7 @@ type VisitStatus {
   """
   Status string of the visit (either full, partial or ongoing)
   """
-  status: String!
+  status: VisitStatusState!
 
   """
   ISO-8601 encoded date string

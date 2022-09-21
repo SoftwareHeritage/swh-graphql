@@ -59,10 +59,17 @@ class Archive:
         )
 
     def get_latest_visit_status(
-        self, origin_url: str, visit_id: int
+        self,
+        origin_url: str,
+        visit_id: int,
+        allowed_statuses: Optional[List[str]] = None,
+        require_snapshot: bool = False,
     ) -> Optional[OriginVisitStatus]:
         return self.storage.origin_visit_status_get_latest(
-            origin_url=origin_url, visit=visit_id
+            origin_url=origin_url,
+            visit=visit_id,
+            allowed_statuses=allowed_statuses,
+            require_snapshot=require_snapshot,
         )
 
     def get_origin_snapshots(self, origin_url: str) -> List[Sha1Git]:
