@@ -96,6 +96,7 @@ class SnapshotBranchConnection(BaseConnection):
             first=self._get_first_arg(),
             target_types=self.kwargs.get("types"),
             name_include=self._get_name_include_arg(),
+            name_exclude_prefix=self._get_name_exclude_prefix_arg(),
         )
         # endCursor is the last branch name, logic for that
         end_cusrsor = (
@@ -118,6 +119,10 @@ class SnapshotBranchConnection(BaseConnection):
     def _get_name_include_arg(self):
         name_include = self.kwargs.get("nameInclude", None)
         return name_include.encode() if name_include else None
+
+    def _get_name_exclude_prefix_arg(self):
+        name_exclude_prefix = self.kwargs.get("nameExcludePrefix", None)
+        return name_exclude_prefix.encode() if name_exclude_prefix else None
 
     def _get_index_cursor(self, index: int, node: BaseSnapshotBranchNode):
         # Snapshot branch is using a different cursor, hence the override

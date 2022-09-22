@@ -401,9 +401,14 @@ type Snapshot implements MerkleNode & Node {
     types: [BranchTargetType]
 
     """
-    Filter by branch name
+    Return branches whose name contains the given substring
     """
     nameInclude: String
+
+    """
+    Do not return branches whose name contains the given prefix
+    """
+    nameExcludePrefix: String
   ): BranchConnection
 }
 

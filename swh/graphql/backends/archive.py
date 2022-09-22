@@ -82,6 +82,7 @@ class Archive:
         first: int = 50,
         target_types: Optional[List[str]] = None,
         name_include: Optional[bytes] = None,
+        name_exclude_prefix: Optional[bytes] = None,
     ) -> Optional[PartialBranches]:
         return self.storage.snapshot_get_branches(
             snapshot_id=snapshot,
@@ -89,6 +90,7 @@ class Archive:
             branches_count=first,
             target_types=target_types,
             branch_name_include_substring=name_include,
+            branch_name_exclude_prefix=name_exclude_prefix,
         )
 
     def get_revisions(self, revision_ids: List[Sha1Git]) -> List[Optional[Revision]]:

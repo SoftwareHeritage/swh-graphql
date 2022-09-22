@@ -127,6 +127,14 @@ def test_get_name_include_filter(client, name):
         assert name in node["name"]["text"]
 
 
+@pytest.mark.parametrize("name", ["target", "target/dir"])
+def test_get_name_exclude_prefix_filter(client, name):
+    swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
+    data, _ = get_branches(client, swhid, 10, nameExcludePrefix=f'"{name}"')
+    for node in data["snapshot"]["branches"]["nodes"]:
+        assert not node["name"]["text"].startswith(name)
+
+
 @pytest.mark.parametrize("count", [1, 2])
 def test_get_first_arg(client, count):
     swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
