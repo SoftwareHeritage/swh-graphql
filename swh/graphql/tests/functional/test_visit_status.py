@@ -5,7 +5,7 @@
 
 import pytest
 
-from ..data import get_visit_status, get_visits
+from ..data import get_origins, get_visit_status, get_visits
 from .utils import get_query_response
 
 
@@ -40,4 +40,64 @@ def test_get_visit_status(client, visit, visit_status):
         else None,
         "status": visit_status.status,
         "type": visit_status.type,
+    }
+
+
+def test_visit_status_pagination(client):
+    # visit status is using a different cursor, hence separate test
+    query_str = """
+    {
+      visit(originUrl: "%s", visitId: %s) {
+        statuses(first: 1) {
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+          edges {
+            cursor
+            node {
+              status
+            }
+          }
+        }
+      }
+    }
+    """ % (
+        get_origins()[0].url,
+        1,
+    )
+    data, _ = get_query_response(client, query_str)
+    # request again with the endcursor
+    end_cursor = data["visit"]["statuses"]["pageInfo"]["endCursor"]
+    query_str = """
+    {
+      visit(originUrl: "%s", visitId: %s) {
+        statuses(first: 1, after: "%s") {
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+          edges {
+            cursor
+            node {
+              status
+            }
+          }
+        }
+      }
+    }
+    """ % (
+        get_origins()[0].url,
+        1,
+        end_cursor,
+    )
+    data, _ = get_query_response(client, query_str)
+    assert data["visit"]["statuses"] == {
+        "edges": [
+            {
+                "cursor": "MjAxNC0wNS0wN1QwNDoyMDozOS40MzIyMjIrMDA6MDA=",
+                "node": {"status": "ongoing"},
+            }
+        ],
+        "pageInfo": {"endCursor": None, "hasNextPage": False},
     }

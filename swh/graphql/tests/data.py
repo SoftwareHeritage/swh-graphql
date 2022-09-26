@@ -3,15 +3,20 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+import datetime
+
 from swh.model.model import (
     Directory,
     DirectoryEntry,
     ObjectType,
+    OriginVisitStatus,
     Release,
     Revision,
     RevisionType,
 )
 from swh.model.tests import swh_model_data
+
+UTC = datetime.timezone.utc
 
 
 def populate_search_data(search):
@@ -122,10 +127,25 @@ def get_directories_with_nested_path():
     ]
 
 
+def get_visit_with_multiple_status():
+    return [
+        OriginVisitStatus(
+            origin=get_origins()[0].url,
+            date=datetime.datetime(2014, 5, 7, 4, 20, 39, 432222, tzinfo=UTC),
+            visit=1,
+            type="git",
+            status="ongoing",
+            snapshot=None,
+            metadata=None,
+        )
+    ]
+
+
 GRAPHQL_EXTRA_TEST_OBJECTS = {
     "release": get_releases_with_target(),
     "revision": get_revisions_with_parents(),
     "directory": get_directories_with_nested_path(),
+    "origin_visit_status": get_visit_with_multiple_status(),
 }
 
 

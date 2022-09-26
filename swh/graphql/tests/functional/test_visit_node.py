@@ -117,7 +117,7 @@ def test_get_latest_visit_status_filter_by_type(client):
         "visit": {
             "date": "2013-05-07T04:20:39.369271+00:00",
             "latestStatus": {
-                "date": "2013-05-07T04:20:39.432222+00:00",
+                "date": "2014-05-07T04:20:39.432222+00:00",
                 "status": "ongoing",
             },
             "type": "git",

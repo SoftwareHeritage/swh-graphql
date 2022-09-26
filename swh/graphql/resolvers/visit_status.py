@@ -4,6 +4,7 @@
 # See top-level LICENSE file for more information
 
 from swh.graphql.errors import NullableObjectError
+from swh.graphql.utils import utils
 from swh.model.swhids import CoreSWHID, ObjectType
 from swh.storage.interface import PagedResult
 
@@ -62,3 +63,7 @@ class VisitStatusConnection(BaseConnection):
             after=self._get_after_arg(),
             first=self._get_first_arg(),
         )
+
+    def _get_index_cursor(self, index: int, node: BaseVisitStatusNode):
+        # Visit status is using a different cursor, hence the override
+        return utils.get_encoded_cursor(utils.get_formatted_date(node.date))
