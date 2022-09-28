@@ -48,7 +48,12 @@ class LatestVisitNode(BaseVisitNode):
 
     def _get_node_data(self):
         # self.obj.url is the origin URL
-        return self.archive.get_origin_latest_visit(self.obj.url)
+        return self.archive.get_origin_latest_visit(
+            origin_url=self.obj.url,
+            visit_type=self.kwargs.get("visitType"),
+            allowed_statuses=self.kwargs.get("allowedStatuses"),
+            require_snapshot=self.kwargs.get("requireSnapshot"),
+        )
 
 
 class OriginVisitConnection(BaseConnection):

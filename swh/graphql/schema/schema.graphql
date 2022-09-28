@@ -137,7 +137,22 @@ type Origin implements Node {
   """
   Latest visit object for the origin
   """
-  latestVisit: Visit
+  latestVisit(
+    """
+    Return the latest visit with the given visit type
+    """
+    visitType: String
+
+    """
+    Return the latest visit with any of the given statuses
+    """
+    allowedStatuses: [VisitStatusState]
+
+    """
+    If True, the latest visit with a snapshot will be returned
+    """
+    requireSnapshot: Boolean
+  ): Visit
 
   """
   Connection to all the snapshots for the origin

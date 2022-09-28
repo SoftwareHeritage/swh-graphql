@@ -44,8 +44,19 @@ class Archive:
     def get_origin_visit(self, origin_url: str, visit_id: int) -> Optional[OriginVisit]:
         return self.storage.origin_visit_get_by(origin=origin_url, visit=visit_id)
 
-    def get_origin_latest_visit(self, origin_url: str) -> Optional[OriginVisit]:
-        return self.storage.origin_visit_get_latest(origin=origin_url)
+    def get_origin_latest_visit(
+        self,
+        origin_url: str,
+        visit_type: Optional[str] = None,
+        allowed_statuses: Optional[List[str]] = None,
+        require_snapshot: bool = False,
+    ) -> Optional[OriginVisit]:
+        return self.storage.origin_visit_get_latest(
+            origin=origin_url,
+            type=visit_type,
+            allowed_statuses=allowed_statuses,
+            require_snapshot=require_snapshot,
+        )
 
     def get_visit_status(
         self,

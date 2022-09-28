@@ -57,3 +57,55 @@ def test_get(client, storage, origin):
     assert data_origin["latestVisit"]["visitId"] == visits_and_statuses[-1].visit.visit
     snapshots = storage.origin_snapshot_get_all(origin.url)
     assert len(data_origin["snapshots"]["nodes"]) == len(snapshots)
+
+
+def test_latest_visit_type_filter(client):
+    query_str = """
+    {
+      origin(url: "%s") {
+        latestVisit(visitType: "%s") {
+          visitId
+        }
+      }
+    }
+    """
+    data, _ = get_query_response(client, query_str % (get_origins()[0].url, "git"))
+    assert data["origin"] == {"latestVisit": {"visitId": 3}}
+
+    data, _ = get_query_response(client, query_str % (get_origins()[0].url, "hg"))
+    assert data["origin"] == {"latestVisit": None}
+
+
+def test_latest_visit_require_snapshot_filter(client):
+    query_str = """
+    {
+      origin(url: "%s") {
+        latestVisit(requireSnapshot: %s) {
+          visitId
+        }
+      }
+    }
+    """
+    data, _ = get_query_response(client, query_str % (get_origins()[1].url, "true"))
+    assert data["origin"] == {"latestVisit": {"visitId": 2}}
+
+
+def test_latest_visit_allowed_statuses_filter(client):
+    query_str = """
+    {
+      origin(url: "%s") {
+        latestVisit(allowedStatuses: [partial]) {
+          visitId
+          statuses {
+            nodes {
+              status
+            }
+          }
+        }
+      }
+    }
+    """
+    data, _ = get_query_response(client, query_str % (get_origins()[1].url))
+    assert data["origin"] == {
+        "latestVisit": {"statuses": {"nodes": [{"status": "partial"}]}, "visitId": 2}
+    }
