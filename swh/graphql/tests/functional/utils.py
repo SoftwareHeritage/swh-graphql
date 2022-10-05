@@ -6,32 +6,27 @@
 import json
 from typing import Dict, Tuple
 
-
-def get_response(client, query_str: str):
-    return client.post("/", json={"query": query_str})
+from ariadne import gql
 
 
-def get_query_response(client, query_str: str) -> Tuple[Dict, Dict]:
-    response = get_response(client, query_str)
+def get_query_response(client, query_str: str, **kwargs) -> Tuple[Dict, Dict]:
+    query = gql(query_str)
+    response = client.post("/", json={"query": query, "variables": kwargs})
     assert response.status_code == 200, response.data
     result = json.loads(response.data)
     return result.get("data"), result.get("errors")
 
 
-def assert_missing_object(client, query_str: str, obj_type: str) -> None:
-    data, errors = get_query_response(client, query_str)
+def assert_missing_object(client, query_str: str, obj_type: str, **kwargs) -> None:
+    data, errors = get_query_response(client, query_str, **kwargs)
     assert data[obj_type] is None
     assert len(errors) == 1
     assert errors[0]["message"] == "Object error: Requested object is not available"
     assert errors[0]["path"] == [obj_type]
 
 
-def get_error_response(client, query_str: str, error_code: int = 400) -> Dict:
-    response = get_response(client, query_str)
-    assert response.status_code == error_code
-    return json.loads(response.data)["errors"]
-
-
-def get_query_params_from_args(**args) -> str:
-    # build a GraphQL query parameters string from arguments
-    return ",".join([f"{key}: {val}" for (key, val) in args.items()])
+def get_error_response(client, query_str: str, **kwargs) -> Dict:
+    data, errors = get_query_response(client, query_str, **kwargs)
+    assert data is None
+    assert len(errors) > 0
+    return errors

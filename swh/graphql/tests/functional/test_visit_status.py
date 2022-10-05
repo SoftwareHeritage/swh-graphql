@@ -5,8 +5,8 @@
 
 import pytest
 
+from . import utils
 from ..data import get_origins, get_visit_status, get_visits
-from .utils import get_query_response
 
 
 @pytest.mark.parametrize(
@@ -14,8 +14,8 @@ from .utils import get_query_response
 )
 def test_get_visit_status(client, visit, visit_status):
     query_str = """
-    {
-      visit(originUrl: "%s", visitId: %s) {
+    query getVisit($origin: String!, $visitId: Int!) {
+      visit(originUrl: $origin, visitId: $visitId) {
         statuses(first: 3) {
           nodes {
             status
@@ -28,11 +28,10 @@ def test_get_visit_status(client, visit, visit_status):
         }
       }
     }
-    """ % (
-        visit.origin,
-        visit.visit,
+    """
+    data, _ = utils.get_query_response(
+        client, query_str, origin=visit.origin, visitId=visit.visit
     )
-    data, _ = get_query_response(client, query_str)
     assert data["visit"]["statuses"]["nodes"][0] == {
         "date": visit_status.date.isoformat(),
         "snapshot": {"swhid": f"swh:1:snp:{visit_status.snapshot.hex()}"}
@@ -46,8 +45,8 @@ def test_get_visit_status(client, visit, visit_status):
 def test_visit_status_pagination(client):
     # visit status is using a different cursor, hence separate test
     query_str = """
-    {
-      visit(originUrl: "%s", visitId: %s) {
+    query getVisit($origin: String!, $visitId: Int!) {
+      visit(originUrl: $origin, visitId: $visitId) {
         statuses(first: 1) {
           pageInfo {
             hasNextPage
@@ -62,17 +61,16 @@ def test_visit_status_pagination(client):
         }
       }
     }
-    """ % (
-        get_origins()[0].url,
-        1,
+    """
+    data, _ = utils.get_query_response(
+        client, query_str, origin=get_origins()[0].url, visitId=1
     )
-    data, _ = get_query_response(client, query_str)
     # request again with the endcursor
     end_cursor = data["visit"]["statuses"]["pageInfo"]["endCursor"]
     query_str = """
-    {
-      visit(originUrl: "%s", visitId: %s) {
-        statuses(first: 1, after: "%s") {
+    query getVisit($origin: String!, $visitId: Int!, $after: String) {
+      visit(originUrl: $origin, visitId: $visitId) {
+        statuses(first: 1, after: $after) {
           pageInfo {
             hasNextPage
             endCursor
@@ -86,12 +84,14 @@ def test_visit_status_pagination(client):
         }
       }
     }
-    """ % (
-        get_origins()[0].url,
-        1,
-        end_cursor,
+    """
+    data, _ = utils.get_query_response(
+        client,
+        query_str,
+        origin=get_origins()[0].url,
+        visitId=1,
+        after=end_cursor,
     )
-    data, _ = get_query_response(client, query_str)
     assert data["visit"]["statuses"] == {
         "edges": [
             {

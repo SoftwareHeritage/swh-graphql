@@ -8,13 +8,13 @@ import pytest
 from . import utils
 
 
-def get_branches(client, swhid: str, first: int, **args) -> tuple:
-    args["first"] = first
-    params = utils.get_query_params_from_args(**args)
+def get_branches(client, **kwargs) -> tuple:
     query_str = """
-    {
-      snapshot(swhid: "%s") {
-        branches(%s) {
+    query getSnapshot($swhid: SWHID!, $first: Int!, $after: String, $types: [BranchTargetType],
+    $nameInclude: String, $excludePrefix: String) {
+      snapshot(swhid: $swhid) {
+        branches(first: $first, after: $after, types: $types, nameInclude: $nameInclude,
+        nameExcludePrefix: $excludePrefix ) {
           pageInfo {
             endCursor
           }
@@ -53,16 +53,13 @@ def get_branches(client, swhid: str, first: int, **args) -> tuple:
         }
       }
     }
-    """ % (
-        swhid,
-        params,
-    )
-    return utils.get_query_response(client, query_str)
+    """
+    return utils.get_query_response(client, query_str, **kwargs)
 
 
 def test_get_data(client):
     swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
-    data, errors = get_branches(client, swhid, 10, types="[revision]")
+    data, errors = get_branches(client, swhid=swhid, first=10, types=["revision"])
     assert len(data["snapshot"]["branches"]["nodes"]) == 1
     # filter 'type' will return a single revision object and is used to assert data
     node = data["snapshot"]["branches"]["nodes"][0]
@@ -78,7 +75,7 @@ def test_get_data(client):
 
 def test_get_branches_with_alias(client):
     swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
-    data, _ = get_branches(client, swhid, 10, types="[alias]")
+    data, _ = get_branches(client, swhid=swhid, first=10, types=["alias"])
     node = data["snapshot"]["branches"]["nodes"][0]
     assert node == {
         "name": {"text": "target/alias"},
@@ -99,7 +96,7 @@ def test_get_branches_with_alias(client):
 )
 def test_get_type_filter(client, filter_type, count, target_type, swhid_pattern):
     swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
-    data, _ = get_branches(client, swhid, 10, types=f"[{filter_type}]")
+    data, _ = get_branches(client, swhid=swhid, first=10, types=[filter_type])
     assert len(data["snapshot"]["branches"]["nodes"]) == count
     for node in data["snapshot"]["branches"]["nodes"]:
         assert node["target"]["__typename"] == target_type
@@ -109,20 +106,20 @@ def test_get_type_filter(client, filter_type, count, target_type, swhid_pattern)
 @pytest.mark.parametrize(
     "filter_types, count",
     [
-        ("revision, release", 2),
-        ("revision, snapshot, release", 3),
+        (["revision", "release"], 2),
+        (["revision", "snapshot", "release"], 3),
     ],
 )
 def test_get_type_filter_multiple(client, filter_types, count):
     swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
-    data, _ = get_branches(client, swhid, 10, types=f"[{filter_types}]")
+    data, _ = get_branches(client, swhid=swhid, first=10, types=filter_types)
     assert len(data["snapshot"]["branches"]["nodes"]) == count
 
 
 @pytest.mark.parametrize("name", ["rel", "rev", "non-exist"])
 def test_get_name_include_filter(client, name):
     swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
-    data, _ = get_branches(client, swhid, 10, nameInclude=f'"{name}"')
+    data, _ = get_branches(client, swhid=swhid, first=10, nameInclude=name)
     for node in data["snapshot"]["branches"]["nodes"]:
         assert name in node["name"]["text"]
 
@@ -130,7 +127,7 @@ def test_get_name_include_filter(client, name):
 @pytest.mark.parametrize("name", ["target", "target/dir"])
 def test_get_name_exclude_prefix_filter(client, name):
     swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
-    data, _ = get_branches(client, swhid, 10, nameExcludePrefix=f'"{name}"')
+    data, _ = get_branches(client, swhid=swhid, first=10, excludePrefix=name)
     for node in data["snapshot"]["branches"]["nodes"]:
         assert not node["name"]["text"].startswith(name)
 
@@ -138,16 +135,16 @@ def test_get_name_exclude_prefix_filter(client, name):
 @pytest.mark.parametrize("count", [1, 2])
 def test_get_first_arg(client, count):
     swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
-    data, _ = get_branches(client, swhid, first=count)
+    data, _ = get_branches(client, swhid=swhid, first=count)
     assert len(data["snapshot"]["branches"]["nodes"]) == count
 
 
 def test_get_after_arg(client):
     swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
-    first_data, _ = get_branches(client, swhid, first=1)
+    first_data, _ = get_branches(client, swhid=swhid, first=1)
     end_cursor = first_data["snapshot"]["branches"]["pageInfo"]["endCursor"]
     node_name = first_data["snapshot"]["branches"]["nodes"][0]["name"]["text"]
-    second_data, _ = get_branches(client, swhid, first=3, after=f'"{end_cursor}"')
+    second_data, _ = get_branches(client, swhid=swhid, first=3, after=end_cursor)
     branches = second_data["snapshot"]["branches"]
     assert len(branches["nodes"]) == 3
     assert branches["edges"][0]["cursor"] == end_cursor

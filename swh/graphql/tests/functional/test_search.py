@@ -8,8 +8,8 @@ from . import utils
 
 def test_search_origins(client):
     query_str = """
-    {
-      search(query: "fox", first: 1) {
+    query doSearch($query: String!, $first: Int!) {
+      search(query: $query, first: $first) {
         nodes {
           targetType
           target {
@@ -28,7 +28,7 @@ def test_search_origins(client):
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str)
+    data, _ = utils.get_query_response(client, query_str, query="fox", first=1)
     assert len(data["search"]["nodes"]) == 1
     assert data == {
         "search": {
@@ -48,8 +48,8 @@ def test_search_origins(client):
 
 def test_search_missing_url(client):
     query_str = """
-    {
-      search(query: "missing-fox", first: 1) {
+    query doSearch($query: String!, $first: Int!) {
+      search(query: $query, first: $first) {
         nodes {
           targetType
         }
@@ -60,5 +60,5 @@ def test_search_missing_url(client):
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str)
+    data, _ = utils.get_query_response(client, query_str, query="missing-fox", first=1)
     assert len(data["search"]["nodes"]) == 0

@@ -5,27 +5,26 @@
 
 import pytest
 
+from . import utils
 from ..data import get_origins
-from .utils import assert_missing_object, get_query_response
 
 
 def test_invalid_get(client):
     query_str = """
-    {
+    query getOrigin {
       origin(url: "http://example.com/non-existing") {
         url
       }
     }
     """
-    assert_missing_object(client, query_str, "origin")
+    utils.assert_missing_object(client, query_str, "origin")
 
 
 @pytest.mark.parametrize("origin", get_origins())
 def test_get(client, storage, origin):
-    query_str = (
-        """
-    {
-      origin(url: "%s") {
+    query_str = """
+    query getOrigin($url: String!) {
+      origin(url: $url) {
         url
         id
         visits(first: 10) {
@@ -44,10 +43,8 @@ def test_get(client, storage, origin):
       }
     }
     """
-        % origin.url
-    )
 
-    response, _ = get_query_response(client, query_str)
+    response, _ = utils.get_query_response(client, query_str, url=origin.url)
     data_origin = response["origin"]
     storage_origin = storage.origin_get([origin.url])[0]
     visits_and_statuses = storage.origin_visit_get_with_statuses(origin.url).results
@@ -61,40 +58,49 @@ def test_get(client, storage, origin):
 
 def test_latest_visit_type_filter(client):
     query_str = """
-    {
-      origin(url: "%s") {
-        latestVisit(visitType: "%s") {
+    query getOrigin($url: String!, $visitType: String!) {
+      origin(url: $url) {
+        latestVisit(visitType: $visitType) {
           visitId
         }
       }
     }
     """
-    data, _ = get_query_response(client, query_str % (get_origins()[0].url, "git"))
+    data, _ = utils.get_query_response(
+        client, query_str, url=get_origins()[0].url, visitType="git"
+    )
     assert data["origin"] == {"latestVisit": {"visitId": 3}}
 
-    data, _ = get_query_response(client, query_str % (get_origins()[0].url, "hg"))
+    data, _ = utils.get_query_response(
+        client, query_str, url=get_origins()[0].url, visitType="hg"
+    )
     assert data["origin"] == {"latestVisit": None}
 
 
 def test_latest_visit_require_snapshot_filter(client):
     query_str = """
-    {
-      origin(url: "%s") {
-        latestVisit(requireSnapshot: %s) {
+    query getOrigin($url: String!, $requireSnapshot: Boolean!) {
+      origin(url: $url) {
+        latestVisit(requireSnapshot: $requireSnapshot) {
           visitId
         }
       }
     }
     """
-    data, _ = get_query_response(client, query_str % (get_origins()[1].url, "true"))
+    data, _ = utils.get_query_response(
+        client,
+        query_str,
+        url=get_origins()[1].url,
+        requireSnapshot=True,
+    )
     assert data["origin"] == {"latestVisit": {"visitId": 2}}
 
 
 def test_latest_visit_allowed_statuses_filter(client):
     query_str = """
-    {
-      origin(url: "%s") {
-        latestVisit(allowedStatuses: [partial]) {
+    query getOrigin($url: String!, $allowedStatuses: [VisitStatusState!]!) {
+      origin(url: $url) {
+        latestVisit(allowedStatuses: $allowedStatuses) {
           visitId
           statuses {
             nodes {
@@ -105,7 +111,12 @@ def test_latest_visit_allowed_statuses_filter(client):
       }
     }
     """
-    data, _ = get_query_response(client, query_str % (get_origins()[1].url))
+    data, _ = utils.get_query_response(
+        client,
+        query_str,
+        url=get_origins()[1].url,
+        allowedStatuses=["partial"],
+    )
     assert data["origin"] == {
         "latestVisit": {"statuses": {"nodes": [{"status": "partial"}]}, "visitId": 2}
     }

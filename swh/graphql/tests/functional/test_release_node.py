@@ -21,10 +21,9 @@ from ..data import (
 
 @pytest.mark.parametrize("release", get_releases())
 def test_get_release(client, release):
-    query_str = (
-        """
-    {
-      release(swhid: "%s") {
+    query_str = """
+    query getRelease($swhid: SWHID!) {
+      release(swhid: $swhid) {
         swhid
         name {
           text
@@ -49,9 +48,7 @@ def test_get_release(client, release):
       }
     }
     """
-        % release.swhid()
-    )
-    data, _ = utils.get_query_response(client, query_str)
+    data, _ = utils.get_query_response(client, query_str, swhid=str(release.swhid()))
 
     assert data["release"] == {
         "swhid": str(release.swhid()),
@@ -74,22 +71,23 @@ def test_get_release(client, release):
 
 def test_get_release_with_invalid_swhid(client):
     query_str = """
-    {
-      release(swhid: "swh:1:rel:invalid") {
+    query getRelease($swhid: SWHID!) {
+      release(swhid: $swhid) {
         swhid
       }
     }
     """
-    errors = utils.get_error_response(client, query_str)
+    errors = utils.get_error_response(client, query_str, swhid="swh:1:rel:invalid")
     # API will throw an error in case of an invalid SWHID
     assert len(errors) == 1
+    assert "Expected type 'SWHID'. Input error: Invalid SWHID" in errors[0]["message"]
 
 
 @pytest.mark.parametrize("release_with_target", get_releases_with_target())
 def test_get_release_targets(client, release_with_target):
     query_str = """
-    {
-      release(swhid: "%s") {
+    query getRelease($swhid: SWHID!) {
+      release(swhid: $swhid) {
         targetType
         target {
           ...on Revision {
@@ -108,7 +106,9 @@ def test_get_release_targets(client, release_with_target):
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str % release_with_target.swhid())
+    data, _ = utils.get_query_response(
+        client, query_str, swhid=str(release_with_target.swhid())
+    )
 
     if release_with_target.target_type == ObjectType.REVISION:
         target_swhid = get_revisions()[0].swhid()
@@ -132,8 +132,8 @@ def test_get_release_target_unknown(client):
     # ie: both swhid and message will be available in the response
     swhid = get_releases_with_target()[0].swhid()
     query_str = """
-    {
-      release(swhid: "%s") {
+    query getRelease($swhid: SWHID!) {
+      release(swhid: $swhid) {
         targetType
         target {
           ...on Revision {
@@ -155,7 +155,7 @@ def test_get_release_target_unknown(client):
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str % swhid)
+    data, _ = utils.get_query_response(client, query_str, swhid=str(swhid))
     assert data["release"] == {
         "target": {
             "message": {"text": "hello"},
@@ -168,10 +168,15 @@ def test_get_release_target_unknown(client):
 def test_get_release_with_unknown_swhid(client):
     unknown_sha1 = "1" * 40
     query_str = """
-    {
-      release(swhid: "swh:1:rel:%s") {
+    query getRelease($swhid: SWHID!) {
+      release(swhid: $swhid) {
         swhid
       }
     }
     """
-    utils.assert_missing_object(client, query_str % unknown_sha1, "release")
+    utils.assert_missing_object(
+        client,
+        query_str,
+        obj_type="release",
+        swhid=f"swh:1:rel:{unknown_sha1}",
+    )

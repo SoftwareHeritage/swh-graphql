@@ -5,15 +5,15 @@
 
 import pytest
 
+from . import utils
 from ..data import get_origins
-from .utils import assert_missing_object, get_query_response
 
 
 @pytest.mark.parametrize("origin", get_origins())
 def test_get_visit(client, storage, origin):
     query_str = """
-    {
-      visit(originUrl: "%s", visitId: %s) {
+    query getVisit($origin: String!, $visitId: Int!) {
+      visit(originUrl: $origin, visitId: $visitId) {
         visitId
         date
         type
@@ -38,7 +38,9 @@ def test_get_visit(client, storage, origin):
     for vws in visits_and_statuses:
         visit = vws.visit
         statuses = vws.statuses
-        data, _ = get_query_response(client, query_str % (origin.url, visit.visit))
+        data, _ = utils.get_query_response(
+            client, query_str, origin=origin.url, visitId=visit.visit
+        )
         assert data["visit"] == {
             "visitId": visit.visit,
             "type": visit.type,
@@ -63,13 +65,13 @@ def test_invalid_get_visit(client):
       }
     }
     """
-    assert_missing_object(client, query_str, "visit")
+    utils.assert_missing_object(client, query_str, "visit")
 
 
 def test_get_latest_visit_status_filter_by_status_return_null(client):
     query_str = """
-    {
-      visit(originUrl: "%s", visitId: %s) {
+    query getVisit($origin: String!, $visitId: Int!) {
+      visit(originUrl: $origin, visitId: $visitId) {
         visitId
         date
         type
@@ -78,11 +80,10 @@ def test_get_latest_visit_status_filter_by_status_return_null(client):
         }
       }
     }
-    """ % (
-        get_origins()[0].url,
-        1,
+    """
+    data, err = utils.get_query_response(
+        client, query_str, origin=get_origins()[0].url, visitId=1
     )
-    data, err = get_query_response(client, query_str)
     assert err is None
     assert data == {
         "visit": {
@@ -96,8 +97,8 @@ def test_get_latest_visit_status_filter_by_status_return_null(client):
 
 def test_get_latest_visit_status_filter_by_type(client):
     query_str = """
-    {
-      visit(originUrl: "%s", visitId: %s) {
+    query getVisit($origin: String!, $visitId: Int!) {
+      visit(originUrl: $origin, visitId: $visitId) {
         visitId
         date
         type
@@ -107,11 +108,10 @@ def test_get_latest_visit_status_filter_by_type(client):
         }
       }
     }
-    """ % (
-        get_origins()[0].url,
-        1,
+    """
+    data, err = utils.get_query_response(
+        client, query_str, origin=get_origins()[0].url, visitId=1
     )
-    data, err = get_query_response(client, query_str)
     assert err is None
     assert data == {
         "visit": {
@@ -128,8 +128,8 @@ def test_get_latest_visit_status_filter_by_type(client):
 
 def test_get_latest_visit_status_filter_by_snapshot(client):
     query_str = """
-    {
-      visit(originUrl: "%s", visitId: %s) {
+    query getVisit($origin: String!, $visitId: Int!) {
+      visit(originUrl: $origin, visitId: $visitId) {
         visitId
         date
         type
@@ -142,11 +142,10 @@ def test_get_latest_visit_status_filter_by_snapshot(client):
         }
       }
     }
-    """ % (
-        get_origins()[1].url,
-        2,
+    """
+    data, err = utils.get_query_response(
+        client, query_str, origin=get_origins()[1].url, visitId=2
     )
-    data, err = get_query_response(client, query_str)
     assert err is None
     assert data == {
         "visit": {

@@ -21,8 +21,8 @@ def test_get_directory_entry_missing_path(client):
     directory = get_directories()[0]
     path = "missing"
     query_str = """
-    {
-      directoryEntry(directorySwhid: "%s", path: "%s") {
+    query getDirEntry($swhid: SWHID!, $path: String!) {
+      directoryEntry(directorySwhid: $swhid, path: $path) {
         name {
           text
         }
@@ -34,11 +34,14 @@ def test_get_directory_entry_missing_path(client):
         }
       }
     }
-    """ % (
-        directory.swhid(),
-        path,
+    """
+    utils.assert_missing_object(
+        client,
+        query_str,
+        "directoryEntry",
+        swhid=str(directory.swhid()),
+        path=path,
     )
-    utils.assert_missing_object(client, query_str, "directoryEntry")
 
 
 @pytest.mark.parametrize(
@@ -47,8 +50,8 @@ def test_get_directory_entry_missing_path(client):
 def test_get_directory_entry(client, directory):
     storage = server.get_storage()
     query_str = """
-    {
-      directoryEntry(directorySwhid: "%s", path: "%s") {
+    query getDirEntry($swhid: SWHID!, $path: String!) {
+      directoryEntry(directorySwhid: $swhid, path: $path) {
         name {
           text
         }
@@ -68,13 +71,11 @@ def test_get_directory_entry(client, directory):
     }
     """
     for entry in storage.directory_ls(directory.id, recursive=True):
-        query = query_str % (
-            directory.swhid(),
-            entry["name"].decode(),
-        )
         data, _ = utils.get_query_response(
             client,
-            query,
+            query_str,
+            swhid=str(directory.swhid()),
+            path=entry["name"].decode(),
         )
         swhid = None
         if entry["type"] == "file" and entry["sha1_git"] is not None:
@@ -99,8 +100,8 @@ def test_get_directory_entry(client, directory):
 @pytest.mark.parametrize("directory", get_directories())
 def test_get_directory_entry_connection(client, directory):
     query_str = """
-    {
-      directory(swhid: "%s") {
+    query getDirectory($swhid: SWHID!) {
+      directory(swhid: $swhid) {
         swhid
         entries {
           nodes {
@@ -113,7 +114,7 @@ def test_get_directory_entry_connection(client, directory):
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str % directory.swhid())
+    data, _ = utils.get_query_response(client, query_str, swhid=str(directory.swhid()))
     directory_entries = data["directory"]["entries"]["nodes"]
     assert len(directory_entries) == len(directory.entries)
     output = [
@@ -130,10 +131,10 @@ def test_directory_entry_connection_filter_by_name(client, directory):
     for dir_entry in storage.directory_ls(directory.id):
         name_include = dir_entry["name"][:-1].decode()
         query_str = """
-        {
-          directory(swhid: "%s") {
+        query getDirectory($swhid: SWHID!, $nameInclude: String) {
+          directory(swhid: $swhid) {
             swhid
-            entries(nameInclude: "%s") {
+            entries(nameInclude: $nameInclude) {
               nodes {
                 targetType
                 name {
@@ -143,11 +144,13 @@ def test_directory_entry_connection_filter_by_name(client, directory):
             }
           }
         }
-        """ % (
-            directory.swhid(),
-            name_include,
+        """
+        data, _ = utils.get_query_response(
+            client,
+            query_str,
+            swhid=str(directory.swhid()),
+            nameInclude=name_include,
         )
-        data, _ = utils.get_query_response(client, query_str)
         for entry in data["directory"]["entries"]["nodes"]:
             assert name_include in entry["name"]["text"]
             assert entry["targetType"] == get_target_type(dir_entry["type"])

@@ -17,15 +17,15 @@ from ..data import (
 
 def test_invalid_swhid(client):
     query_str = """
-    {
-      resolveSwhid(swhid: "swh:1:dir:dae0d245988b472abd30a4f968b919d0019b6c7") {
+    query resolve($swhid: SWHID!) {
+      resolveSwhid(swhid: $swhid) {
         nodes {
           targetType
         }
       }
     }
     """
-    errors = utils.get_error_response(client, query_str)
+    errors = utils.get_error_response(client, query_str, swhid="swh:1:dir:invalid")
     # API will throw an error in case of an invalid SWHID
     assert len(errors) == 1
     assert "Input error: Invalid SWHID" in errors[0]["message"]
@@ -43,15 +43,15 @@ def test_invalid_swhid(client):
 )
 def test_missing_swhid(client, swhid):
     query_str = """
-    {
-      resolveSwhid(swhid: "%s") {
+    query resolve($swhid: SWHID!) {
+      resolveSwhid(swhid: $swhid) {
         nodes {
           targetType
         }
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str % swhid)
+    data, _ = utils.get_query_response(client, query_str, swhid=swhid)
     # API will return an empty list in case of a valid, non existing SWHID
     assert data == {"resolveSwhid": {"nodes": []}}
 
@@ -59,8 +59,8 @@ def test_missing_swhid(client, swhid):
 @pytest.mark.parametrize("snapshot", get_snapshots())
 def test_snapshot_swhid_resolve(client, snapshot):
     query_str = """
-    {
-      resolveSwhid(swhid: "%s") {
+    query resolve($swhid: SWHID!) {
+      resolveSwhid(swhid: $swhid) {
         nodes {
           targetType
           target {
@@ -73,7 +73,7 @@ def test_snapshot_swhid_resolve(client, snapshot):
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str % snapshot.swhid())
+    data, _ = utils.get_query_response(client, query_str, swhid=str(snapshot.swhid()))
     assert data == {
         "resolveSwhid": {
             "nodes": [
@@ -92,8 +92,8 @@ def test_snapshot_swhid_resolve(client, snapshot):
 @pytest.mark.parametrize("revision", get_revisions())
 def test_revision_swhid_resolve(client, revision):
     query_str = """
-    {
-      resolveSwhid(swhid: "%s") {
+    query resolve($swhid: SWHID!) {
+      resolveSwhid(swhid: $swhid) {
         nodes {
           targetType
           target {
@@ -106,7 +106,7 @@ def test_revision_swhid_resolve(client, revision):
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str % revision.swhid())
+    data, _ = utils.get_query_response(client, query_str, swhid=str(revision.swhid()))
     assert data == {
         "resolveSwhid": {
             "nodes": [
@@ -125,8 +125,8 @@ def test_revision_swhid_resolve(client, revision):
 @pytest.mark.parametrize("release", get_releases())
 def test_release_swhid_resolve(client, release):
     query_str = """
-    {
-      resolveSwhid(swhid: "%s") {
+    query resolve($swhid: SWHID!) {
+      resolveSwhid(swhid: $swhid) {
         nodes {
           targetType
           target {
@@ -139,7 +139,7 @@ def test_release_swhid_resolve(client, release):
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str % release.swhid())
+    data, _ = utils.get_query_response(client, query_str, swhid=str(release.swhid()))
     assert data == {
         "resolveSwhid": {
             "nodes": [
@@ -158,8 +158,8 @@ def test_release_swhid_resolve(client, release):
 @pytest.mark.parametrize("directory", get_directories())
 def test_directory_swhid_resolve(client, directory):
     query_str = """
-    {
-      resolveSwhid(swhid: "%s") {
+    query resolve($swhid: SWHID!) {
+      resolveSwhid(swhid: $swhid) {
         nodes {
           targetType
           target {
@@ -172,7 +172,7 @@ def test_directory_swhid_resolve(client, directory):
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str % directory.swhid())
+    data, _ = utils.get_query_response(client, query_str, swhid=str(directory.swhid()))
     assert data == {
         "resolveSwhid": {
             "nodes": [
@@ -191,8 +191,8 @@ def test_directory_swhid_resolve(client, directory):
 @pytest.mark.parametrize("content", get_contents())
 def test_content_swhid_resolve(client, content):
     query_str = """
-    {
-      resolveSwhid(swhid: "%s") {
+    query resolve($swhid: SWHID!) {
+      resolveSwhid(swhid: $swhid) {
         nodes {
           targetType
           target {
@@ -205,7 +205,7 @@ def test_content_swhid_resolve(client, content):
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str % content.swhid())
+    data, _ = utils.get_query_response(client, query_str, swhid=str(content.swhid()))
     assert data == {
         "resolveSwhid": {
             "nodes": [
