@@ -7,5 +7,3 @@ search:
   url: http://webapp.internal.staging.swh.network:5010
 
 debug: no
-
-server-type: asgi

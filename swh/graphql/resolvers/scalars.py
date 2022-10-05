@@ -21,10 +21,10 @@ content_hash_scalar = ScalarType("ContentHash")
 
 
 @id_scalar.serializer
-def serialize_id(value):
-    if type(value) is bytes:
-        return value.hex()
-    return value
+def serialize_id(value) -> str:
+    if type(value) is str:
+        value = value.encode()
+    return value.hex()
 
 
 @datetime_scalar.serializer

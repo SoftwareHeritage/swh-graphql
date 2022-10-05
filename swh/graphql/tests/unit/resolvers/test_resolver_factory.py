@@ -15,4 +15,4 @@ class TestFactory:
 
     def test_get_connection_resolver_invalid_type(self):
         with pytest.raises(AttributeError):
-            resolver_factory.get_connection_resolver("invalid", None, None)
+            resolver_factory.ConnectionObjectFactory().create("invalid", None, None)

@@ -15,6 +15,7 @@ def test_get_content_with_swhid(client, content):
     query getContent($swhid: SWHID!) {
       content(swhid: $swhid) {
         swhid
+        id
         checksum {
           blake2s256
           sha1
@@ -42,6 +43,7 @@ def test_get_content_with_swhid(client, content):
     archive_url = "https://archive.softwareheritage.org/api/1/"
     response = {
         "swhid": str(content.swhid()),
+        "id": content.sha1_git.hex(),
         "checksum": {
             "blake2s256": content.blake2s256.hex(),
             "sha1": content.sha1.hex(),

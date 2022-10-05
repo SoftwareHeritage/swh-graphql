@@ -7,5 +7,3 @@ search:
   url: http://moma.internal.softwareheritage.org:5010
 
 debug: yes
-
-server-type: asgi

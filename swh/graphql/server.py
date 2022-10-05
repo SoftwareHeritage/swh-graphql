@@ -64,6 +64,7 @@ def make_app_from_configfile():
     SWH_CONFIG_FILENAME environment variable defines the
     configuration path to load.
     """
+    from ariadne.asgi import GraphQL
     from starlette.middleware.cors import CORSMiddleware
 
     from .app import schema
@@ -75,14 +76,10 @@ def make_app_from_configfile():
         config_path = os.environ.get("SWH_CONFIG_FILENAME")
         graphql_cfg = load_and_check_config(config_path)
 
-    server_type = graphql_cfg.get("server-type")
-    if server_type == "asgi":
-        from ariadne.asgi import GraphQL
-
-        application = CORSMiddleware(
-            GraphQL(schema, debug=graphql_cfg["debug"], error_formatter=format_error),
-            # FIXME, restrict origins after deploying the JS client
-            allow_origins=["*"],
-            allow_methods=("GET", "POST", "OPTIONS"),
-        )
+    application = CORSMiddleware(
+        GraphQL(schema, debug=graphql_cfg["debug"], error_formatter=format_error),
+        # FIXME, restrict origins after deploying the JS client
+        allow_origins=["*"],
+        allow_methods=("GET", "POST", "OPTIONS"),
+    )
     return application

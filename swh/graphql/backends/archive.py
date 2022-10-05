@@ -15,7 +15,6 @@ from swh.model.model import (
     OriginVisitStatus,
     Release,
     Revision,
-    Sha1,
     Sha1Git,
 )
 from swh.model.swhids import ObjectType
@@ -143,5 +142,5 @@ class Archive:
     def get_contents(self, checksums: Dict[str, Any]) -> List[Content]:
         return self.storage.content_find(content=checksums)
 
-    def get_content_data(self, content_sha1: Sha1) -> Optional[bytes]:
-        return self.storage.content_get_data(content=content_sha1)
+    # def get_content_data(self, content_sha1: Sha1) -> Optional[bytes]:
+    #     return self.storage.content_get_data(content=content_sha1)
