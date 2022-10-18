@@ -9,7 +9,11 @@ from swh.graphql import server
 from swh.model.swhids import CoreSWHID, ObjectType
 
 from . import utils
-from ..data import get_directories, get_directories_with_nested_path
+from ..data import (
+    get_directories,
+    get_directories_with_nested_path,
+    get_directories_with_special_name_entries,
+)
 
 
 def get_target_type(target_type):
@@ -154,3 +158,31 @@ def test_directory_entry_connection_filter_by_name(client, directory):
         for entry in data["directory"]["entries"]["nodes"]:
             assert name_include in entry["name"]["text"]
             assert entry["targetType"] == get_target_type(dir_entry["type"])
+
+
+def test_directory_entry_connection_filter_by_name_special_chars(client):
+    directory = get_directories_with_special_name_entries()[0]
+    query_str = """
+    query getDirectory($swhid: SWHID!, $nameInclude: String) {
+      directory(swhid: $swhid) {
+        entries(nameInclude: $nameInclude) {
+          nodes {
+            targetType
+            name {
+              text
+            }
+          }
+        }
+      }
+    }
+    """
+    data, _ = utils.get_query_response(
+        client,
+        query_str,
+        swhid=str(directory.swhid()),
+        nameInclude="ssSSé",
+    )
+    assert data["directory"]["entries"]["nodes"][0] == {
+        "name": {"text": "ßßétEÉt"},
+        "targetType": "content",
+    }

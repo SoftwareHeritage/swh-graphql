@@ -127,6 +127,21 @@ def get_directories_with_nested_path():
     ]
 
 
+def get_directories_with_special_name_entries():
+    return [
+        Directory(
+            entries=(
+                DirectoryEntry(
+                    name="ßßétEÉt".encode(),
+                    perms=0o644,
+                    type="file",
+                    target=get_contents()[0].sha1_git,
+                ),
+            )
+        )
+    ]
+
+
 def get_visit_with_multiple_status():
     return [
         OriginVisitStatus(
@@ -144,7 +159,8 @@ def get_visit_with_multiple_status():
 GRAPHQL_EXTRA_TEST_OBJECTS = {
     "release": get_releases_with_target(),
     "revision": get_revisions_with_parents(),
-    "directory": get_directories_with_nested_path(),
+    "directory": get_directories_with_nested_path()
+    + get_directories_with_special_name_entries(),
     "origin_visit_status": get_visit_with_multiple_status(),
 }
 

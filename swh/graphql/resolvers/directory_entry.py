@@ -56,6 +56,8 @@ class DirectoryEntryConnection(BaseConnection):
         if name_include is not None:
             # STORAGE-TODO, move this filter to swh-storage
             entries = [
-                x for x in entries if name_include.lower().encode() in x.name.lower()
+                x
+                for x in entries
+                if name_include.casefold() in x.name.decode().casefold()
             ]
         return utils.paginated(entries, self._get_first_arg(), self._get_after_arg())
