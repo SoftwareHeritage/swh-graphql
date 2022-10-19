@@ -50,20 +50,19 @@ type PageInfo {
 }
 
 """
-Binary strings; different encodings
+Binary string with multiple encodings
 """
 type BinaryString {
   """
   Utf-8 encoded value, any non Unicode character will be replaced
   """
-  text: String
+  text: String!
 
   """
   base64 encoded value
   """
-  base64: String
+  base64: String!
 }
-
 
 """
 Connection to origins
@@ -132,7 +131,7 @@ type Origin implements Node {
     Returns the page after this cursor
     """
     after: String
-  ): VisitConnection!
+  ): VisitConnection
 
   """
   Latest visit object for the origin
@@ -584,10 +583,12 @@ type Revision implements MerkleNode & Node {
   message: BinaryString
 
   """
+  Revision author
   """
   author: Person
 
   """
+  Revision committer
   """
   committer: Person
 
@@ -678,6 +679,7 @@ type Release implements MerkleNode & Node {
   message: BinaryString
 
   """
+  Release author
   """
   author: Person
 
@@ -1101,7 +1103,7 @@ type Query {
     SWHID to look for
     """
     swhid: SWHID!
-  ): SearchResultConnection!
+  ): SearchResultConnection
 
   """
   Search in SWH
@@ -1121,5 +1123,5 @@ type Query {
     Returns the page after the cursor
     """
     after: String
-  ): SearchResultConnection!
+  ): SearchResultConnection
 }
