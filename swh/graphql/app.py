@@ -12,7 +12,7 @@ from ariadne import gql, load_schema_from_path, make_executable_schema
 from .resolvers import resolvers, scalars
 
 type_defs = gql(
-    # pkg_resources.resource_string("swh.graphql", "schem/schema.graphql").decode()
+    # pkg_resources.resource_string("swh.graphql", "schema/schema.graphql").decode()
     load_schema_from_path(
         os.path.join(Path(__file__).parent.resolve(), "schema", "schema.graphql")
     )
