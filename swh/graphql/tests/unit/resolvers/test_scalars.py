@@ -38,7 +38,7 @@ def test_validate_swhid():
 def test_validate_content_hash_invalid_value(content_hash):
     with pytest.raises(InvalidInputError) as e:
         scalars.validate_content_hash(content_hash)
-    assert "Invalid content checksum" in str(e.value)
+    assert "Invalid content hash" in str(e.value)
 
 
 def test_validate_content_hash_invalid_hash_algo():

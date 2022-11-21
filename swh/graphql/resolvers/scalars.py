@@ -57,7 +57,7 @@ def validate_content_hash(value):
         hash_type, hash_string = value.split(":")
         hash_value = hashutil.hash_to_bytes(hash_string)
     except ValueError as e:
-        raise InvalidInputError("Invalid content checksum", e)
+        raise InvalidInputError("Invalid content hash", e)
     if hash_type not in hashutil.ALGORITHMS:
         raise InvalidInputError("Invalid hash algorithm")
     return hash_type, hash_value

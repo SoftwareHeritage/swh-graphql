@@ -809,9 +809,9 @@ type Directory implements SWHNode & Node {
 }
 
 """
-An object with different content checksums
+An object with different content hashes
 """
-type ContentChecksum {
+type ContentHashes {
   blake2s256: String
   sha1: String
   sha1_git: String
@@ -869,9 +869,9 @@ type Content implements SWHNode & Node {
   swhid: SWHID!
 
   """
-  Checksums for the content
+  Hashes for the content
   """
-  checksum: ContentChecksum
+  hashes: ContentHashes
 
   """
   Length of the content in bytes
@@ -1088,11 +1088,11 @@ type Query {
   Get the content by one or more hashes
   Use multiple hashes for an accurate result
   """
-  contentByHash(
+  contentByHashes(
     """
     List of hashType:hashValue strings
     """
-    checksums: [ContentHash]!
+    hashes: [ContentHash]!
   ): Content
 
   """

@@ -17,13 +17,13 @@ class BaseContentNode(BaseSWHNode):
     Base resolver for all the content nodes
     """
 
-    def _get_content_by_hash(self, checksums: dict):
-        content = self.archive.get_contents(checksums)
+    def _get_content_by_hashes(self, hashes: dict):
+        content = self.archive.get_contents(hashes)
         # in case of a conflict, return the first element
         return content[0] if content else None
 
     @property
-    def checksum(self):
+    def hashes(self):
         # FIXME, use a Node instead
         return {k: v.hex() for (k, v) in self._node.hashes().items()}
 
@@ -68,18 +68,18 @@ class ContentNode(BaseContentNode):
     """
 
     def _get_node_data(self):
-        checksums = {"sha1_git": self.kwargs.get("swhid").object_id}
-        return self._get_content_by_hash(checksums)
+        hashes = {"sha1_git": self.kwargs.get("swhid").object_id}
+        return self._get_content_by_hashes(hashes)
 
 
 class HashContentNode(BaseContentNode):
     """
-    Node resolver for a content requested with one or more checksums
+    Node resolver for a content requested with one or more hashes
     """
 
     def _get_node_data(self):
-        checksums = dict(self.kwargs.get("checksums"))
-        return self._get_content_by_hash(checksums)
+        hashes = dict(self.kwargs.get("hashes"))
+        return self._get_content_by_hashes(hashes)
 
 
 class TargetContentNode(BaseContentNode):
@@ -96,4 +96,4 @@ class TargetContentNode(BaseContentNode):
     ]
 
     def _get_node_data(self):
-        return self._get_content_by_hash(checksums={"sha1_git": self.obj.target_hash})
+        return self._get_content_by_hashes(hashes={"sha1_git": self.obj.target_hash})

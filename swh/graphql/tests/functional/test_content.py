@@ -16,7 +16,7 @@ def test_get_content_with_swhid(client, content):
       content(swhid: $swhid) {
         swhid
         id
-        checksum {
+        hashes {
           blake2s256
           sha1
           sha1_git
@@ -44,7 +44,7 @@ def test_get_content_with_swhid(client, content):
     response = {
         "swhid": str(content.swhid()),
         "id": content.sha1_git.hex(),
-        "checksum": {
+        "hashes": {
             "blake2s256": content.blake2s256.hex(),
             "sha1": content.sha1.hex(),
             "sha1_git": content.sha1_git.hex(),
@@ -65,8 +65,8 @@ def test_get_content_with_swhid(client, content):
 @pytest.mark.parametrize("content", get_contents())
 def test_get_content_with_hash(client, content):
     query_str = """
-    query getContent($checksums: [ContentHash]!) {
-      contentByHash(checksums: $checksums) {
+    query getContent($hashes: [ContentHash]!) {
+      contentByHashes(hashes: $hashes) {
         swhid
       }
     }
@@ -74,14 +74,14 @@ def test_get_content_with_hash(client, content):
     data, _ = utils.get_query_response(
         client,
         query_str,
-        checksums=[
+        hashes=[
             f"blake2s256:{content.blake2s256.hex()}",
             f"sha1:{content.sha1.hex()}",
             f"sha1_git:{content.sha1_git.hex()}",
             f"sha256:{content.sha256.hex()}",
         ],
     )
-    assert data["contentByHash"] == {"swhid": str(content.swhid())}
+    assert data["contentByHashes"] == {"swhid": str(content.swhid())}
 
 
 def test_get_content_with_invalid_swhid(client):
@@ -101,8 +101,8 @@ def test_get_content_with_invalid_swhid(client):
 def test_get_content_with_invalid_hashes(client):
     content = get_contents()[0]
     query_str = """
-    query getContent($checksums: [ContentHash]!) {
-      contentByHash(checksums: $checksums) {
+    query getContent($hashes: [ContentHash]!) {
+      contentByHashes(hashes: $hashes) {
         swhid
       }
     }
@@ -110,7 +110,7 @@ def test_get_content_with_invalid_hashes(client):
     errors = utils.get_error_response(
         client,
         query_str,
-        checksums=[
+        hashes=[
             "invalid",  # Only one hash is invalid
             f"sha1:{content.sha1.hex()}",
             f"sha1_git:{content.sha1_git.hex()}",
@@ -119,20 +119,20 @@ def test_get_content_with_invalid_hashes(client):
     )
     # API will throw an error in case of an invalid content hash
     assert len(errors) == 1
-    assert "Input error: Invalid content checksum" in errors[0]["message"]
+    assert "Input error: Invalid content hash" in errors[0]["message"]
 
 
 def test_get_content_with_invalid_hash_algorithm(client):
     content = get_contents()[0]
     query_str = """
-    query getContent($checksums: [ContentHash]!) {
-      contentByHash(checksums: $checksums) {
+    query getContent($hashes: [ContentHash]!) {
+      contentByHashes(hashes: $hashes) {
         swhid
       }
     }
     """
     data, errors = utils.get_query_response(
-        client, query_str, checksums=[f"test:{content.sha1.hex()}"]
+        client, query_str, hashes=[f"test:{content.sha1.hex()}"]
     )
     assert data is None
     assert len(errors) == 1

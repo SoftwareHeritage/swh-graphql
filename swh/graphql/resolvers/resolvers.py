@@ -195,7 +195,7 @@ def search_result_target_resolver(
     return NodeObjectFactory.create(f"search-result-{obj.targetType}", obj, info, **kw)
 
 
-@query.field("contentByHash")
+@query.field("contentByHashes")
 def content_by_hash_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
 ) -> rs.content.ContentNode:

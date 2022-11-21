@@ -139,8 +139,8 @@ class Archive:
         }
         return not list(mapping[object_type]([object_id]))
 
-    def get_contents(self, checksums: Dict[str, Any]) -> List[Content]:
-        return self.storage.content_find(content=checksums)
+    def get_contents(self, hashes: Dict[str, Any]) -> List[Content]:
+        return self.storage.content_find(content=hashes)
 
     # def get_content_data(self, content_sha1: Sha1) -> Optional[bytes]:
     #     return self.storage.content_get_data(content=content_sha1)
