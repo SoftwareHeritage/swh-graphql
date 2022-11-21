@@ -18,7 +18,7 @@ from ..data import (
 def test_invalid_swhid(client):
     query_str = """
     query resolve($swhid: SWHID!) {
-      resolveSwhid(swhid: $swhid) {
+      resolveSWHID(swhid: $swhid) {
         nodes {
           targetType
         }
@@ -44,7 +44,7 @@ def test_invalid_swhid(client):
 def test_missing_swhid(client, swhid):
     query_str = """
     query resolve($swhid: SWHID!) {
-      resolveSwhid(swhid: $swhid) {
+      resolveSWHID(swhid: $swhid) {
         nodes {
           targetType
         }
@@ -53,14 +53,14 @@ def test_missing_swhid(client, swhid):
     """
     data, _ = utils.get_query_response(client, query_str, swhid=swhid)
     # API will return an empty list in case of a valid, non existing SWHID
-    assert data == {"resolveSwhid": {"nodes": []}}
+    assert data == {"resolveSWHID": {"nodes": []}}
 
 
 @pytest.mark.parametrize("snapshot", get_snapshots())
 def test_snapshot_swhid_resolve(client, snapshot):
     query_str = """
     query resolve($swhid: SWHID!) {
-      resolveSwhid(swhid: $swhid) {
+      resolveSWHID(swhid: $swhid) {
         nodes {
           targetType
           target {
@@ -75,7 +75,7 @@ def test_snapshot_swhid_resolve(client, snapshot):
     """
     data, _ = utils.get_query_response(client, query_str, swhid=str(snapshot.swhid()))
     assert data == {
-        "resolveSwhid": {
+        "resolveSWHID": {
             "nodes": [
                 {
                     "target": {
@@ -93,7 +93,7 @@ def test_snapshot_swhid_resolve(client, snapshot):
 def test_revision_swhid_resolve(client, revision):
     query_str = """
     query resolve($swhid: SWHID!) {
-      resolveSwhid(swhid: $swhid) {
+      resolveSWHID(swhid: $swhid) {
         nodes {
           targetType
           target {
@@ -108,7 +108,7 @@ def test_revision_swhid_resolve(client, revision):
     """
     data, _ = utils.get_query_response(client, query_str, swhid=str(revision.swhid()))
     assert data == {
-        "resolveSwhid": {
+        "resolveSWHID": {
             "nodes": [
                 {
                     "target": {
@@ -126,7 +126,7 @@ def test_revision_swhid_resolve(client, revision):
 def test_release_swhid_resolve(client, release):
     query_str = """
     query resolve($swhid: SWHID!) {
-      resolveSwhid(swhid: $swhid) {
+      resolveSWHID(swhid: $swhid) {
         nodes {
           targetType
           target {
@@ -141,7 +141,7 @@ def test_release_swhid_resolve(client, release):
     """
     data, _ = utils.get_query_response(client, query_str, swhid=str(release.swhid()))
     assert data == {
-        "resolveSwhid": {
+        "resolveSWHID": {
             "nodes": [
                 {
                     "target": {
@@ -159,7 +159,7 @@ def test_release_swhid_resolve(client, release):
 def test_directory_swhid_resolve(client, directory):
     query_str = """
     query resolve($swhid: SWHID!) {
-      resolveSwhid(swhid: $swhid) {
+      resolveSWHID(swhid: $swhid) {
         nodes {
           targetType
           target {
@@ -174,7 +174,7 @@ def test_directory_swhid_resolve(client, directory):
     """
     data, _ = utils.get_query_response(client, query_str, swhid=str(directory.swhid()))
     assert data == {
-        "resolveSwhid": {
+        "resolveSWHID": {
             "nodes": [
                 {
                     "target": {
@@ -192,7 +192,7 @@ def test_directory_swhid_resolve(client, directory):
 def test_content_swhid_resolve(client, content):
     query_str = """
     query resolve($swhid: SWHID!) {
-      resolveSwhid(swhid: $swhid) {
+      resolveSWHID(swhid: $swhid) {
         nodes {
           targetType
           target {
@@ -207,7 +207,7 @@ def test_content_swhid_resolve(client, content):
     """
     data, _ = utils.get_query_response(client, query_str, swhid=str(content.swhid()))
     assert data == {
-        "resolveSwhid": {
+        "resolveSWHID": {
             "nodes": [
                 {
                     "target": {

@@ -262,7 +262,7 @@ def directory_entries_resolver(
     return ConnectionObjectFactory.create("directory-entries", obj, info, **kw)
 
 
-@query.field("resolveSwhid")
+@query.field("resolveSWHID")
 def search_swhid_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
 ) -> rs.search.ResolveSwhidConnection:

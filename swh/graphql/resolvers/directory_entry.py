@@ -31,7 +31,7 @@ class DirectoryEntryNode(BaseDirectoryEntryNode):
         # STORAGE-TODO, archive is returning a dict
         # return DirectoryEntry object instead
         return self.archive.get_directory_entry_by_path(
-            directory_id=self.kwargs.get("directorySwhid").object_id,
+            directory_id=self.kwargs.get("directorySWHID").object_id,
             path=self.kwargs.get("path"),
         )
 

@@ -26,7 +26,7 @@ def test_get_directory_entry_missing_path(client):
     path = "missing"
     query_str = """
     query getDirEntry($swhid: SWHID!, $path: String!) {
-      directoryEntry(directorySwhid: $swhid, path: $path) {
+      directoryEntry(directorySWHID: $swhid, path: $path) {
         name {
           text
         }
@@ -55,7 +55,7 @@ def test_get_directory_entry(client, directory):
     storage = server.get_storage()
     query_str = """
     query getDirEntry($swhid: SWHID!, $path: String!) {
-      directoryEntry(directorySwhid: $swhid, path: $path) {
+      directoryEntry(directorySWHID: $swhid, path: $path) {
         name {
           text
         }

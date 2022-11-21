@@ -1066,7 +1066,7 @@ type Query {
     """
     SWHID of the directory object
     """
-    directorySwhid: SWHID!
+    directorySWHID: SWHID!
 
     """
     Relative path to the requested object
@@ -1098,7 +1098,7 @@ type Query {
   """
   Resolve the given SWHID to an object
   """
-  resolveSwhid(
+  resolveSWHID(
     """
     SWHID to look for
     """
