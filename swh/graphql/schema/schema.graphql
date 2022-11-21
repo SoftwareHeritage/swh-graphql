@@ -27,7 +27,7 @@ interface Node {
 """
 SWH merkle node object with a SWHID
 """
-interface MerkleNode {
+interface SWHNode {
   """
   SWHID of the object
   """
@@ -384,7 +384,7 @@ type SnapshotEdge {
 """
 A snapshot object
 """
-type Snapshot implements MerkleNode & Node {
+type Snapshot implements SWHNode & Node {
   """
   Unique identifier
   """
@@ -566,7 +566,7 @@ type RevisionEdge {
 """
 A revision object
 """
-type Revision implements MerkleNode & Node {
+type Revision implements SWHNode & Node {
   """
   Unique identifier
   """
@@ -657,7 +657,7 @@ enum ReleaseTargetType {
 """
 A release object
 """
-type Release implements MerkleNode & Node {
+type Release implements SWHNode & Node {
   """
   Unique identifier
   """
@@ -776,7 +776,7 @@ type DirectoryEntry {
 """
 A directory object
 """
-type Directory implements MerkleNode & Node {
+type Directory implements SWHNode & Node {
   """
   Unique identifier
   """
@@ -857,7 +857,7 @@ type ContentLicense {
 """
 A content object
 """
-type Content implements MerkleNode & Node {
+type Content implements SWHNode & Node {
   """
   Unique identifier
   """
