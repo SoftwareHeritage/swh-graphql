@@ -42,7 +42,7 @@ class BaseContentNode(BaseSWHNode):
         }
 
     @property
-    def fileType(self):
+    def mimeType(self):
         # FIXME, fetch data from the indexers
         return None
 

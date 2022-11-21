@@ -828,7 +828,7 @@ type ContentData {
   url: String
 }
 
-type ContentFileType {
+type ContentMimeType {
   """
   Detected content encoding
   """
@@ -891,7 +891,7 @@ type Content implements SWHNode & Node {
   """
   Information about the content MIME type
   """
-  fileType: ContentFileType
+  mimeType: ContentMimeType
 
   """
   Information about the programming language used in the content

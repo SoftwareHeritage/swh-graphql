@@ -27,7 +27,7 @@ def test_get_content_with_swhid(client, content):
         data {
           url
         }
-        fileType {
+        mimeType {
           encoding
         }
         language {
@@ -55,7 +55,7 @@ def test_get_content_with_swhid(client, content):
         "data": {
             "url": f"{archive_url}content/sha1:{content.sha1.hex()}/raw/",
         },
-        "fileType": None,
+        "mimeType": None,
         "language": None,
         "license": None,
     }
