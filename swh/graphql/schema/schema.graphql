@@ -9,11 +9,6 @@ ISO-8601 encoded date string
 scalar DateTime
 
 """
-Content identifier in the form hash-type:hash-value
-"""
-scalar ContentHash
-
-"""
 Object with an id
 """
 interface Node {
@@ -1085,14 +1080,21 @@ type Query {
   ): Content
 
   """
-  Get the content by one or more hashes
-  Use multiple hashes for an accurate result
+  Get a content that match all the given hashes.
+  This entrypoint can be used to uniquely identify a content
+  in the event of hash conflicts. Use multiple hashes to
+  get an accurate result.
+
+  At least one of the four hashes must be provided.
   """
   contentByHashes(
-    """
-    List of hashType:hashValue strings
-    """
-    hashes: [ContentHash]!
+    sha1: String
+
+    sha256: String
+
+    sha1_git: String
+
+    blake2s256: String
   ): Content
 
   """

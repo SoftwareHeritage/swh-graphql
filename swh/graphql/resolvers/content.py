@@ -5,6 +5,9 @@
 
 from typing import Union
 
+from swh.graphql.errors import InvalidInputError
+from swh.model import hashutil
+
 from .base_node import BaseSWHNode
 from .directory_entry import BaseDirectoryEntryNode
 from .release import BaseReleaseNode
@@ -78,7 +81,16 @@ class HashContentNode(BaseContentNode):
     """
 
     def _get_node_data(self):
-        hashes = dict(self.kwargs.get("hashes"))
+        try:
+            hashes = {
+                hash_type: hashutil.hash_to_bytes(hash_value)
+                for (hash_type, hash_value) in self.kwargs.items()
+            }
+        except ValueError as e:
+            # raise an input error in case of an invalid hash
+            raise InvalidInputError("Invalid content hash", e)
+        if not hashes:
+            raise InvalidInputError("At least one of the four hashes must be provided")
         return self._get_content_by_hashes(hashes)
 
 

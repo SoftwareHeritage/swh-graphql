@@ -27,6 +27,5 @@ def assert_missing_object(client, query_str: str, obj_type: str, **kwargs) -> No
 
 def get_error_response(client, query_str: str, **kwargs) -> Dict:
     data, errors = get_query_response(client, query_str, **kwargs)
-    assert data is None
     assert len(errors) > 0
     return errors

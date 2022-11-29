@@ -9,7 +9,6 @@ from ariadne import ScalarType
 
 from swh.graphql.errors import InvalidInputError
 from swh.graphql.utils import utils
-from swh.model import hashutil
 from swh.model.exceptions import ValidationError
 from swh.model.model import TimestampWithTimezone
 from swh.model.swhids import CoreSWHID
@@ -17,7 +16,6 @@ from swh.model.swhids import CoreSWHID
 datetime_scalar = ScalarType("DateTime")
 swhid_scalar = ScalarType("SWHID")
 id_scalar = ScalarType("ID")
-content_hash_scalar = ScalarType("ContentHash")
 
 
 @id_scalar.serializer
@@ -49,15 +47,3 @@ def validate_swhid(value):
 @swhid_scalar.serializer
 def serialize_swhid(value):
     return str(value)
-
-
-@content_hash_scalar.value_parser
-def validate_content_hash(value):
-    try:
-        hash_type, hash_string = value.split(":")
-        hash_value = hashutil.hash_to_bytes(hash_string)
-    except ValueError as e:
-        raise InvalidInputError("Invalid content hash", e)
-    if hash_type not in hashutil.ALGORITHMS:
-        raise InvalidInputError("Invalid hash algorithm")
-    return hash_type, hash_value

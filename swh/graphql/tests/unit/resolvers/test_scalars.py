@@ -32,23 +32,3 @@ def test_validate_swhid_invalid():
 def test_validate_swhid():
     swhid = scalars.validate_swhid(f"swh:1:rev:{'1' * 40}")
     assert str(swhid) == "swh:1:rev:1111111111111111111111111111111111111111"
-
-
-@pytest.mark.parametrize("content_hash", ["invalid", "test:invalid"])
-def test_validate_content_hash_invalid_value(content_hash):
-    with pytest.raises(InvalidInputError) as e:
-        scalars.validate_content_hash(content_hash)
-    assert "Invalid content hash" in str(e.value)
-
-
-def test_validate_content_hash_invalid_hash_algo():
-    with pytest.raises(InvalidInputError) as e:
-        scalars.validate_content_hash(f"invalid:{'1' * 40}")
-    assert "Invalid hash algorithm" in str(e.value)
-
-
-def test_validate_content_hash():
-    assert (
-        "sha1",
-        b"\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11",
-    ) == scalars.validate_content_hash(f"sha1:{'1' * 40}")
