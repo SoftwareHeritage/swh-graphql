@@ -4,7 +4,7 @@
 # See top-level LICENSE file for more information
 
 from . import utils
-from ..data import get_origins
+from ..data import get_directories, get_origins
 
 
 # Using Origin object to run functional tests for pagination
@@ -78,26 +78,74 @@ def test_invalid_after_arg(client):
 
 
 def test_edge_cursor(client):
-    origins = get_origin_nodes(client, first=1)[0]["origins"]
-    # end cursor here must be the item cursor for the second item
-    end_cursor = origins["pageInfo"]["endCursor"]
-
+    # Use DirectoryEntry connection to test connection edges
+    # The same code is used in all the other connections, hence a single test
+    directory = get_directories()[1]
     query_str = """
-    query getOrigins($first: Int!, $after: String) {
-      origins(first: $first, after: $after) {
-        edges {
-          cursor
-          node {
-            id
+    query getDirectory($swhid: SWHID!, $entries_first: Int!, $entries_after: String) {
+      directory(swhid: $swhid) {
+        entries(first: $entries_first, after: $entries_after) {
+          edges {
+            cursor
+            node {
+              name {
+                text
+              }
+            }
           }
-        }
-        nodes {
-          id
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          nodes {
+             name {
+               text
+             }
+          }
         }
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str, first=1, after=end_cursor)
-    origins = data["origins"]
-    assert [edge["node"] for edge in origins["edges"]] == origins["nodes"]
-    assert origins["edges"][0]["cursor"] == end_cursor
+    data, _ = utils.get_query_response(
+        client, query_str, swhid=str(directory.swhid()), entries_first=1
+    )
+    entries = data["directory"]["entries"]
+    # Make sure the first node object in edges and nodes is the same
+    assert entries["edges"][0]["node"] == entries["nodes"][0]
+    assert entries["edges"][0]["node"] == {
+        "name": {"text": directory.entries[1].name.decode()}
+    }
+    assert entries["pageInfo"]["hasNextPage"] is True
+    # FIXME, Following behaviour is not in compliance with the relay spec.
+    # last-item-cursor and endcursor should be the same as per relay.
+    # This test will fail once the pagination becomes fully relay complaint.
+    assert entries["pageInfo"]["endCursor"] != entries["edges"][-1]["cursor"]
+    # Make another query with the after argument, after argument is the first item
+    # cursor here, result will be the same as the last one
+    new_data, _ = utils.get_query_response(
+        client,
+        query_str,
+        swhid=str(directory.swhid()),
+        entries_first=1,
+        entries_after=entries["edges"][0]["cursor"],
+    )
+    assert new_data == data
+    # Make another query with the end cursor from the first query
+    final_data, _ = utils.get_query_response(
+        client,
+        query_str,
+        swhid=str(directory.swhid()),
+        entries_first=2,
+        entries_after=entries["pageInfo"]["endCursor"],
+    )
+    final_result_entries = final_data["directory"]["entries"]
+    # endcursor from the first query will be the first item cursor here
+    # FIXME, this behaviour is not in compliance with the relay spec.
+    # With relay spec, items after the given cursor ($after) will be returned
+    assert (
+        final_result_entries["edges"][0]["cursor"] == entries["pageInfo"]["endCursor"]
+    )
+    assert final_result_entries["nodes"] == [
+        {"name": {"text": directory.entries[0].name.decode()}},
+        {"name": {"text": directory.entries[2].name.decode()}},
+    ]

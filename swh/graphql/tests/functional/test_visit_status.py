@@ -53,7 +53,6 @@ def test_visit_status_pagination(client):
             endCursor
           }
           edges {
-            cursor
             node {
               status
             }
@@ -76,7 +75,6 @@ def test_visit_status_pagination(client):
             endCursor
           }
           edges {
-            cursor
             node {
               status
             }
@@ -95,7 +93,6 @@ def test_visit_status_pagination(client):
     assert data["visit"]["statuses"] == {
         "edges": [
             {
-                "cursor": "MjAxNC0wNS0wN1QwNDoyMDozOS40MzIyMjIrMDA6MDA=",
                 "node": {"status": "ongoing"},
             }
         ],

@@ -18,9 +18,6 @@ def get_branches(client, **kwargs) -> tuple:
           pageInfo {
             endCursor
           }
-          edges {
-            cursor
-          }
           nodes {
             targetType
             name {
@@ -147,6 +144,5 @@ def test_get_after_arg(client):
     second_data, _ = get_branches(client, swhid=swhid, first=3, after=end_cursor)
     branches = second_data["snapshot"]["branches"]
     assert len(branches["nodes"]) == 3
-    assert branches["edges"][0]["cursor"] == end_cursor
     for node in branches["nodes"]:
         assert node["name"]["text"] > node_name

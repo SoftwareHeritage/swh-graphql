@@ -88,10 +88,13 @@ type OriginConnection {
 Edge in origin connection
 """
 type OriginEdge {
-  """
-  Cursor to request the next page after the item
-  """
-  cursor: String!
+  # Cursor in this edge is removed for the time being
+  # see https://forge.softwareheritage.org/D8911 for details
+
+  # """
+  # Cursor to request the next page after the item
+  # """
+  # cursor: String!
 
   """
   Origin object
@@ -193,10 +196,13 @@ type VisitConnection {
 Edge in origin visit connection
 """
 type VisitEdge {
-  """
-  Cursor to request the next page after the item
-  """
-  cursor: String!
+  # Cursor in this edge is removed for the time being
+  # see https://forge.softwareheritage.org/D8911 for details
+
+  # """
+  # Cursor to request the next page after the item
+  # """
+  # cursor: String!
 
   """
   Visit object
@@ -300,10 +306,13 @@ type VisitStatusConnection {
 Edge in visit status connection
 """
 type VisitStatusEdge {
-  """
-  Cursor to request the next page after the item
-  """
-  cursor: String!
+  # Cursor in this edge is removed for the time being
+  # see https://forge.softwareheritage.org/D8911 for details
+
+  # """
+  # Cursor to request the next page after the item
+  # """
+  # cursor: String!
 
   """
   Visit status object
@@ -450,10 +459,13 @@ type BranchConnection {
 Edge in snapshot branch connection
 """
 type BranchConnectionEdge {
-  """
-  Cursor to request the next page after the item
-  """
-  cursor: String!
+  # Cursor in this edge is removed for the time being
+  # see https://forge.softwareheritage.org/D8911 for details
+
+  # """
+  # Cursor to request the next page after the item
+  # """
+  # cursor: String!
 
   """
   Branch object
@@ -928,10 +940,13 @@ type SearchResultConnection {
 Edge in SearchResult connection
 """
 type SearchResultEdge {
-  """
-  Cursor to request the next page after the item
-  """
-  cursor: String!
+  # Cursor in this edge is removed for the time being
+  # see https://forge.softwareheritage.org/D8911 for details
+
+  # """
+  # Cursor to request the next page after the item
+  # """
+  # cursor: String!
 
   """
   SearchResult object
