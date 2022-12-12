@@ -77,7 +77,12 @@ def make_app_from_configfile():
         graphql_cfg = load_and_check_config(config_path)
 
     application = CORSMiddleware(
-        GraphQL(schema, debug=graphql_cfg["debug"], error_formatter=format_error),
+        GraphQL(
+            schema,
+            debug=graphql_cfg["debug"],
+            error_formatter=format_error,
+            introspection=graphql_cfg["introspection"],
+        ),
         # FIXME, restrict origins after deploying the JS client
         allow_origins=["*"],
         allow_methods=("GET", "POST", "OPTIONS"),

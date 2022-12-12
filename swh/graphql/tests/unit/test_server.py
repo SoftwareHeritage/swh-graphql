@@ -55,7 +55,11 @@ def test_load_and_check_config(mocker):
 
 
 def test_make_app_from_configfile_with_config(mocker):
-    server.graphql_cfg = {"storage": {"test": "test"}, "debug": True}
+    server.graphql_cfg = {
+        "storage": {"test": "test"},
+        "debug": True,
+        "introspection": True,
+    }
     mocker.patch("starlette.middleware.cors.CORSMiddleware", return_value="dummy-app")
     assert server.make_app_from_configfile() == "dummy-app"
 
