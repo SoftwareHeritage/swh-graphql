@@ -3,11 +3,13 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from typing import Union
+from typing import Dict, List, Optional, Union
 
-from swh.graphql.errors import InvalidInputError
+from swh.graphql.errors import DataError, InvalidInputError
 from swh.model import hashutil
+from swh.model.model import Content
 
+from .base_connection import BaseList
 from .base_node import BaseSWHNode
 from .directory_entry import BaseDirectoryEntryNode
 from .release import BaseReleaseNode
@@ -15,15 +17,21 @@ from .search import SearchResultNode
 from .snapshot_branch import BaseSnapshotBranchNode
 
 
+def read_and_validate_content_hashes(hashes) -> Dict[str, bytes]:
+    try:
+        return {
+            hash_type: hashutil.hash_to_bytes(hash_value)
+            for (hash_type, hash_value) in hashes
+        }
+    except ValueError as e:
+        # raise an input error in case of an invalid hash
+        raise InvalidInputError("Invalid content hash", e)
+
+
 class BaseContentNode(BaseSWHNode):
     """
     Base resolver for all the content nodes
     """
-
-    def _get_content_by_hashes(self, hashes: dict):
-        content = self.archive.get_contents(hashes)
-        # in case of a conflict, return the first element
-        return content[0] if content else None
 
     @property
     def hashes(self):
@@ -65,33 +73,19 @@ class BaseContentNode(BaseSWHNode):
         return "Content"
 
 
-class ContentNode(BaseContentNode):
+class ContentbyHashesNode(BaseContentNode):
     """
-    Node resolver for a content requested directly with its SWHID
-    """
-
-    def _get_node_data(self):
-        hashes = {"sha1_git": self.kwargs.get("swhid").object_id}
-        return self._get_content_by_hashes(hashes)
-
-
-class HashContentNode(BaseContentNode):
-    """
-    Node resolver for a content requested with one or more hashes
+    Node resolver for a content requested with all of its hashes
+    A single content object will be returned
     """
 
-    def _get_node_data(self):
-        try:
-            hashes = {
-                hash_type: hashutil.hash_to_bytes(hash_value)
-                for (hash_type, hash_value) in self.kwargs.items()
-            }
-        except ValueError as e:
-            # raise an input error in case of an invalid hash
-            raise InvalidInputError("Invalid content hash", e)
-        if not hashes:
-            raise InvalidInputError("At least one of the four hashes must be provided")
-        return self._get_content_by_hashes(hashes)
+    def _get_node_data(self) -> Optional[Content]:
+        hashes = read_and_validate_content_hashes(self.kwargs.items())
+        contents = self.archive.get_contents(hashes=hashes)
+        if len(contents) > 1:
+            # This situation is not expected to happen IRL
+            raise DataError("Content hash conflict for the set ", hashes)
+        return contents[0] if contents else None
 
 
 class TargetContentNode(BaseContentNode):
@@ -107,5 +101,37 @@ class TargetContentNode(BaseContentNode):
         BaseSnapshotBranchNode,
     ]
 
-    def _get_node_data(self):
-        return self._get_content_by_hashes(hashes={"sha1_git": self.obj.target_hash})
+    def _get_node_data(self) -> Optional[Content]:
+        # FIXME, this is not considering hash collisions
+        # and could return a wrong object in very rare situations
+        contents = self.archive.get_contents(hashes={"sha1_git": self.obj.target_hash})
+        # always returning the first content from the storage
+        return contents[0] if contents else None
+
+
+class ContentSwhidList(BaseList):
+    """
+    Return a non paginated list of contents for the given SWHID
+    This will return a single item in most of the cases
+    """
+
+    _node_class = BaseContentNode
+
+    def _get_results(self) -> List[Content]:
+        hashes = {"sha1_git": self.kwargs.get("swhid").object_id}
+        return self.archive.get_contents(hashes=hashes)
+
+
+class ContentHashList(BaseList):
+    """
+    Return a non paginated list of contents for the given hashes
+    This will return a single item in most of the cases
+    """
+
+    _node_class = BaseContentNode
+
+    def _get_results(self) -> List[Content]:
+        hashes = read_and_validate_content_hashes(self.kwargs.items())
+        if not hashes:
+            raise InvalidInputError("At least one of the four hashes must be provided")
+        return self.archive.get_contents(hashes=hashes)

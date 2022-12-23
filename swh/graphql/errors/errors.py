@@ -33,3 +33,7 @@ class InvalidInputError(Exception):
 
 class NullableObjectError(Exception):
     pass
+
+
+class DataError(Exception):
+    pass

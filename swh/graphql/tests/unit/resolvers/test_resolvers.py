@@ -31,7 +31,7 @@ class TestResolvers:
             (rs.revision_directory_resolver, resolvers.directory.RevisionDirectoryNode),
             (rs.release_resolver, resolvers.release.ReleaseNode),
             (rs.directory_resolver, resolvers.directory.DirectoryNode),
-            (rs.content_resolver, resolvers.content.ContentNode),
+            (rs.content_by_hashes_resolver, resolvers.content.ContentbyHashesNode),
         ],
     )
     def test_node_resolver(self, mocker, dummy_node, resolver_func, node_cls):

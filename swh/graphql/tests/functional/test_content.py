@@ -10,10 +10,12 @@ from ..data import get_contents
 
 
 @pytest.mark.parametrize("content", get_contents())
-def test_get_content_with_swhid(client, content):
+def test_get_content_with_hashes(client, content):
     query_str = """
-    query getContent($swhid: SWHID!) {
-      content(swhid: $swhid) {
+    query getContentByHashes($sha1: String!, $sha256: String!,
+                     $sha1_git: String!, $blake2s256: String!) {
+      contentByHashes(sha1: $sha1, sha256: $sha256, sha1_git: $sha1_git,
+              blake2s256: $blake2s256) {
         swhid
         id
         hashes {
@@ -39,7 +41,14 @@ def test_get_content_with_swhid(client, content):
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str, swhid=str(content.swhid()))
+    data, _ = utils.get_query_response(
+        client,
+        query_str,
+        blake2s256=content.blake2s256.hex(),
+        sha1=content.sha1.hex(),
+        sha1_git=content.sha1_git.hex(),
+        sha256=content.sha256.hex(),
+    )
     archive_url = "https://archive.softwareheritage.org/api/1/"
     response = {
         "swhid": str(content.swhid()),
@@ -59,13 +68,26 @@ def test_get_content_with_swhid(client, content):
         "language": None,
         "license": None,
     }
-    assert data["content"] == response
+    assert data["contentByHashes"] == response
 
 
-def test_get_content_with_invalid_swhid(client):
+@pytest.mark.parametrize("content", get_contents())
+def test_get_contents_with_swhid(client, content):
     query_str = """
-    query getContent($swhid: SWHID!) {
-      content(swhid: $swhid) {
+    query getContents($swhid: SWHID!) {
+      contentsBySWHID(swhid: $swhid) {
+        swhid
+      }
+    }
+    """
+    data, _ = utils.get_query_response(client, query_str, swhid=str(content.swhid()))
+    assert data["contentsBySWHID"] == [{"swhid": str(content.swhid())}]
+
+
+def test_get_contents_with_invalid_swhid(client):
+    query_str = """
+    query getContents($swhid: SWHID!) {
+      contentsBySWHID(swhid: $swhid) {
         swhid
       }
     }
@@ -76,11 +98,27 @@ def test_get_content_with_invalid_swhid(client):
     assert "Input error: Invalid SWHID" in errors[0]["message"]
 
 
-@pytest.mark.parametrize("content", get_contents())
-def test_get_content_with_hash(client, content):
+def test_get_contents_with_missing_swhid(client):
+    missing_sha1 = "1" * 40
     query_str = """
-    query getContent($sha1: String, $sha1_git: String, $sha256: String, $blake2s256: String) {
-      contentByHashes(sha1: $sha1, sha1_git: $sha1_git, sha256: $sha256,
+    query getContents($swhid: SWHID!) {
+      contentsBySWHID(swhid: $swhid) {
+        swhid
+      }
+    }
+    """
+    data, _ = utils.get_query_response(
+        client, query_str, swhid=f"swh:1:cnt:{missing_sha1}"
+    )
+    assert data["contentsBySWHID"] == []
+
+
+@pytest.mark.parametrize("content", get_contents())
+def test_get_contents_with_hashes(client, content):
+    query_str = """
+    query getContents($sha1: String, $sha1_git: String, $sha256: String,
+                     $blake2s256: String) {
+      contentsByHashes(sha1: $sha1, sha1_git: $sha1_git, sha256: $sha256,
                       blake2s256: $blake2s256) {
         swhid
       }
@@ -94,14 +132,15 @@ def test_get_content_with_hash(client, content):
         sha256=content.sha256.hex(),
         blake2s256=content.blake2s256.hex(),
     )
-    assert data["contentByHashes"] == {"swhid": str(content.swhid())}
+    assert data["contentsByHashes"] == [{"swhid": str(content.swhid())}]
 
 
 @pytest.mark.parametrize("content", get_contents())
 def test_get_content_with_single_hash(client, content):
     query_str = """
-    query getContent($sha1: String, $sha1_git: String, $sha256: String, $blake2s256: String) {
-      contentByHashes(sha1: $sha1, sha1_git: $sha1_git, sha256: $sha256,
+    query getContents($sha1: String, $sha1_git: String, $sha256: String,
+                     $blake2s256: String) {
+      contentsByHashes(sha1: $sha1, sha1_git: $sha1_git, sha256: $sha256,
                       blake2s256: $blake2s256) {
         swhid
       }
@@ -112,34 +151,43 @@ def test_get_content_with_single_hash(client, content):
         query_str,
         sha1=content.sha1.hex(),
     )
-    assert data["contentByHashes"] == {"swhid": str(content.swhid())}
+    assert data["contentsByHashes"] == [{"swhid": str(content.swhid())}]
+
+    data, _ = utils.get_query_response(
+        client,
+        query_str,
+        blake2s256=content.blake2s256.hex(),
+    )
+    assert data["contentsByHashes"] == [{"swhid": str(content.swhid())}]
 
 
 @pytest.mark.parametrize("content", get_contents())
-def test_get_content_with_one_non_matching_hash(client, content):
+def test_get_contents_with_one_non_matching_hash(client, content):
     query_str = """
-    query getContent($sha1: String, $sha1_git: String, $sha256: String, $blake2s256: String) {
-      contentByHashes(sha1: $sha1, sha1_git: $sha1_git, sha256: $sha256,
+    query getContents($sha1: String, $sha1_git: String, $sha256: String, $blake2s256: String) {
+      contentsByHashes(sha1: $sha1, sha1_git: $sha1_git, sha256: $sha256,
                       blake2s256: $blake2s256) {
         swhid
       }
     }
     """
-    utils.assert_missing_object(
+    data, _ = utils.get_query_response(
         client,
         query_str,
-        obj_type="contentByHashes",
+        obj_type="contentsByHashes",
         sha1=content.sha1.hex(),
         sha1_git="a" * 20,  # hash is valid, but not matching the object
     )
+    assert data["contentsByHashes"] == []
 
 
 def test_get_content_with_invalid_hashes(client):
     content = get_contents()[0]
     query_str = """
-    query getContent($sha1: String, $sha1_git: String, $sha256: String, $blake2s256: String) {
-      contentByHashes(sha1: $sha1, sha1_git: $sha1_git, sha256: $sha256,
-                      blake2s256: $blake2s256) {
+    query getContents($sha1: String, $sha1_git: String, $sha256: String,
+                      $blake2s256: String) {
+      contentsByHashes(sha1: $sha1, sha1_git: $sha1_git, sha256: $sha256,
+                       blake2s256: $blake2s256) {
         swhid
       }
     }
@@ -158,8 +206,8 @@ def test_get_content_with_invalid_hashes(client):
 
 def test_get_content_with_no_hashes(client):
     query_str = """
-    query getContent($sha1: String, $sha1_git: String, $sha256: String, $blake2s256: String) {
-      contentByHashes(sha1: $sha1, sha1_git: $sha1_git, sha256: $sha256,
+    query getContents($sha1: String, $sha1_git: String, $sha256: String, $blake2s256: String) {
+      contentsByHashes(sha1: $sha1, sha1_git: $sha1_git, sha256: $sha256,
                       blake2s256: $blake2s256) {
         swhid
       }
@@ -203,20 +251,3 @@ def test_get_content_as_target(client):
         "length": 4,
         "swhid": "swh:1:cnt:86bc6b377e9d25f9d26777a4a28d08e63e7c5779",
     }
-
-
-def test_get_content_with_unknown_swhid(client):
-    unknown_sha1 = "1" * 40
-    query_str = """
-    query getDirectory($swhid: SWHID!) {
-      content(swhid: $swhid) {
-        swhid
-      }
-    }
-    """
-    utils.assert_missing_object(
-        client,
-        query_str,
-        obj_type="content",
-        swhid=f"swh:1:cnt:{unknown_sha1}",
-    )

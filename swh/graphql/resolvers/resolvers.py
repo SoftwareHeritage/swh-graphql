@@ -177,13 +177,6 @@ def directory_entry_target_resolver(
     return NodeObjectFactory.create(f"dir-entry-{obj.targetType}", obj, info, **kw)
 
 
-@query.field("content")
-def content_resolver(
-    obj: None, info: GraphQLResolveInfo, **kw
-) -> rs.content.ContentNode:
-    return NodeObjectFactory.create("content", obj, info, **kw)
-
-
 @search_result.field("target")
 def search_result_target_resolver(
     obj: rs.search.SearchResultNode, info: GraphQLResolveInfo, **kw
@@ -203,10 +196,10 @@ def search_result_target_resolver(
 
 
 @query.field("contentByHashes")
-def content_by_hash_resolver(
+def content_by_hashes_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
-) -> rs.content.ContentNode:
-    return NodeObjectFactory.create("content-by-hash", obj, info, **kw)
+) -> rs.content.ContentbyHashesNode:
+    return NodeObjectFactory.create("content-by-hashes", obj, info, **kw)
 
 
 # Connection resolvers
@@ -277,6 +270,20 @@ def search_resolver(
 
 
 # Simple list resolvers (lists without paginations)
+
+
+@query.field("contentsBySWHID")
+def contnets_by_swhid_resolver(
+    obj: None, info: GraphQLResolveInfo, **kw
+) -> rs.content.ContentSwhidList:
+    return SimpleListFactory.create("contents-swhid", obj, info, **kw)
+
+
+@query.field("contentsByHashes")
+def contnets_by_hashes_resolver(
+    obj: None, info: GraphQLResolveInfo, **kw
+) -> rs.content.ContentHashList:
+    return SimpleListFactory.create("contents-hashes", obj, info, **kw)
 
 
 @query.field("resolveSWHID")

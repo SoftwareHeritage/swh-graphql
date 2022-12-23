@@ -4,6 +4,7 @@
 # See top-level LICENSE file for more information
 
 from .errors import (
+    DataError,
     InvalidInputError,
     NullableObjectError,
     ObjectNotFoundError,
@@ -16,5 +17,6 @@ __all__ = [
     "PaginationError",
     "InvalidInputError",
     "NullableObjectError",
+    "DataError",
     "format_error",
 ]

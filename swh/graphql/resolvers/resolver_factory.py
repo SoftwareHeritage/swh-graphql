@@ -9,7 +9,12 @@ from swh.graphql.errors import NullableObjectError
 
 from .base_connection import BaseConnection, BaseList
 from .base_node import BaseNode
-from .content import ContentNode, HashContentNode, TargetContentNode
+from .content import (
+    ContentbyHashesNode,
+    ContentHashList,
+    ContentSwhidList,
+    TargetContentNode,
+)
 from .directory import DirectoryNode, RevisionDirectoryNode, TargetDirectoryNode
 from .directory_entry import DirectoryEntryConnection, DirectoryEntryNode
 from .origin import OriginConnection, OriginNode, TargetOriginNode
@@ -56,8 +61,7 @@ class NodeObjectFactory:
         "release-content": TargetContentNode,
         "directory": DirectoryNode,
         "directory-entry": DirectoryEntryNode,
-        "content": ContentNode,
-        "content-by-hash": HashContentNode,
+        "content-by-hashes": ContentbyHashesNode,
         "dir-entry-content": TargetContentNode,
         "dir-entry-directory": TargetDirectoryNode,
         "dir-entry-revision": TargetRevisionNode,
@@ -109,6 +113,8 @@ class SimpleListFactory:
         "revision-author": RevisionAuthorList,
         "revision-committer": RevisionCommitterList,
         "release-author": ReleaseAuthorList,
+        "contents-swhid": ContentSwhidList,
+        "contents-hashes": ContentHashList,
     }
 
     @classmethod

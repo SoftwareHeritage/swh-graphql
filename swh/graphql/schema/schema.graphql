@@ -1105,24 +1105,20 @@ type Query {
   ): DirectoryEntry
 
   """
-  Get the content with a SWHID
+  Get a list of contents for the given SWHID
   """
-  content(
+  contentsBySWHID (
     """
-    SWHID of the content object
+    SWHID to look for
     """
     swhid: SWHID!
-  ): Content
+  ): [Content]
 
   """
-  Get a content that match all the given hashes.
-  This entrypoint can be used to uniquely identify a content
-  in the event of hash conflicts. Use multiple hashes to
-  get an accurate result.
-
-  At least one of the four hashes must be provided.
+  Get contents with hashes
+  At least one of the four hashes must be provided
   """
-  contentByHashes(
+  contentsByHashes(
     sha1: String
 
     sha256: String
@@ -1130,6 +1126,22 @@ type Query {
     sha1_git: String
 
     blake2s256: String
+  ): [Content]
+
+  """
+  Get a content that match all the given hashes.
+  All the four hashes must be provided
+  This entrypoint can be used to uniquely identify
+  a content in the event of hash collisions
+  """
+  contentByHashes(
+    sha1: String!
+
+    sha256: String!
+
+    sha1_git: String!
+
+    blake2s256: String!
   ): Content
 
   """
