@@ -5,7 +5,7 @@
 
 from swh.storage.interface import PagedResult
 
-from .base_connection import BaseConnection
+from .base_connection import BaseConnection, BaseList
 from .base_node import BaseNode
 
 
@@ -17,13 +17,14 @@ class SearchResultNode(BaseNode):
         return self._node.type
 
 
-class ResolveSwhidConnection(BaseConnection):
+class ResolveSwhidList(BaseList):
 
     _node_class = SearchResultNode
 
-    def _get_paged_result(self) -> PagedResult:
+    def _get_results(self) -> list:
         swhid = self.kwargs.get("swhid")
         results = []
+
         if self.archive.is_object_available(swhid.object_id, swhid.object_type):
             results = [
                 {
@@ -31,7 +32,7 @@ class ResolveSwhidConnection(BaseConnection):
                     "type": swhid.object_type.name.lower(),
                 }
             ]
-        return PagedResult(results=results)
+        return results
 
 
 class SearchConnection(BaseConnection):

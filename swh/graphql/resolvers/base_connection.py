@@ -144,3 +144,42 @@ class BaseConnection(ABC):
         offset_index = self._get_after_arg() or "0"
         index_cursor = int(offset_index) + index
         return utils.get_encoded_cursor(str(index_cursor))
+
+
+class BaseList(ABC):
+    """
+    Base class to be used for simple lists that do not require
+    pagination; eg resolveSWHID entrypoint
+    """
+
+    _node_class: Optional[Type[BaseNode]] = None
+
+    def __init__(self, obj, info, results=None, **kwargs):
+        self.obj: Optional[BaseNode] = obj
+        self.info: GraphQLResolveInfo = info
+        self.kwargs = kwargs
+        self._results: List = results
+
+        self.archive = Archive()
+
+    def get_results(self) -> List:
+        if self._results is None:
+            # To avoid multiple calls to the backend
+            self._results = self._get_results()
+
+        if self._node_class is not None:
+            # convert list items to node objects
+            return [
+                self._node_class(
+                    obj=self.obj, info=self.info, node_data=result, **self.kwargs
+                )
+                for result in self._results
+            ]
+        return self._results
+
+    @abstractmethod
+    def _get_results(self) -> List:
+        """
+        Override for desired behaviour
+        return a list of objects
+        """

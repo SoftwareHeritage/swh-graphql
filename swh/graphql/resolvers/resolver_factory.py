@@ -7,7 +7,7 @@ from typing import ClassVar, Dict, Type
 
 from swh.graphql.errors import NullableObjectError
 
-from .base_connection import BaseConnection
+from .base_connection import BaseConnection, BaseList
 from .base_node import BaseNode
 from .content import ContentNode, HashContentNode, TargetContentNode
 from .directory import DirectoryNode, RevisionDirectoryNode, TargetDirectoryNode
@@ -20,7 +20,7 @@ from .revision import (
     RevisionNode,
     TargetRevisionNode,
 )
-from .search import ResolveSwhidConnection, SearchConnection
+from .search import ResolveSwhidList, SearchConnection
 from .snapshot import (
     OriginSnapshotConnection,
     SnapshotNode,
@@ -91,7 +91,6 @@ class ConnectionObjectFactory:
         "revision-parents": ParentRevisionConnection,
         "revision-log": LogRevisionConnection,
         "directory-entries": DirectoryEntryConnection,
-        "resolve-swhid": ResolveSwhidConnection,
         "search": SearchConnection,
     }
 
@@ -101,3 +100,18 @@ class ConnectionObjectFactory:
         if not resolver:
             raise AttributeError(f"Invalid connection type: {connection_type}")
         return resolver(obj, info, *args, **kw)
+
+
+class SimpleListFactory:
+    mapping: ClassVar[Dict[str, Type[BaseList]]] = {
+        "resolve-swhid": ResolveSwhidList,
+    }
+
+    @classmethod
+    def create(cls, list_type: str, obj, info, *args, **kw):
+        resolver = cls.mapping.get(list_type)
+
+        if not resolver:
+            raise AttributeError(f"Invalid list type: {list_type}")
+        # invoke the get_results method to return the list
+        return resolver(obj, info, *args, **kw).get_results()

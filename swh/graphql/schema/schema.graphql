@@ -1140,7 +1140,7 @@ type Query {
     SWHID to look for
     """
     swhid: SWHID!
-  ): SearchResultConnection
+  ): [SearchResult]
 
   """
   Search in SWH

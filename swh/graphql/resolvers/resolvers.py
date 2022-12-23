@@ -26,7 +26,11 @@ from swh.graphql import resolvers as rs
 from swh.graphql.utils import utils
 from swh.model.model import TimestampWithTimezone
 
-from .resolver_factory import ConnectionObjectFactory, NodeObjectFactory
+from .resolver_factory import (
+    ConnectionObjectFactory,
+    NodeObjectFactory,
+    SimpleListFactory,
+)
 
 query: ObjectType = ObjectType("Query")
 origin: ObjectType = ObjectType("Origin")
@@ -265,18 +269,21 @@ def directory_entries_resolver(
     return ConnectionObjectFactory.create("directory-entries", obj, info, **kw)
 
 
-@query.field("resolveSWHID")
-def search_swhid_resolver(
-    obj: None, info: GraphQLResolveInfo, **kw
-) -> rs.search.ResolveSwhidConnection:
-    return ConnectionObjectFactory.create("resolve-swhid", obj, info, **kw)
-
-
 @query.field("search")
 def search_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
 ) -> rs.search.SearchConnection:
     return ConnectionObjectFactory.create("search", obj, info, **kw)
+
+
+# Simple list resolvers (lists without paginations)
+
+
+@query.field("resolveSWHID")
+def search_swhid_resolver(
+    obj: None, info: GraphQLResolveInfo, **kw
+) -> rs.search.ResolveSwhidList:
+    return SimpleListFactory.create("resolve-swhid", obj, info, **kw)
 
 
 # Other resolvers
