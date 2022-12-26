@@ -110,7 +110,6 @@ class BaseConnection(ABC):
         return a PagedResult object
         """
         # FIXME, make this call async (not for v1)
-        return None
 
     def _get_after_arg(self):
         """

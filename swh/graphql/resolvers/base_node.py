@@ -70,7 +70,6 @@ class BaseNode:
         This will be called only when node_data is None
         """
         # FIXME, make this call async (not for v1)
-        return None
 
     def __getattr__(self, name: str) -> Any:
         """
