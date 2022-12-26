@@ -74,16 +74,20 @@ def test_get_revision(client, revision):
     assert data["revision"] == {
         "swhid": str(revision.swhid()),
         "message": {"text": revision.message.decode()},
-        "author": {
-            "fullname": {"text": revision.author.fullname.decode()},
-            "name": {"text": revision.author.name.decode()},
-            "email": {"text": revision.author.email.decode()},
-        },
-        "committer": {
-            "fullname": {"text": revision.committer.fullname.decode()},
-            "name": {"text": revision.committer.name.decode()},
-            "email": {"text": revision.committer.email.decode()},
-        },
+        "author": [
+            {
+                "fullname": {"text": revision.author.fullname.decode()},
+                "name": {"text": revision.author.name.decode()},
+                "email": {"text": revision.author.email.decode()},
+            }
+        ],
+        "committer": [
+            {
+                "fullname": {"text": revision.committer.fullname.decode()},
+                "name": {"text": revision.committer.name.decode()},
+                "email": {"text": revision.committer.email.decode()},
+            }
+        ],
         "date": {
             "date": revision.date.to_datetime().isoformat(),
             "offset": {

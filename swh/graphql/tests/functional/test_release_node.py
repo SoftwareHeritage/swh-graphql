@@ -63,13 +63,15 @@ def test_get_release(client, release):
             "base64": base64.b64encode(release.name).decode("ascii"),
         },
         "message": {"text": release.message.decode()},
-        "author": {
-            "email": {"text": release.author.email.decode()},
-            "name": {"text": release.author.name.decode()},
-            "fullname": {"text": release.author.fullname.decode()},
-        }
+        "author": [
+            {
+                "email": {"text": release.author.email.decode()},
+                "name": {"text": release.author.name.decode()},
+                "fullname": {"text": release.author.fullname.decode()},
+            }
+        ]
         if release.author
-        else None,
+        else [],
         "date": {
             "date": release.date.to_datetime().isoformat(),
             "offset": {

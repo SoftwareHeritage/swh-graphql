@@ -286,6 +286,27 @@ def search_swhid_resolver(
     return SimpleListFactory.create("resolve-swhid", obj, info, **kw)
 
 
+@revision.field("author")
+def revision_author_resolver(
+    obj: None, info: GraphQLResolveInfo, **kw
+) -> rs.revision.RevisionNode:
+    return SimpleListFactory.create("revision-author", obj, info, **kw)
+
+
+@revision.field("committer")
+def revision_committer_resolver(
+    obj: None, info: GraphQLResolveInfo, **kw
+) -> rs.revision.RevisionNode:
+    return SimpleListFactory.create("revision-committer", obj, info, **kw)
+
+
+@release.field("author")
+def release_author_resolver(
+    obj: rs.release.BaseReleaseNode, info: GraphQLResolveInfo, **kw
+) -> rs.revision.RevisionNode:
+    return SimpleListFactory.create("release-author", obj, info, **kw)
+
+
 # Other resolvers
 
 

@@ -13,6 +13,7 @@ from .content import ContentNode, HashContentNode, TargetContentNode
 from .directory import DirectoryNode, RevisionDirectoryNode, TargetDirectoryNode
 from .directory_entry import DirectoryEntryConnection, DirectoryEntryNode
 from .origin import OriginConnection, OriginNode, TargetOriginNode
+from .person import ReleaseAuthorList, RevisionAuthorList, RevisionCommitterList
 from .release import ReleaseNode, TargetReleaseNode
 from .revision import (
     LogRevisionConnection,
@@ -105,6 +106,9 @@ class ConnectionObjectFactory:
 class SimpleListFactory:
     mapping: ClassVar[Dict[str, Type[BaseList]]] = {
         "resolve-swhid": ResolveSwhidList,
+        "revision-author": RevisionAuthorList,
+        "revision-committer": RevisionCommitterList,
+        "release-author": ReleaseAuthorList,
     }
 
     @classmethod

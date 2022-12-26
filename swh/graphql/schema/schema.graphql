@@ -605,14 +605,14 @@ type Revision implements SWHNode & Node {
   message: BinaryString
 
   """
-  Revision author
+  Revision authors
   """
-  author: Person
+  author: [Person]
 
   """
-  Revision committer
+  Revision committers
   """
-  committer: Person
+  committer: [Person]
 
   """
   Commit date
@@ -708,7 +708,7 @@ type Release implements SWHNode & Node {
   """
   Release author
   """
-  author: Person
+  author: [Person]
 
   """
   Release date
