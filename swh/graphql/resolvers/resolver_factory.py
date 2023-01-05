@@ -33,7 +33,7 @@ from .snapshot import (
     TargetSnapshotNode,
     VisitSnapshotNode,
 )
-from .snapshot_branch import AliasSnapshotBranchNode, SnapshotBranchConnection
+from .snapshot_branch import SnapshotBranchConnection
 from .visit import LatestVisitNode, OriginVisitConnection, OriginVisitNode
 from .visit_status import LatestVisitStatusNode, VisitStatusConnection
 
@@ -46,7 +46,6 @@ class NodeObjectFactory:
         "latest-status": LatestVisitStatusNode,
         "visit-snapshot": VisitSnapshotNode,
         "snapshot": SnapshotNode,
-        "branch-alias": AliasSnapshotBranchNode,
         "branch-revision": TargetRevisionNode,
         "branch-release": TargetReleaseNode,
         "branch-directory": TargetDirectoryNode,

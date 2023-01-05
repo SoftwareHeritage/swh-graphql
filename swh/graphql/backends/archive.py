@@ -4,7 +4,7 @@
 # See top-level LICENSE file for more information
 
 import os
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from swh.graphql import server
 from swh.model.model import (
@@ -16,8 +16,10 @@ from swh.model.model import (
     Release,
     Revision,
     Sha1Git,
+    SnapshotBranch,
 )
 from swh.model.swhids import ObjectType
+from swh.storage.algos.snapshot import snapshot_resolve_branch_target
 from swh.storage.interface import PagedResult, PartialBranches, StorageInterface
 
 
@@ -144,3 +146,16 @@ class Archive:
 
     # def get_content_data(self, content_sha1: Sha1) -> Optional[bytes]:
     #     return self.storage.content_get_data(content=content_sha1)
+
+    def get_branch_target(
+        self,
+        snapshot_id: Sha1Git,
+        branch_obj: Optional[SnapshotBranch],
+        max_length: int,
+    ) -> Tuple[Optional[SnapshotBranch], List[bytes]]:
+        return snapshot_resolve_branch_target(
+            storage=self.storage,
+            snapshot_id=snapshot_id,
+            branch_obj=branch_obj,
+            max_length=max_length,
+        )

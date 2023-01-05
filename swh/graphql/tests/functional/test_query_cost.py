@@ -115,13 +115,13 @@ def test_query_cost_snapshots(client):
     }
     """
     # Total cost here is 157
-    # 1 (snapshot) + 2 *50 (branches) + 50 * 1 (revision or Directory) +  3 * 2 = 157
+    # 1 (snapshot) + 2 *50 (branches) + 50 * 2 (revision or Directory) +  3 * 2 = 207
     # parent multiplier is not applied when schema introspection is used
     # ie: directory entry connection cost is 3 * 2 and not 50 * 3 * 2
     errors = utils.get_error_response(
         client, query_str, swhid=str(get_snapshots()[0].swhid()), response_code=400
     )
     assert (
-        "The query exceeds the maximum cost of 100. Actual cost is 157"
+        "The query exceeds the maximum cost of 100. Actual cost is 207"
         in errors[0]["message"]
     )

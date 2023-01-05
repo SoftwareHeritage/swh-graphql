@@ -14,7 +14,7 @@ from .base_node import BaseSWHNode
 from .directory_entry import BaseDirectoryEntryNode
 from .release import BaseReleaseNode
 from .search import SearchResultNode
-from .snapshot_branch import BaseSnapshotBranchNode
+from .snapshot_branch import SnapshotBranchNode
 
 
 def read_and_validate_content_hashes(hashes) -> Dict[str, bytes]:
@@ -98,7 +98,7 @@ class TargetContentNode(BaseContentNode):
         SearchResultNode,
         BaseDirectoryEntryNode,
         BaseReleaseNode,
-        BaseSnapshotBranchNode,
+        SnapshotBranchNode,
     ]
 
     def _get_node_data(self) -> Optional[Content]:

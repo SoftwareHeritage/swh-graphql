@@ -7,7 +7,7 @@ from typing import Union
 
 from .base_node import BaseSWHNode
 from .search import SearchResultNode
-from .snapshot_branch import BaseSnapshotBranchNode
+from .snapshot_branch import SnapshotBranchNode
 
 
 class BaseReleaseNode(BaseSWHNode):
@@ -47,7 +47,7 @@ class TargetReleaseNode(BaseReleaseNode):
     """
 
     _can_be_null = True
-    obj: Union[BaseSnapshotBranchNode, BaseReleaseNode, SearchResultNode]
+    obj: Union[SnapshotBranchNode, BaseReleaseNode, SearchResultNode]
 
     def _get_node_data(self):
         # self.obj.target_hash is the requested release id

@@ -13,6 +13,9 @@ from swh.model.model import (
     Release,
     Revision,
     RevisionType,
+    Snapshot,
+    SnapshotBranch,
+    TargetType,
 )
 from swh.model.tests import swh_model_data
 
@@ -172,7 +175,75 @@ def get_visit_with_multiple_status():
     ]
 
 
+def get_snapshots_with_multiple_alias():
+    return [
+        Snapshot(
+            # This branch alias chain breaks without a target
+            branches={
+                b"target/alias1": SnapshotBranch(
+                    target_type=TargetType.ALIAS, target=b"target/alias2"
+                ),
+                b"target/alias2": SnapshotBranch(
+                    target_type=TargetType.ALIAS, target=b"target/alias3"
+                ),
+            },
+        ),
+        Snapshot(
+            # This branch alias chain resolves to a release after 2 levels
+            branches={
+                b"target/alias1": SnapshotBranch(
+                    target_type=TargetType.ALIAS, target=b"target/alias2"
+                ),
+                b"target/alias2": SnapshotBranch(
+                    target_type=TargetType.ALIAS, target=b"target/release"
+                ),
+                b"target/release": SnapshotBranch(
+                    target_type=TargetType.RELEASE, target=get_releases()[0].id
+                ),
+            },
+        ),
+        Snapshot(
+            # This branch alias chain is going 6 levels deep
+            branches={
+                b"target/alias1": SnapshotBranch(
+                    target_type=TargetType.ALIAS, target=b"target/alias2"
+                ),
+                b"target/alias2": SnapshotBranch(
+                    target_type=TargetType.ALIAS, target=b"target/alias3"
+                ),
+                b"target/alias3": SnapshotBranch(
+                    target_type=TargetType.ALIAS, target=b"target/alias4"
+                ),
+                b"target/alias4": SnapshotBranch(
+                    target_type=TargetType.ALIAS, target=b"target/alias5"
+                ),
+                b"target/alias5": SnapshotBranch(
+                    target_type=TargetType.ALIAS, target=b"target/alias6"
+                ),
+                b"target/alias6": SnapshotBranch(
+                    target_type=TargetType.ALIAS, target=b"target/release"
+                ),
+                b"target/release": SnapshotBranch(
+                    target_type=TargetType.RELEASE, target=get_releases()[0].id
+                ),
+            },
+        ),
+        Snapshot(
+            # This branch alias chain is recursive
+            branches={
+                b"target/alias1": SnapshotBranch(
+                    target_type=TargetType.ALIAS, target=b"target/alias2"
+                ),
+                b"target/alias2": SnapshotBranch(
+                    target_type=TargetType.ALIAS, target=b"target/alias1"
+                ),
+            },
+        ),
+    ]
+
+
 GRAPHQL_EXTRA_TEST_OBJECTS = {
+    "snapshot": get_snapshots_with_multiple_alias(),
     "release": get_releases_with_target(),
     "revision": get_revisions_with_parents() + get_revisions_with_none_date(),
     "directory": get_directories_with_nested_path()

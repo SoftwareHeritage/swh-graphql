@@ -70,10 +70,10 @@ class TargetSnapshotNode(BaseSnapshotNode):
     Node resolver for a snapshot requested as a target
     """
 
-    from .snapshot_branch import BaseSnapshotBranchNode
+    from .snapshot_branch import SnapshotBranchNode
 
     _can_be_null = True
-    obj: Union[SearchResultNode, BaseSnapshotBranchNode]
+    obj: Union[SearchResultNode, SnapshotBranchNode]
 
     def _get_node_data(self):
         snapshot_id = self.obj.target_hash

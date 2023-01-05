@@ -498,7 +498,7 @@ type Person {
 """
 Possible branch target objects
 """
-union BranchTarget = Revision | Release | Branch | Content | Directory | Snapshot
+union BranchTarget = Revision | Release | Content | Directory | Snapshot
 
 """
 Possible Branch target types
@@ -527,9 +527,15 @@ type Branch {
   targetType: BranchTargetType
 
   """
+  The chain of alias branch names from the requested branch to the final target.
+  This is empty for most references, and typically has a single item for `HEAD`.
+  """
+  resolveChain: [BinaryString]  # FIXME, requesting this alone is as complex as the target, will be fixed with the target structure fix
+
+  """
   Branch target object
   """
-  target: BranchTarget @cost(complexity: 1)
+  target: BranchTarget @cost(complexity: 2)  # This costs more because of possible alias chains
 }
 
 """

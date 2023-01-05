@@ -97,19 +97,21 @@ def visit_snapshot_resolver(
 
 @snapshot_branch.field("target")
 def snapshot_branch_target_resolver(
-    obj: rs.snapshot_branch.BaseSnapshotBranchNode, info: GraphQLResolveInfo, **kw
+    obj: rs.snapshot_branch.SnapshotBranchNode, info: GraphQLResolveInfo, **kw
 ) -> Union[
     rs.revision.BaseRevisionNode,
     rs.release.BaseReleaseNode,
     rs.directory.BaseDirectoryNode,
     rs.content.BaseContentNode,
     rs.snapshot.BaseSnapshotNode,
-    rs.snapshot_branch.BaseSnapshotBranchNode,
 ]:
     """
     Snapshot branch target can be a revision, release, directory,
-    content, snapshot or a branch itself (alias type)
+    content or a snapshot
     """
+
+    # FIXME, this will fail and raise an error for a branch with None target
+    # will be fixed with the target structure fix
     return NodeObjectFactory.create(f"branch-{obj.targetType}", obj, info, **kw)
 
 
@@ -329,7 +331,6 @@ def union_resolver(
         rs.directory.BaseDirectoryNode,
         rs.content.BaseContentNode,
         rs.snapshot.BaseSnapshotNode,
-        rs.snapshot_branch.BaseSnapshotBranchNode,
     ],
     *_,
 ) -> str:

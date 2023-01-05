@@ -12,7 +12,7 @@ from .base_node import BaseSWHNode
 from .release import BaseReleaseNode
 from .revision import BaseRevisionNode
 from .search import SearchResultNode
-from .snapshot_branch import BaseSnapshotBranchNode
+from .snapshot_branch import SnapshotBranchNode
 
 
 class BaseDirectoryNode(BaseSWHNode):
@@ -69,7 +69,7 @@ class TargetDirectoryNode(BaseDirectoryNode):
 
     _can_be_null = True
     obj: Union[
-        BaseSnapshotBranchNode,
+        SnapshotBranchNode,
         BaseReleaseNode,
         BaseDirectoryEntryNode,
         SearchResultNode,
