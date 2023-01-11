@@ -5,9 +5,8 @@
 
 from swh.graphql.utils import utils
 from swh.model.swhids import CoreSWHID, ObjectType
-from swh.storage.interface import PagedResult
 
-from .base_connection import BaseConnection
+from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseNode
 from .visit import BaseVisitNode
 
@@ -50,13 +49,15 @@ class VisitStatusConnection(BaseConnection):
     obj: BaseVisitNode
     _node_class = BaseVisitStatusNode
 
-    def _get_paged_result(self) -> PagedResult:
+    def _get_connection_data(self) -> ConnectionData:
         # self.obj.origin is the origin URL
-        return self.archive.get_visit_status(
-            self.obj.origin,
-            self.obj.visitId,
-            after=self._get_after_arg(),
-            first=self._get_first_arg(),
+        return ConnectionData(
+            paged_result=self.archive.get_visit_status(
+                self.obj.origin,
+                self.obj.visitId,
+                after=self._get_after_arg(),
+                first=self._get_first_arg(),
+            )
         )
 
     def _get_index_cursor(self, index: int, node: BaseVisitStatusNode):

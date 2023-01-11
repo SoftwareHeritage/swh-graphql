@@ -18,6 +18,7 @@ def get_origins_from_api(
         nodes {
           url
         }
+        totalCount
         pageInfo {
           hasNextPage
           endCursor
@@ -49,5 +50,6 @@ def test_get_filter_by_non_existing_pattern(client):
 
 def test_basic_pagination(client):
     data, _ = get_origins_from_api(client, first=len(get_origins()))
+    assert data["origins"]["totalCount"] is None
     assert len(data["origins"]["nodes"]) == len(get_origins())
     assert data["origins"]["pageInfo"] == {"hasNextPage": False, "endCursor": None}

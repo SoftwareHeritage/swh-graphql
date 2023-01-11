@@ -5,7 +5,7 @@
 
 from swh.storage.interface import PagedResult
 
-from .base_connection import BaseConnection, BaseList
+from .base_connection import BaseConnection, BaseList, ConnectionData
 from .base_node import BaseNode
 
 
@@ -39,7 +39,7 @@ class SearchConnection(BaseConnection):
 
     _node_class = SearchResultNode
 
-    def _get_paged_result(self) -> PagedResult:
+    def _get_connection_data(self) -> ConnectionData:
         origins = self.search.get_origins(
             query=self.kwargs.get("query"),
             after=self._get_after_arg(),
@@ -50,4 +50,8 @@ class SearchConnection(BaseConnection):
         results = [
             {"target_url": ori["url"], "type": "origin"} for ori in origins.results
         ]
-        return PagedResult(results=results, next_page_token=origins.next_page_token)
+        return ConnectionData(
+            paged_result=PagedResult(
+                results=results, next_page_token=origins.next_page_token
+            )
+        )

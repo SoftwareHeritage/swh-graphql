@@ -9,7 +9,7 @@ from swh.graphql.errors import ObjectNotFoundError
 from swh.graphql.utils import utils
 from swh.storage.interface import PagedResult
 
-from .base_connection import BaseConnection
+from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseNode
 
 
@@ -19,7 +19,7 @@ class BaseSnapshotBranchNode(BaseNode):
     # It is resolved in the top level (resolvers.resolvers.py)
 
     def _get_node_from_data(self, node_data: tuple):
-        # node_data is a tuple as returned by _get_paged_result in
+        # node_data is a tuple as returned by _get_connection_data in
         # SnapshotBranchConnection and _get_node_data in AliasSnapshotBranchNode
         # overriding to support this special data structure
         branch_name, branch_obj = node_data
@@ -89,7 +89,7 @@ class SnapshotBranchConnection(BaseConnection):
 
     _node_class = BaseSnapshotBranchNode
 
-    def _get_paged_result(self) -> PagedResult:
+    def _get_connection_data(self) -> ConnectionData:
         result = self.archive.get_snapshot_branches(
             self.obj.swhid.object_id,
             after=self._get_after_arg(),
@@ -107,8 +107,10 @@ class SnapshotBranchConnection(BaseConnection):
         # STORAGE-TODO
 
         # this will be serialized in _get_node_from_data method in the node class
-        return PagedResult(
-            results=result["branches"].items(), next_page_token=end_cusrsor
+        return ConnectionData(
+            paged_result=PagedResult(
+                results=result["branches"].items(), next_page_token=end_cusrsor
+            )
         )
 
     def _get_after_arg(self):

@@ -108,6 +108,7 @@ def test_get_directory_entry_connection(client, directory):
       directory(swhid: $swhid) {
         swhid
         entries(first: 10) {
+          totalCount
           nodes {
             targetType
             name {
@@ -121,6 +122,7 @@ def test_get_directory_entry_connection(client, directory):
     data, _ = utils.get_query_response(client, query_str, swhid=str(directory.swhid()))
     directory_entries = data["directory"]["entries"]["nodes"]
     assert len(directory_entries) == len(directory.entries)
+    assert data["directory"]["entries"]["totalCount"] == len(directory.entries)
     output = [
         {"name": {"text": de.name.decode()}, "targetType": get_target_type(de.type)}
         for de in directory.entries

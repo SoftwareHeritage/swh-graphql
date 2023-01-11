@@ -31,6 +31,12 @@ class ConnectionEdge:
     cursor: Optional[str]
 
 
+@dataclass
+class ConnectionData:
+    paged_result: PagedResult
+    total_count: Optional[int] = None
+
+
 class BaseConnection(ABC):
     """
     Base resolver for all the connections
@@ -40,14 +46,14 @@ class BaseConnection(ABC):
     _page_size: int = 50  # default page size (default value for the first arg)
     _max_page_size: int = 1000  # maximum page size(max value for the first arg)
 
-    def __init__(self, obj, info, paged_data=None, **kwargs):
+    def __init__(self, obj, info, data=None, **kwargs):
         self.obj: Optional[BaseNode] = obj
         self.info: GraphQLResolveInfo = info
+        self._connection_data: ConnectionData = data
         self.kwargs = kwargs
         # initialize commonly used vars
         self.archive = Archive()
         self.search = Search()
-        self._paged_data: PagedResult = paged_data
 
     @property
     def edges(self) -> List[ConnectionEdge]:
@@ -72,16 +78,18 @@ class BaseConnection(ABC):
                 self._node_class(
                     obj=self, info=self.info, node_data=result, **self.kwargs
                 )
-                for result in self.get_paged_data().results
+                for result in self.get_connection_data().paged_result.results
             ]
-        return self.get_paged_data().results
+        return self.get_connection_data().paged_result.results
 
     @property
     def pageInfo(self) -> PageInfo:  # To support the schema naming convention
         # FIXME, add more details like startCursor
         return PageInfo(
-            hasNextPage=bool(self.get_paged_data().next_page_token),
-            endCursor=utils.get_encoded_cursor(self.get_paged_data().next_page_token),
+            hasNextPage=bool(self.get_connection_data().paged_result.next_page_token),
+            endCursor=utils.get_encoded_cursor(
+                self.get_connection_data().paged_result.next_page_token
+            ),
         )
 
     @property
@@ -90,24 +98,21 @@ class BaseConnection(ABC):
         Will be None for most of the connections
         override if needed/possible
         """
+        return self.get_connection_data().total_count
 
-        return None
-
-    def get_paged_data(self) -> PagedResult:
+    def get_connection_data(self) -> ConnectionData:
         """
-        Cache to avoid multiple calls to the backend :meth:`_get_paged_result`
-        return a PagedResult object
+        Cache to avoid multiple calls to the backend :meth:`_get_connection_data`
         """
-        if self._paged_data is None:
+        if self._connection_data is None:
             # FIXME, make this call async (not for v1)
-            self._paged_data = self._get_paged_result()
-        return self._paged_data
+            self._connection_data = self._get_connection_data()
+        return self._connection_data
 
     @abstractmethod
-    def _get_paged_result(self):
+    def _get_connection_data(self) -> ConnectionData:
         """
-        Override for desired behaviour
-        return a PagedResult object
+        Override to fetch data
         """
         # FIXME, make this call async (not for v1)
 

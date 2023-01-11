@@ -161,7 +161,8 @@ def test_get_revision_log(client):
     query getRevision($swhid: SWHID!) {
       revision(swhid: $swhid) {
         swhid
-        revisionLog(first: 3) {
+        revisionLog(first: 2) {
+          totalCount
           nodes {
             swhid
           }
@@ -171,11 +172,11 @@ def test_get_revision_log(client):
     """
     data, _ = utils.get_query_response(client, query_str, swhid=str(revision_swhid))
     assert data["revision"]["revisionLog"] == {
+        "totalCount": 3,
         "nodes": [
             {"swhid": str(revision_swhid)},
             {"swhid": str(get_revisions()[0].swhid())},
-            {"swhid": str(get_revisions()[1].swhid())},
-        ]
+        ],
     }
 
 
@@ -186,6 +187,7 @@ def test_get_revision_parents(client):
       revision(swhid: $swhid) {
         swhid
         parents {
+          totalCount
           nodes {
             swhid
           }
@@ -196,10 +198,11 @@ def test_get_revision_parents(client):
     data, _ = utils.get_query_response(client, query_str, swhid=str(revision_swhid))
 
     assert data["revision"]["parents"] == {
+        "totalCount": 2,
         "nodes": [
             {"swhid": str(get_revisions()[0].swhid())},
             {"swhid": str(get_revisions()[1].swhid())},
-        ]
+        ],
     }
 
 

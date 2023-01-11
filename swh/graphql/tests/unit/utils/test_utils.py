@@ -34,30 +34,30 @@ class TestUtils:
         )
         assert utils.get_formatted_date(date) == "2015-08-04T22:26:14.804009+00:00"
 
-    def test_paginated(self):
+    def test_get_local_paginated_data(self):
         source = [1, 2, 3, 4, 5]
-        response = utils.paginated(source, first=50)
-        assert response.results == source
-        assert response.next_page_token is None
+        response = utils.get_local_paginated_data(source, first=50)
+        assert response.paged_result.results == source
+        assert response.paged_result.next_page_token is None
 
-    def test_paginated_first_arg(self):
+    def test_get_local_paginated_data_first_arg(self):
         source = [1, 2, 3, 4, 5]
-        response = utils.paginated(source, first=2)
-        assert response.results == source[:2]
-        assert response.next_page_token == "2"
+        response = utils.get_local_paginated_data(source, first=2)
+        assert response.paged_result.results == source[:2]
+        assert response.paged_result.next_page_token == "2"
 
-    def test_paginated_after_arg(self):
+    def test_get_local_paginated_data_after_arg(self):
         source = [1, 2, 3, 4, 5]
-        response = utils.paginated(source, first=2, after="2")
-        assert response.results == [3, 4]
-        assert response.next_page_token == "4"
+        response = utils.get_local_paginated_data(source, first=2, after="2")
+        assert response.paged_result.results == [3, 4]
+        assert response.paged_result.next_page_token == "4"
 
-        response = utils.paginated(source, first=2, after="3")
-        assert response.results == [4, 5]
-        assert response.next_page_token is None
+        response = utils.get_local_paginated_data(source, first=2, after="3")
+        assert response.paged_result.results == [4, 5]
+        assert response.paged_result.next_page_token is None
 
-    def test_paginated_endcursor_outside(self):
+    def test_get_local_paginated_data_endcursor_outside(self):
         source = [1, 2, 3, 4, 5]
-        response = utils.paginated(source, first=2, after="10")
-        assert response.results == []
-        assert response.next_page_token is None
+        response = utils.get_local_paginated_data(source, first=2, after="10")
+        assert response.paged_result.results == []
+        assert response.paged_result.next_page_token is None

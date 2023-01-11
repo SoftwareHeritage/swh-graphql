@@ -4,9 +4,8 @@
 # See top-level LICENSE file for more information
 
 from swh.graphql.utils import utils
-from swh.storage.interface import PagedResult
 
-from .base_connection import BaseConnection
+from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseNode
 from .origin import OriginNode
 
@@ -65,8 +64,10 @@ class OriginVisitConnection(BaseConnection):
 
     _node_class = BaseVisitNode
 
-    def _get_paged_result(self) -> PagedResult:
+    def _get_connection_data(self) -> ConnectionData:
         # self.obj.url is the origin URL
-        return self.archive.get_origin_visits(
-            self.obj.url, after=self._get_after_arg(), first=self._get_first_arg()
+        return ConnectionData(
+            paged_result=self.archive.get_origin_visits(
+                self.obj.url, after=self._get_after_arg(), first=self._get_first_arg()
+            )
         )

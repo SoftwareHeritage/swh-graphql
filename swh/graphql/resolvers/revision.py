@@ -8,9 +8,8 @@ from typing import Union
 from swh.graphql.utils import utils
 from swh.model.model import Revision
 from swh.model.swhids import CoreSWHID, ObjectType
-from swh.storage.interface import PagedResult
 
-from .base_connection import BaseConnection
+from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseSWHNode
 from .directory_entry import BaseDirectoryEntryNode
 from .release import BaseReleaseNode
@@ -87,17 +86,18 @@ class ParentRevisionConnection(BaseConnection):
 
     _node_class = BaseRevisionNode
 
-    def _get_paged_result(self) -> PagedResult:
+    def _get_connection_data(self) -> ConnectionData:
         # self.obj is the current(child) revision
         # self.obj.parent_swhids is the list of parent SWHIDs
 
         # FIXME, using dummy(local) pagination, move pagination to backend
-        # To remove localpagination, just drop the paginated call
         # STORAGE-TODO (pagination)
         parents = self.archive.get_revisions(
             [x.object_id for x in self.obj.parent_swhids]
         )
-        return utils.paginated(parents, self._get_first_arg(), self._get_after_arg())
+        return utils.get_local_paginated_data(
+            parents, self._get_first_arg(), self._get_after_arg()
+        )
 
 
 class LogRevisionConnection(BaseConnection):
@@ -109,13 +109,14 @@ class LogRevisionConnection(BaseConnection):
 
     _node_class = BaseRevisionNode
 
-    def _get_paged_result(self) -> PagedResult:
+    def _get_connection_data(self) -> ConnectionData:
         log = self.archive.get_revision_log([self.obj.swhid.object_id])
         # Storage is returning a list of dicts instead of model objects
         # Following loop is to reverse that operation
         # STORAGE-TODO; remove to_dict from storage.revision_log
         log = [Revision.from_dict(rev) for rev in log]
         # FIXME, using dummy(local) pagination, move pagination to backend
-        # To remove localpagination, just drop the paginated call
         # STORAGE-TODO (pagination)
-        return utils.paginated(log, self._get_first_arg(), self._get_after_arg())
+        return utils.get_local_paginated_data(
+            log, self._get_first_arg(), self._get_after_arg()
+        )

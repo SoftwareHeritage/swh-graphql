@@ -4,9 +4,8 @@
 # See top-level LICENSE file for more information
 
 from swh.graphql.utils import utils
-from swh.storage.interface import PagedResult
 
-from .base_connection import BaseConnection
+from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseNode
 
 
@@ -47,9 +46,8 @@ class DirectoryEntryConnection(BaseConnection):
 
     _node_class = BaseDirectoryEntryNode
 
-    def _get_paged_result(self) -> PagedResult:
+    def _get_connection_data(self) -> ConnectionData:
         # FIXME, using dummy(local) pagination, move pagination to backend
-        # To remove localpagination, just drop the paginated call
         # STORAGE-TODO
         entries = self.archive.get_directory_entries(self.obj.swhid.object_id).results
         name_include = self.kwargs.get("nameInclude")
@@ -60,4 +58,6 @@ class DirectoryEntryConnection(BaseConnection):
                 for x in entries
                 if name_include.casefold() in x.name.decode().casefold()
             ]
-        return utils.paginated(entries, self._get_first_arg(), self._get_after_arg())
+        return utils.get_local_paginated_data(
+            entries, self._get_first_arg(), self._get_after_arg()
+        )

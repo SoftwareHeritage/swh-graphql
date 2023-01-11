@@ -6,7 +6,7 @@
 from swh.model.model import Origin
 from swh.storage.interface import PagedResult
 
-from .base_connection import BaseConnection
+from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseSWHNode
 from .search import SearchResultNode
 
@@ -48,7 +48,7 @@ class OriginConnection(BaseConnection):
 
     _node_class = BaseOriginNode
 
-    def _get_paged_result(self) -> PagedResult:
+    def _get_connection_data(self) -> ConnectionData:
         # Use the search backend if a urlPattern is given
         if self.kwargs.get("urlPattern"):
             origins = self.search.get_origins(
@@ -57,8 +57,12 @@ class OriginConnection(BaseConnection):
                 first=self._get_first_arg(),
             )
             results = [Origin(ori["url"]) for ori in origins.results]
-            return PagedResult(results=results, next_page_token=origins.next_page_token)
-        # Use the archive backend by default
-        return self.archive.get_origins(
-            after=self._get_after_arg(), first=self._get_first_arg()
-        )
+            paged_result = PagedResult(
+                results=results, next_page_token=origins.next_page_token
+            )
+        else:
+            # Use the archive backend by default
+            paged_result = self.archive.get_origins(
+                after=self._get_after_arg(), first=self._get_first_arg()
+            )
+        return ConnectionData(paged_result=paged_result)

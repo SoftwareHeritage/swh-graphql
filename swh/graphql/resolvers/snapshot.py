@@ -9,9 +9,8 @@ from swh.graphql.errors import NullableObjectError
 from swh.graphql.utils import utils
 from swh.model.model import Snapshot
 from swh.model.swhids import ObjectType
-from swh.storage.interface import PagedResult
 
-from .base_connection import BaseConnection
+from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseSWHNode
 from .origin import OriginNode
 from .search import SearchResultNode
@@ -90,10 +89,12 @@ class OriginSnapshotConnection(BaseConnection):
 
     _node_class = BaseSnapshotNode
 
-    def _get_paged_result(self) -> PagedResult:
+    def _get_connection_data(self) -> ConnectionData:
         results = self.archive.get_origin_snapshots(self.obj.url)
         snapshots = [Snapshot(id=snapshot, branches={}) for snapshot in results]
         # FIXME, using dummy(local) pagination, move pagination to backend
         # To remove localpagination, just drop the paginated call
         # STORAGE-TODO
-        return utils.paginated(snapshots, self._get_first_arg(), self._get_after_arg())
+        return utils.get_local_paginated_data(
+            snapshots, self._get_first_arg(), self._get_after_arg()
+        )
