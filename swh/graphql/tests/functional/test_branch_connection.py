@@ -3,6 +3,8 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+import base64
+
 import pytest
 
 from . import utils
@@ -20,12 +22,14 @@ def get_branches(client, **kwargs) -> tuple:
             endCursor
           }
           nodes {
+            id
             targetType
             resolveChain {
               text
             }
             name {
               text
+              base64
             }
             target {
               __typename
@@ -59,14 +63,19 @@ def test_get_data(client):
     assert len(data["snapshot"]["branches"]["nodes"]) == 1
     # filter 'type' will return a single revision object and is used to assert data
     node = data["snapshot"]["branches"]["nodes"][0]
+
     assert node == {
-        "name": {"text": "target/revision"},
+        "name": {
+            "text": "target/revision",
+            "base64": base64.b64encode(b"target/revision").decode(),
+        },
         "target": {
             "__typename": "Revision",
             "swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c",
         },
         "targetType": "revision",
         "resolveChain": None,
+        "id": node["name"]["base64"].encode().hex(),
     }
 
 
@@ -75,13 +84,15 @@ def test_get_branches_with_one_level_alias(client):
     data, _ = get_branches(client, swhid=swhid, first=10, types=["alias"])
     node = data["snapshot"]["branches"]["nodes"][0]
     assert node == {
-        "name": {"text": "target/alias"},  # original name
+        "name": {"text": "target/alias",
+                 "base64": base64.b64encode(b"target/alias").decode(),},  # original name
         "target": {
             "__typename": "Revision",
             "swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c",
         },
         "targetType": "revision",
         "resolveChain": [{"text": "target/revision"}],
+        "id": node["name"]["base64"].encode().hex(),
     }
 
 
@@ -96,10 +107,11 @@ def test_get_branches_alias_without_a_target(client):
     )
     node = data["snapshot"]["branches"]["nodes"][0]
     assert node == {
-        "name": {"text": "target/alias1"},  # original name
+        "name": {"text": "target/alias1", "base64": base64.b64encode(b"target/alias1").decode()},  # original name
         "target": None,
         "targetType": None,
         "resolveChain": [{"text": "target/alias2"}, {"text": "target/alias3"}],
+        "id": node["name"]["base64"].encode().hex()
     }
 
 
@@ -114,10 +126,11 @@ def test_get_branches_with_multiple_alias_redirects(client):
     )
     node = data["snapshot"]["branches"]["nodes"][0]
     assert node == {
-        "name": {"text": "target/alias1"},  # original name
+        "name": {"text": "target/alias1", "base64": base64.b64encode(b"target/alias1").decode()},  # original name
         "target": {"__typename": "Release", "swhid": str(get_releases()[0].swhid())},
         "targetType": "release",
         "resolveChain": [{"text": "target/alias2"}, {"text": "target/release"}],
+        "id": node["name"]["base64"].encode().hex()
     }
 
 
@@ -132,7 +145,7 @@ def test_get_branches_with_too_many_alias_redirects(client):
     )
     node = data["snapshot"]["branches"]["nodes"][0]
     assert node == {
-        "name": {"text": "target/alias1"},  # original name
+        "name": {"text": "target/alias1", "base64": base64.b64encode(b"target/alias1").decode()},  # original name
         "target": None,
         "targetType": None,
         "resolveChain": [
@@ -142,6 +155,7 @@ def test_get_branches_with_too_many_alias_redirects(client):
             {"text": "target/alias5"},
             {"text": "target/alias6"},
         ],
+        "id": node["name"]["base64"].encode().hex()
     }
 
 
@@ -156,7 +170,8 @@ def test_get_branches_with_infinite_alias_redirects(client):
     )
     node = data["snapshot"]["branches"]["nodes"][0]
     assert node == {
-        "name": {"text": "target/alias1"},  # original name
+        "name": {"text": "target/alias1",
+                 "base64": base64.b64encode(b"target/alias1").decode()},  # original name
         "target": None,
         "targetType": None,
         "resolveChain": [
@@ -164,6 +179,7 @@ def test_get_branches_with_infinite_alias_redirects(client):
             {"text": "target/alias1"},
             {"text": "target/alias2"},
         ],
+        "id": node["name"]["base64"].encode().hex()
     }
 
 

@@ -21,7 +21,12 @@ class SnapshotBranchNode(BaseNode):
     # target field for this node is a UNION type
     # It is resolved in the top level (resolvers.resolvers.py)
 
-    def _get_node_from_data(self, node_data: Tuple[bytes, Optional[SnapshotBranch]]):
+    @property
+    def id(self):
+        # branch names will be unique inside a snapshot branch connection
+        return utils.get_b64_string(self._node.name)
+
+    def _get_node_from_data(self, node_data: tuple):
         # node_data is a tuple as returned by _get_connection_data in SnapshotBranchConnection
         # overriding to support this special data structure
         branch_name, branch_obj = node_data

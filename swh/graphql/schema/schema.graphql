@@ -515,7 +515,12 @@ enum BranchTargetType {
 """
 A snapshot branch object
 """
-type Branch {
+type Branch implements Node {
+  """
+  Unique identifier
+  """
+  id: ID!
+
   """
   Branch name
   """
