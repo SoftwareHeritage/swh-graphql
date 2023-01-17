@@ -11,5 +11,15 @@ debug: no
 introspection: yes
 
 max_query_cost:
-  anonymous: 500
+  anonymous: 50
+  user: 500
 
+auth:
+  server: https://auth.softwareheritage.org/auth/
+  relam: SoftwareHeritageStaging
+  client: swh-web
+
+# FIXME, temporary simple memory cache
+# slow and very often cause a cache miss
+cache:
+  url: memory://

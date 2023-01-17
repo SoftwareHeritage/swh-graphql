@@ -2,3 +2,4 @@ ariadne
 uvicorn
 starlette
 httpx
+aiocache

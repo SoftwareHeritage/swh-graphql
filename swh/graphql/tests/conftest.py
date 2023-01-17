@@ -6,8 +6,10 @@
 import os
 
 import pytest
+from starlette.authentication import AuthCredentials, AuthenticationError, SimpleUser
 from starlette.testclient import TestClient
 
+from swh.auth.starlette.backends import BearerTokenAuthBackend
 from swh.graphql import server as app_server
 
 from .data import populate_dummy_data, populate_search_data
@@ -20,6 +22,36 @@ def test_app():
     )
     app = app_server.make_app_from_configfile()
     return app
+
+
+@pytest.fixture(autouse=True)
+def authenticated_user(mocker):
+    async def authenticate(*args, **kw):
+        return AuthCredentials(["Authenticated"]), SimpleUser("user")
+
+    mocker.patch.object(
+        BearerTokenAuthBackend, "authenticate", side_effect=authenticate
+    )
+
+
+@pytest.fixture
+def anonymous_user(mocker):
+    async def authenticate(*args, **kw):
+        return None
+
+    mocker.patch.object(
+        BearerTokenAuthBackend, "authenticate", side_effect=authenticate
+    )
+
+
+@pytest.fixture
+def authentication_error(mocker):
+    async def authenticate(*args, **kw):
+        raise AuthenticationError("auth error")
+
+    mocker.patch.object(
+        BearerTokenAuthBackend, "authenticate", side_effect=authenticate
+    )
 
 
 @pytest.fixture(scope="session")
@@ -46,16 +78,16 @@ def client(test_app, storage, search):
 
 @pytest.fixture
 def high_query_cost():
-    query_cost = app_server.graphql_cfg["max_query_cost"]["anonymous"]
-    app_server.graphql_cfg["max_query_cost"]["anonymous"] = 2000
+    query_cost = app_server.graphql_cfg["max_query_cost"]["user"]
+    app_server.graphql_cfg["max_query_cost"]["user"] = 2000
     yield
-    app_server.graphql_cfg["max_query_cost"]["anonymous"] = query_cost
+    app_server.graphql_cfg["max_query_cost"]["user"] = query_cost
 
 
 @pytest.fixture
 def none_query_cost():
     # There will not be any query cost limit in this case
-    query_cost = app_server.graphql_cfg["max_query_cost"]["anonymous"]
-    app_server.graphql_cfg["max_query_cost"]["anonymous"] = None
+    query_cost = app_server.graphql_cfg["max_query_cost"]["user"]
+    app_server.graphql_cfg["max_query_cost"]["user"] = None
     yield
-    app_server.graphql_cfg["max_query_cost"]["anonymous"] = query_cost
+    app_server.graphql_cfg["max_query_cost"]["user"] = query_cost

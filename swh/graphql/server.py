@@ -6,6 +6,15 @@
 import os
 from typing import Any, Dict, Optional
 
+from aiocache import Cache
+from ariadne.asgi import GraphQL
+from starlette.applications import Starlette
+from starlette.middleware import Middleware
+from starlette.middleware.authentication import AuthenticationMiddleware
+from starlette.middleware.cors import CORSMiddleware
+from starlette.routing import Mount
+
+from swh.auth.starlette.backends import BearerTokenAuthBackend
 from swh.core import config
 from swh.search import get_search as get_swh_search
 from swh.search.interface import SearchInterface
@@ -64,13 +73,8 @@ def make_app_from_configfile():
     SWH_CONFIG_FILENAME environment variable defines the
     configuration path to load.
     """
-    from ariadne.asgi import GraphQL
-    from starlette.applications import Starlette
-    from starlette.middleware import Middleware
-    from starlette.middleware.cors import CORSMiddleware
-
     from .app import schema, validation_rules
-    from .errors import format_error
+    from .errors import format_error, on_auth_error
     from .middlewares.logger import LogMiddleware
 
     global graphql_cfg
@@ -78,26 +82,39 @@ def make_app_from_configfile():
     if not graphql_cfg:
         config_path = os.environ.get("SWH_CONFIG_FILENAME")
         graphql_cfg = load_and_check_config(config_path)
-
+    ariadne_app = GraphQL(
+        schema,
+        debug=graphql_cfg["debug"],
+        introspection=graphql_cfg["introspection"],
+        validation_rules=validation_rules,
+        error_formatter=format_error,
+    )
     middleware = [
         Middleware(
             CORSMiddleware,
             # FIXME, restrict origins after deploying the JS client
             allow_origins=["*"],
             allow_methods=("GET", "POST", "OPTIONS"),
+            allow_headers=["*"],
+        ),
+        Middleware(
+            AuthenticationMiddleware,
+            backend=BearerTokenAuthBackend(
+                server_url=graphql_cfg["auth"]["server"],
+                realm_name=graphql_cfg["auth"]["relam"],
+                client_id=graphql_cfg["auth"]["client"],
+                # FIXME, improve this with response cache implementation
+                cache=Cache.from_url(url=graphql_cfg["cache"]["url"]),
+            ),
+            on_error=on_auth_error,
         ),
         Middleware(LogMiddleware),
     ]
-
-    application = Starlette(middleware=middleware)
-    application.mount(
-        "/",
-        GraphQL(
-            schema,
-            debug=graphql_cfg["debug"],
-            introspection=graphql_cfg["introspection"],
-            validation_rules=validation_rules,
-            error_formatter=format_error,
-        ),
+    # Mount under a starlette application
+    application = Starlette(
+        routes=[
+            Mount("/", ariadne_app),
+        ],
+        middleware=middleware,
     )
     return application

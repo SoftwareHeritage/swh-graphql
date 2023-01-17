@@ -11,5 +11,13 @@ debug: yes
 introspection: yes
 
 max_query_cost:
-  anonymous: 100
+  anonymous: 10
+  user: 100
 
+auth:
+  server: dummy
+  relam: dummy
+  client: dummy
+
+cache:
+  url: memory://

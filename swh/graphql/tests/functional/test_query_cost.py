@@ -131,3 +131,21 @@ def test_query_cost_snapshots(client):
         "The query exceeds the maximum cost of 100. Actual cost is 207"
         in errors[0]["message"]
     )
+
+
+def test_reduced_cost_for_anonymous(client, anonymous_user):
+    # max cost is 10 for a test anonymous user
+    query_str = """
+    query getOrigins {
+      origins(first: 11) {
+        nodes {
+          url
+        }
+      }
+    }
+    """
+    errors = utils.get_error_response(client, query_str, response_code=400)
+    assert (
+        "The query exceeds the maximum cost of 10. Actual cost is 11"
+        in errors[0]["message"]
+    )

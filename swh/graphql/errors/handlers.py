@@ -6,6 +6,8 @@
 from ariadne import format_error as original_format_error
 from graphql import GraphQLError
 import sentry_sdk
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 
 from .errors import InvalidInputError, ObjectNotFoundError, PaginationError
 
@@ -27,3 +29,7 @@ def format_error(error: GraphQLError, debug: bool = False):
         sentry_sdk.capture_exception(error)
     # FIXME log the original_format to kibana (with stack trace)
     return formatted
+
+
+def on_auth_error(request: Request, exc: Exception):
+    return JSONResponse({"errors": [str(exc)]}, status_code=401)

@@ -10,7 +10,7 @@ from .errors import (
     ObjectNotFoundError,
     PaginationError,
 )
-from .handlers import format_error
+from .handlers import format_error, on_auth_error
 
 __all__ = [
     "ObjectNotFoundError",
@@ -19,4 +19,5 @@ __all__ = [
     "NullableObjectError",
     "DataError",
     "format_error",
+    "on_auth_error",
 ]

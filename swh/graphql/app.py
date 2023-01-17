@@ -48,11 +48,14 @@ schema = make_executable_schema(
 )
 
 
-def validation_rules(context_value, document, data):
+def validation_rules(context, document, data):
     from .server import graphql_cfg
 
-    # add logic to set max_query_cost depending on user type
-    max_query_cost = graphql_cfg["max_query_cost"]["anonymous"]
+    if context["request"].user.is_authenticated:
+        max_query_cost = graphql_cfg["max_query_cost"]["user"]
+    else:
+        max_query_cost = graphql_cfg["max_query_cost"]["anonymous"]
+
     if max_query_cost:
         return [
             cost_validator(maximum_cost=max_query_cost, variables=data.get("variables"))
