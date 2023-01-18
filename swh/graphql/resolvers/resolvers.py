@@ -45,9 +45,10 @@ directory_entry: ObjectType = ObjectType("DirectoryEntry")
 search_result: ObjectType = ObjectType("SearchResult")
 binary_string: ObjectType = ObjectType("BinaryString")
 date: ObjectType = ObjectType("Date")
+release_target: ObjectType = ObjectType("ReleaseTarget")
 
+release_target_node: UnionType = UnionType("ReleaseTargetNode")
 branch_target: UnionType = UnionType("BranchTarget")
-release_target: UnionType = UnionType("ReleaseTarget")
 directory_entry_target: UnionType = UnionType("DirectoryEntryTarget")
 search_result_target: UnionType = UnionType("SearchResultTarget")
 
@@ -136,21 +137,6 @@ def release_resolver(
     return NodeObjectFactory.create("release", obj, info, **kw)
 
 
-@release.field("target")
-def release_target_resolver(
-    obj: rs.release.BaseReleaseNode, info: GraphQLResolveInfo, **kw
-) -> Union[
-    rs.revision.BaseRevisionNode,
-    rs.release.BaseReleaseNode,
-    rs.directory.BaseDirectoryNode,
-    rs.content.BaseContentNode,
-]:
-    """
-    Release target can be a release, revision, directory or a content
-    """
-    return NodeObjectFactory.create(f"release-{obj.targetType}", obj, info, **kw)
-
-
 @query.field("directory")
 def directory_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
@@ -163,6 +149,25 @@ def directory_entry_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
 ) -> rs.directory_entry.DirectoryEntryNode:
     return NodeObjectFactory.create("directory-entry", obj, info, **kw)
+
+
+@release.field("target")
+def generic_target_resolver(
+    obj: rs.release.BaseReleaseNode, info: GraphQLResolveInfo, **kw
+) -> rs.target.TargetNode:
+    return NodeObjectFactory.create("generic-target", obj, info, **kw)
+
+
+@release_target.field("node")
+def generic_target_node_resolver(
+    obj: rs.target.TargetNode, info: GraphQLResolveInfo, **kw
+) -> Union[
+    rs.revision.BaseRevisionNode,
+    rs.release.BaseReleaseNode,
+    rs.directory.BaseDirectoryNode,
+    rs.content.BaseContentNode,
+]:
+    return NodeObjectFactory.create(f"target-{obj.type}", obj, info, **kw)
 
 
 @directory_entry.field("target")
@@ -319,7 +324,7 @@ def release_author_resolver(
 # Other resolvers
 
 
-@release_target.type_resolver
+@release_target_node.type_resolver
 @directory_entry_target.type_resolver
 @branch_target.type_resolver
 @search_result_target.type_resolver

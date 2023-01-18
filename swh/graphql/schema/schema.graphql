@@ -675,21 +675,6 @@ type Revision implements SWHNode & Node {
 }
 
 """
-Possible release target objects
-"""
-union ReleaseTarget = Release | Revision | Directory | Content
-
-"""
-Possible release target types
-"""
-enum ReleaseTargetType {
-  release
-  revision
-  content
-  directory
-}
-
-"""
 A release object
 """
 type Release implements SWHNode & Node {
@@ -724,14 +709,44 @@ type Release implements SWHNode & Node {
   date: Date
 
   """
-  Type of release target
-  """
-  targetType: ReleaseTargetType
-
-  """
   Release target object
   """
-  target: ReleaseTarget @cost(complexity: 1)
+  target: ReleaseTarget
+}
+
+"""
+Possible release target nodes
+"""
+union ReleaseTargetNode = Release | Revision | Directory | Content
+
+"""
+Possible release target types
+"""
+enum ReleaseTargetType {
+  release
+  revision
+  content
+  directory
+}
+
+"""
+A release target object
+"""
+type ReleaseTarget {
+  """
+  Release target node type
+  """
+  type: ReleaseTargetType!
+
+  """
+  Release target node SWHID
+  """
+  swhid: SWHID
+
+  """
+  Release target node
+  """
+  node: ReleaseTargetNode @cost(complexity: 1)
 }
 
 """

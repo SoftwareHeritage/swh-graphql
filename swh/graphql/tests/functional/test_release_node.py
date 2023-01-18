@@ -50,7 +50,9 @@ def test_get_release(client, release):
             base64
           }
         }
-        targetType
+        target {
+          type
+        }
       }
     }
     """
@@ -81,7 +83,7 @@ def test_get_release(client, release):
         }
         if release.date
         else None,
-        "targetType": release.target_type.value,
+        "target": {"type": release.target_type.value},
     }
 
 
@@ -104,19 +106,22 @@ def test_get_release_targets(client, release_with_target):
     query_str = """
     query getRelease($swhid: SWHID!) {
       release(swhid: $swhid) {
-        targetType
         target {
-          ...on Revision {
-            swhid
-          }
-          ...on Release {
-            swhid
-          }
-          ...on Directory {
-            swhid
-          }
-          ...on Content {
-            swhid
+          type
+          swhid
+          node {
+            ...on Revision {
+              swhid
+            }
+            ...on Release {
+              swhid
+            }
+            ...on Directory {
+              swhid
+            }
+            ...on Content {
+              swhid
+            }
           }
         }
       }
@@ -135,8 +140,11 @@ def test_get_release_targets(client, release_with_target):
     elif release_with_target.target_type == ObjectType.CONTENT:
         target_swhid = get_contents()[0].swhid()
     assert data["release"] == {
-        "targetType": release_with_target.target_type.value,
-        "target": {"swhid": str(target_swhid)},
+        "target": {
+            "type": release_with_target.target_type.value,
+            "swhid": str(target_swhid),
+            "node": {"swhid": str(target_swhid)},
+        }
     }
 
 
@@ -150,22 +158,24 @@ def test_get_release_target_unknown(client):
     query_str = """
     query getRelease($swhid: SWHID!) {
       release(swhid: $swhid) {
-        targetType
         target {
-          ...on Revision {
-            swhid
-            message {
-              text
+          type
+          node {
+            ...on Revision {
+              swhid
+              message {
+                text
+              }
             }
-          }
-          ...on Release {
-            swhid
-          }
-          ...on Directory {
-            swhid
-          }
-          ...on Content {
-            swhid
+            ...on Release {
+              swhid
+            }
+            ...on Directory {
+              swhid
+            }
+            ...on Content {
+              swhid
+            }
           }
         }
       }
@@ -174,10 +184,12 @@ def test_get_release_target_unknown(client):
     data, _ = utils.get_query_response(client, query_str, swhid=str(swhid))
     assert data["release"] == {
         "target": {
-            "message": {"text": "hello"},
-            "swhid": str(get_revisions()[0].swhid()),
+            "type": "revision",
+            "node": {
+                "message": {"text": "hello"},
+                "swhid": str(get_revisions()[0].swhid()),
+            },
         },
-        "targetType": "revision",
     }
 
 

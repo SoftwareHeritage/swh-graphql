@@ -12,9 +12,9 @@ from swh.model.swhids import CoreSWHID, ObjectType
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseSWHNode
 from .directory_entry import BaseDirectoryEntryNode
-from .release import BaseReleaseNode
 from .search import SearchResultNode
 from .snapshot_branch import SnapshotBranchNode
+from .target import TargetNode
 
 
 class BaseRevisionNode(BaseSWHNode):
@@ -67,14 +67,16 @@ class TargetRevisionNode(BaseRevisionNode):
     _can_be_null = True
     obj: Union[
         SnapshotBranchNode,
-        BaseReleaseNode,
+        TargetNode,
         BaseDirectoryEntryNode,
         SearchResultNode,
     ]
 
     def _get_node_data(self):
         # self.obj.target_hash is the requested revision id
-        return self._get_revision_by_id(self.obj.target_hash)
+        if self.obj.target_hash:
+            return self._get_revision_by_id(self.obj.target_hash)
+        return None
 
 
 class ParentRevisionConnection(BaseConnection):

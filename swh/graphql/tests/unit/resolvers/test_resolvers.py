@@ -87,22 +87,6 @@ class TestResolvers:
     @pytest.mark.parametrize(
         "target_type, node_cls",
         [
-            ("revision", resolvers.revision.TargetRevisionNode),
-            ("release", resolvers.release.TargetReleaseNode),
-            ("directory", resolvers.directory.TargetDirectoryNode),
-            ("content", resolvers.content.TargetContentNode),
-        ],
-    )
-    def test_release_target_resolver(self, mocker, dummy_node, target_type, node_cls):
-        obj = mocker.Mock(targetType=target_type)
-        mock_get = mocker.patch.object(node_cls, "_get_node", return_value=dummy_node)
-        node_obj = rs.release_target_resolver(obj, None)
-        assert isinstance(node_obj, node_cls)
-        assert mock_get.assert_called
-
-    @pytest.mark.parametrize(
-        "target_type, node_cls",
-        [
             ("directory", resolvers.directory.TargetDirectoryNode),
             ("content", resolvers.content.TargetContentNode),
             ("revision", resolvers.revision.TargetRevisionNode),

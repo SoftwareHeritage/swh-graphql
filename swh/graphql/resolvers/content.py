@@ -12,9 +12,9 @@ from swh.model.model import Content
 from .base_connection import BaseList
 from .base_node import BaseSWHNode
 from .directory_entry import BaseDirectoryEntryNode
-from .release import BaseReleaseNode
 from .search import SearchResultNode
 from .snapshot_branch import SnapshotBranchNode
+from .target import TargetNode
 
 
 def read_and_validate_content_hashes(hashes) -> Dict[str, bytes]:
@@ -97,11 +97,13 @@ class TargetContentNode(BaseContentNode):
     obj: Union[
         SearchResultNode,
         BaseDirectoryEntryNode,
-        BaseReleaseNode,
+        TargetNode,
         SnapshotBranchNode,
     ]
 
     def _get_node_data(self) -> Optional[Content]:
+        if not self.obj.target_hash:
+            return None
         # FIXME, this is not considering hash collisions
         # and could return a wrong object in very rare situations
         contents = self.archive.get_contents(hashes={"sha1_git": self.obj.target_hash})

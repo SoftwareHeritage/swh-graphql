@@ -65,8 +65,10 @@ def test_get_target_directory(client):
       release(swhid: $swhid) {
         swhid
         target {
-          ...on Directory {
-            swhid
+          node {
+            ...on Directory {
+              swhid
+            }
           }
         }
       }
@@ -77,7 +79,7 @@ def test_get_target_directory(client):
         query_str,
         swhid="swh:1:rel:ee4d20e80af850cc0f417d25dc5073792c5010d2",
     )
-    assert data["release"]["target"] == {
+    assert data["release"]["target"]["node"] == {
         "swhid": "swh:1:dir:0505050505050505050505050505050505050505"
     }
 

@@ -3,13 +3,12 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 from swh.model.model import Directory
 from swh.model.swhids import ObjectType
 
 from .base_node import BaseSWHNode
-from .release import BaseReleaseNode
 from .revision import BaseRevisionNode
 from .search import SearchResultNode
 from .snapshot_branch import SnapshotBranchNode
@@ -65,15 +64,19 @@ class TargetDirectoryNode(BaseDirectoryNode):
     Node resolver for a directory requested as a target
     """
 
-    from .directory_entry import BaseDirectoryEntryNode
+    if TYPE_CHECKING:  # pragma: no cover
+        from .directory_entry import BaseDirectoryEntryNode
+        from .target import TargetNode
 
+        obj: Union[
+            SnapshotBranchNode,
+            TargetNode,
+            BaseDirectoryEntryNode,
+            SearchResultNode,
+        ]
     _can_be_null = True
-    obj: Union[
-        SnapshotBranchNode,
-        BaseReleaseNode,
-        BaseDirectoryEntryNode,
-        SearchResultNode,
-    ]
 
     def _get_node_data(self):
-        return self._get_directory_by_id(self.obj.target_hash)
+        if self.obj.target_hash:
+            return self._get_directory_by_id(self.obj.target_hash)
+        return None
