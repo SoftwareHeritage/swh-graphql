@@ -65,13 +65,11 @@ class TargetDirectoryNode(BaseDirectoryNode):
     """
 
     if TYPE_CHECKING:  # pragma: no cover
-        from .directory_entry import BaseDirectoryEntryNode
         from .target import TargetNode
 
         obj: Union[
             SnapshotBranchNode,
             TargetNode,
-            BaseDirectoryEntryNode,
             SearchResultNode,
         ]
     _can_be_null = True

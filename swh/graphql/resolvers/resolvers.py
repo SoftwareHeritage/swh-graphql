@@ -46,10 +46,11 @@ search_result: ObjectType = ObjectType("SearchResult")
 binary_string: ObjectType = ObjectType("BinaryString")
 date: ObjectType = ObjectType("Date")
 release_target: ObjectType = ObjectType("ReleaseTarget")
+directory_entry_target: ObjectType = ObjectType("DirectoryEntryTarget")
 
 release_target_node: UnionType = UnionType("ReleaseTargetNode")
+directory_entry_target_node: UnionType = UnionType("DirectoryEntryTargetNode")
 branch_target: UnionType = UnionType("BranchTarget")
-directory_entry_target: UnionType = UnionType("DirectoryEntryTarget")
 search_result_target: UnionType = UnionType("SearchResultTarget")
 
 # Node resolvers
@@ -151,13 +152,17 @@ def directory_entry_resolver(
     return NodeObjectFactory.create("directory-entry", obj, info, **kw)
 
 
+@directory_entry.field("target")
 @release.field("target")
 def generic_target_resolver(
-    obj: rs.release.BaseReleaseNode, info: GraphQLResolveInfo, **kw
+    obj: Union[rs.release.BaseReleaseNode, rs.directory_entry.BaseDirectoryEntryNode],
+    info: GraphQLResolveInfo,
+    **kw,
 ) -> rs.target.TargetNode:
     return NodeObjectFactory.create("generic-target", obj, info, **kw)
 
 
+@directory_entry_target.field("node")
 @release_target.field("node")
 def generic_target_node_resolver(
     obj: rs.target.TargetNode, info: GraphQLResolveInfo, **kw
@@ -168,20 +173,6 @@ def generic_target_node_resolver(
     rs.content.BaseContentNode,
 ]:
     return NodeObjectFactory.create(f"target-{obj.type}", obj, info, **kw)
-
-
-@directory_entry.field("target")
-def directory_entry_target_resolver(
-    obj: rs.directory_entry.BaseDirectoryEntryNode, info: GraphQLResolveInfo, **kw
-) -> Union[
-    rs.revision.BaseRevisionNode,
-    rs.directory.BaseDirectoryNode,
-    rs.content.BaseContentNode,
-]:
-    """
-    DirectoryEntry target can be a directory, content or a revision
-    """
-    return NodeObjectFactory.create(f"dir-entry-{obj.targetType}", obj, info, **kw)
 
 
 @search_result.field("target")
@@ -325,7 +316,7 @@ def release_author_resolver(
 
 
 @release_target_node.type_resolver
-@directory_entry_target.type_resolver
+@directory_entry_target_node.type_resolver
 @branch_target.type_resolver
 @search_result_target.type_resolver
 def union_resolver(

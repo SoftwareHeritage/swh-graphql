@@ -30,10 +30,13 @@ def test_get_directory_entry_missing_path(client):
         name {
           text
         }
-        targetType
         target {
-          ...on Content {
-            swhid
+          type
+          swhid
+          node {
+            ...on Content {
+              swhid
+            }
           }
         }
       }
@@ -59,16 +62,19 @@ def test_get_directory_entry(client, directory):
         name {
           text
         }
-        targetType
         target {
-          ...on Content {
-            swhid
-          }
-          ...on Directory {
-            swhid
-          }
-          ...on Revision {
-            swhid
+          type
+          swhid
+          node {
+            ...on Content {
+              swhid
+            }
+            ...on Directory {
+              swhid
+            }
+            ...on Revision {
+              swhid
+            }
           }
         }
       }
@@ -82,10 +88,9 @@ def test_get_directory_entry(client, directory):
             path=entry["name"].decode(),
         )
         swhid = None
-        if entry["type"] == "file" and entry["sha1_git"] is not None:
-            swhid = CoreSWHID(
-                object_type=ObjectType.CONTENT, object_id=entry["sha1_git"]
-            )
+        node_exists = True
+        if entry["type"] == "file" and entry["target"] is not None:
+            swhid = CoreSWHID(object_type=ObjectType.CONTENT, object_id=entry["target"])
         elif entry["type"] == "dir" and entry["target"] is not None:
             swhid = CoreSWHID(
                 object_type=ObjectType.DIRECTORY, object_id=entry["target"]
@@ -94,10 +99,16 @@ def test_get_directory_entry(client, directory):
             swhid = CoreSWHID(
                 object_type=ObjectType.REVISION, object_id=entry["target"]
             )
+        if entry["target"] == b"\x11" * 20:
+            # This is a non existing object, just the target reference exists
+            node_exists = False
         assert data["directoryEntry"] == {
             "name": {"text": entry["name"].decode()},
-            "target": {"swhid": str(swhid)} if swhid else None,
-            "targetType": get_target_type(entry["type"]),
+            "target": {
+                "type": get_target_type(entry["type"]),
+                "swhid": str(swhid) if swhid else None,
+                "node": {"swhid": str(swhid)} if (swhid and node_exists) else None,
+            },
         }
 
 
@@ -110,9 +121,11 @@ def test_get_directory_entry_connection(client, directory):
         entries(first: 10) {
           totalCount
           nodes {
-            targetType
             name {
               text
+            }
+            target {
+              type
             }
           }
         }
@@ -124,7 +137,10 @@ def test_get_directory_entry_connection(client, directory):
     assert len(directory_entries) == len(directory.entries)
     assert data["directory"]["entries"]["totalCount"] == len(directory.entries)
     output = [
-        {"name": {"text": de.name.decode()}, "targetType": get_target_type(de.type)}
+        {
+            "name": {"text": de.name.decode()},
+            "target": {"type": get_target_type(de.type)},
+        }
         for de in directory.entries
     ]
     for each_entry in output:
@@ -142,9 +158,11 @@ def test_directory_entry_connection_filter_by_name(client, directory):
             swhid
             entries(nameInclude: $nameInclude) {
               nodes {
-                targetType
                 name {
                   text
+                }
+                target {
+                  type
                 }
               }
             }
@@ -159,7 +177,7 @@ def test_directory_entry_connection_filter_by_name(client, directory):
         )
         for entry in data["directory"]["entries"]["nodes"]:
             assert name_include in entry["name"]["text"]
-            assert entry["targetType"] == get_target_type(dir_entry["type"])
+            assert entry["target"]["type"] == get_target_type(dir_entry["type"])
 
 
 def test_directory_entry_connection_filter_by_name_special_chars(client):
@@ -169,9 +187,11 @@ def test_directory_entry_connection_filter_by_name_special_chars(client):
       directory(swhid: $swhid) {
         entries(nameInclude: $nameInclude) {
           nodes {
-            targetType
             name {
               text
+            }
+            target {
+              type
             }
           }
         }
@@ -186,5 +206,7 @@ def test_directory_entry_connection_filter_by_name_special_chars(client):
     )
     assert data["directory"]["entries"]["nodes"][0] == {
         "name": {"text": "ßßétEÉt"},
-        "targetType": "content",
+        "target": {
+            "type": "content",
+        },
     }

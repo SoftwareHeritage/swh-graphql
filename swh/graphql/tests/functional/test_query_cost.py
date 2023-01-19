@@ -104,7 +104,9 @@ def test_query_cost_snapshots(client):
                 swhid
                 entries(first: 3) {
                   nodes {
-                    targetType
+                    name {
+                      text
+                    }
                   }
                 }
               }

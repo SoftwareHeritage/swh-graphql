@@ -233,11 +233,13 @@ def test_get_content_as_target(client):
         swhid
         entries(first: 2) {
           nodes {
-            targetType
             target {
-              ...on Content {
-                swhid
-                length
+              type
+              node {
+                ...on Content {
+                  swhid
+                  length
+                }
               }
             }
           }
@@ -246,7 +248,7 @@ def test_get_content_as_target(client):
     }
     """
     data, _ = utils.get_query_response(client, query_str, swhid=directory_swhid)
-    content_obj = data["directory"]["entries"]["nodes"][1]["target"]
+    content_obj = data["directory"]["entries"]["nodes"][1]["target"]["node"]
     assert content_obj == {
         "length": 4,
         "swhid": "swh:1:cnt:86bc6b377e9d25f9d26777a4a28d08e63e7c5779",

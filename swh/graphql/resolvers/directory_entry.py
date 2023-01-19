@@ -3,21 +3,28 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+from typing import List
+
 from swh.graphql.utils import utils
+from swh.model.model import DirectoryEntry, ObjectType, Sha1Git
 
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseNode
 
 
 class BaseDirectoryEntryNode(BaseNode):
-    @property
-    def target_hash(self):  # for DirectoryNode
+    def target_hash(self) -> Sha1Git:
+        assert self._node is not None
         return self._node.target
 
-    @property
-    def targetType(self):  # To support the schema naming convention
-        mapping = {"file": "content", "dir": "directory", "rev": "revision"}
-        return mapping.get(self._node.type)
+    def target_type(self) -> ObjectType:
+        mapping = {
+            "file": ObjectType.CONTENT,
+            "dir": ObjectType.DIRECTORY,
+            "rev": ObjectType.REVISION,
+        }
+        assert self._node is not None
+        return mapping[self._node.type]
 
 
 class DirectoryEntryNode(BaseDirectoryEntryNode):
@@ -49,7 +56,9 @@ class DirectoryEntryConnection(BaseConnection):
     def _get_connection_data(self) -> ConnectionData:
         # FIXME, using dummy(local) pagination, move pagination to backend
         # STORAGE-TODO
-        entries = self.archive.get_directory_entries(self.obj.swhid.object_id).results
+        entries: List[DirectoryEntry] = self.archive.get_directory_entries(
+            self.obj.swhid.object_id
+        ).results
         name_include = self.kwargs.get("nameInclude")
         if name_include is not None:
             # STORAGE-TODO, move this filter to swh-storage

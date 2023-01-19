@@ -3,7 +3,7 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional, Union
 
 from swh.model.model import CoreSWHID, Sha1Git
 from swh.model.swhids import ObjectType as SwhidObjectType
@@ -21,9 +21,10 @@ class TargetNode(BaseNode):
     # 'node' field in this object is resolved in the top level
 
     if TYPE_CHECKING:  # pragma: no cover
+        from .directory_entry import BaseDirectoryEntryNode
         from .release import BaseReleaseNode
 
-        obj: BaseReleaseNode
+        obj: Union[BaseReleaseNode, BaseDirectoryEntryNode]
 
     @property
     def type(self) -> str:

@@ -790,20 +790,6 @@ type DirectoryEntryEdge {
 }
 
 """
-Possible directory entry target objects
-"""
-union DirectoryEntryTarget = Directory | Content | Revision
-
-"""
-Possible directory entry types
-"""
-enum DirectoryEntryTargetType {
-  directory
-  content
-  revision
-}
-
-"""
 A directory entry object
 """
 type DirectoryEntry {
@@ -813,14 +799,43 @@ type DirectoryEntry {
   name: BinaryString
 
   """
-  Directory entry object type; can be file, dir or rev
-  """
-  targetType: DirectoryEntryTargetType
-
-  """
   Directory entry target object
   """
   target: DirectoryEntryTarget @cost(complexity: 1)
+}
+
+"""
+Possible directory entry target nodes
+"""
+union DirectoryEntryTargetNode = Directory | Content | Revision
+
+"""
+Possible directory entry target types
+"""
+enum DirectoryEntryTargetType {
+  directory
+  content
+  revision
+}
+
+"""
+A directory entry target object
+"""
+type DirectoryEntryTarget {
+  """
+  Directory entry target node type
+  """
+  type: DirectoryEntryTargetType!
+
+  """
+  Directory entry target node SWHID
+  """
+  swhid: SWHID
+
+  """
+  Directory entry target node
+  """
+  node: DirectoryEntryTargetNode @cost(complexity: 1)
 }
 
 """
