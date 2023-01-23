@@ -5,20 +5,43 @@
 
 from typing import TYPE_CHECKING, Dict, Optional, Union
 
-from swh.model.model import CoreSWHID, Sha1Git
+from swh.model.model import CoreSWHID
 from swh.model.swhids import ObjectType as SwhidObjectType
 
 from .base_node import BaseNode
+from .snapshot_branch import SnapshotBranchNode
 
 
-class TargetNode(BaseNode):
+class BaseTargetNode(BaseNode):
+
+    # 'node' field in this object is resolved in the top level
+
+    @property
+    def swhid(self) -> Optional[CoreSWHID]:
+        # field exposed in the schema
+        # use the target type and hash to construct the SWHID
+        mapping = {  # to map models.ObjectId to swhids.ObjectId
+            "snapshot": SwhidObjectType.SNAPSHOT,
+            "revision": SwhidObjectType.REVISION,
+            "release": SwhidObjectType.RELEASE,
+            "directory": SwhidObjectType.DIRECTORY,
+            "content": SwhidObjectType.CONTENT,
+        }
+        if self.target_hash and self.type:
+            return CoreSWHID(object_type=mapping[self.type], object_id=self.target_hash)
+        return None
+
+    def _get_node_data(self) -> Dict:
+        # No exta data to fetch; everything is available from self.obj
+        return {}
+
+
+class TargetNode(BaseTargetNode):
     """
     Intermediate node between an object and its target
     Created for schema clarity and to handle missing target
     nodes in the archive
     """
-
-    # 'node' field in this object is resolved in the top level
 
     if TYPE_CHECKING:  # pragma: no cover
         from .directory_entry import BaseDirectoryEntryNode
@@ -26,32 +49,34 @@ class TargetNode(BaseNode):
 
         obj: Union[BaseReleaseNode, BaseDirectoryEntryNode]
 
-    @property
-    def type(self) -> str:
-        # field exposed in the schema
-        return self.obj.target_type().value
-
-    @property
-    def swhid(self) -> Optional[CoreSWHID]:
-        # field exposed in the schema
-        # use the target type and hash to construct the SWHID
-        mapping = {  # to map models.ObjectId to swhids.ObjectId
-            "revision": SwhidObjectType.REVISION,
-            "release": SwhidObjectType.RELEASE,
-            "directory": SwhidObjectType.DIRECTORY,
-            "content": SwhidObjectType.CONTENT,
-        }
-        if self.target_hash:
-            return CoreSWHID(object_type=mapping[self.type], object_id=self.target_hash)
-        return None
-
-    @property
-    def target_hash(self) -> Optional[Sha1Git]:
-        # field NOT exposed in the schema
-        # to be used while retrieving the node object
-        # This will always be the target_hash from the parent (slef.obj)
-        return self.obj.target_hash()
-
     def _get_node_data(self) -> Dict:
         # No exta data to fetch; everything is available from self.obj
-        return {}
+        return {
+            # field exposed in the schema
+            "type": self.obj.target_type().value,
+            # field NOT exposed in the schema
+            # to be used while retrieving the node object
+            "target_hash": self.obj.target_hash(),
+        }
+
+
+class BranchTargetNode(BaseTargetNode):
+    # Return the final target and the chain
+
+    obj: SnapshotBranchNode
+
+    def _get_node_data(self) -> Dict:
+        branch, chain = self.archive.get_branch_target(
+            snapshot_id=self.obj.snapshot_id,
+            branch_obj=self.obj.branch_obj,
+            max_length=5,
+        )
+        return {
+            # field exposed in the schema, return None instead of an empty list
+            "resolveChain": chain if chain else None,
+            # field exposed in the schema
+            "type": branch.target_type.value if branch else None,
+            # field NOT exposed in the schema
+            # to be used while retrieving the node object
+            "target_hash": branch.target if branch else None,
+        }

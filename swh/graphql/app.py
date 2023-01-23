@@ -33,6 +33,7 @@ schema = make_executable_schema(
     resolvers.directory_entry,
     resolvers.search_result,
     resolvers.branch_target,
+    resolvers.branch_target_node,
     resolvers.release_target,
     resolvers.release_target_node,
     resolvers.directory_entry_target,

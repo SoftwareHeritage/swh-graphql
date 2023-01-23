@@ -3,7 +3,7 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 from swh.graphql.errors import NullableObjectError
 from swh.graphql.utils import utils
@@ -70,14 +70,17 @@ class TargetSnapshotNode(BaseSnapshotNode):
     Node resolver for a snapshot requested as a target
     """
 
-    from .snapshot_branch import SnapshotBranchNode
+    if TYPE_CHECKING:  # pragma: no cover
+        from .target import BranchTargetNode
+
+        obj: Union[SearchResultNode, BranchTargetNode]
 
     _can_be_null = True
-    obj: Union[SearchResultNode, SnapshotBranchNode]
 
     def _get_node_data(self):
-        snapshot_id = self.obj.target_hash
-        return self._get_snapshot_by_id(snapshot_id)
+        if self.obj.target_hash:
+            return self._get_snapshot_by_id(self.obj.target_hash)
+        return None
 
 
 class OriginSnapshotConnection(BaseConnection):

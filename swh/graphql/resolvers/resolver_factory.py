@@ -34,7 +34,7 @@ from .snapshot import (
     VisitSnapshotNode,
 )
 from .snapshot_branch import SnapshotBranchConnection
-from .target import TargetNode
+from .target import BranchTargetNode, TargetNode
 from .visit import LatestVisitNode, OriginVisitConnection, OriginVisitNode
 from .visit_status import LatestVisitStatusNode, VisitStatusConnection
 
@@ -47,11 +47,6 @@ class NodeObjectFactory:
         "latest-status": LatestVisitStatusNode,
         "visit-snapshot": VisitSnapshotNode,
         "snapshot": SnapshotNode,
-        "branch-revision": TargetRevisionNode,
-        "branch-release": TargetReleaseNode,
-        "branch-directory": TargetDirectoryNode,
-        "branch-content": TargetContentNode,
-        "branch-snapshot": TargetSnapshotNode,
         "revision": RevisionNode,
         "revision-directory": RevisionDirectoryNode,
         "release": ReleaseNode,
@@ -65,6 +60,8 @@ class NodeObjectFactory:
         "search-result-directory": TargetDirectoryNode,
         "search-result-content": TargetContentNode,
         "generic-target": TargetNode,
+        "branch-target": BranchTargetNode,
+        "target-snapshot": TargetSnapshotNode,
         "target-revision": TargetRevisionNode,
         "target-release": TargetReleaseNode,
         "target-directory": TargetDirectoryNode,

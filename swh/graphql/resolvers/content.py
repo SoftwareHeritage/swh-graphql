@@ -12,8 +12,7 @@ from swh.model.model import Content
 from .base_connection import BaseList
 from .base_node import BaseSWHNode
 from .search import SearchResultNode
-from .snapshot_branch import SnapshotBranchNode
-from .target import TargetNode
+from .target import BranchTargetNode, TargetNode
 
 
 def read_and_validate_content_hashes(hashes) -> Dict[str, bytes]:
@@ -96,7 +95,7 @@ class TargetContentNode(BaseContentNode):
     obj: Union[
         SearchResultNode,
         TargetNode,
-        SnapshotBranchNode,
+        BranchTargetNode,
     ]
 
     def _get_node_data(self) -> Optional[Content]:

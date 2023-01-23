@@ -11,7 +11,6 @@ from swh.model.swhids import ObjectType
 from .base_node import BaseSWHNode
 from .revision import BaseRevisionNode
 from .search import SearchResultNode
-from .snapshot_branch import SnapshotBranchNode
 
 
 class BaseDirectoryNode(BaseSWHNode):
@@ -65,10 +64,10 @@ class TargetDirectoryNode(BaseDirectoryNode):
     """
 
     if TYPE_CHECKING:  # pragma: no cover
-        from .target import TargetNode
+        from .target import BranchTargetNode, TargetNode
 
         obj: Union[
-            SnapshotBranchNode,
+            BranchTargetNode,
             TargetNode,
             SearchResultNode,
         ]

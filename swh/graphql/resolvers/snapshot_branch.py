@@ -18,35 +18,21 @@ class SnapshotBranchNode(BaseNode):
 
     obj: "SnapshotBranchConnection"
 
-    # target field for this node is a UNION type
-    # It is resolved in the top level (resolvers.resolvers.py)
-
     def _get_node_from_data(self, node_data: Tuple[bytes, Optional[SnapshotBranch]]):
         # node_data is a tuple as returned by _get_connection_data in SnapshotBranchConnection
         # overriding to support this special data structure
         branch_name, branch_obj = node_data
-        branch_obj, resolve_chain = self.archive.get_branch_target(
-            snapshot_id=self._get_snapshot_swhid().object_id,
-            branch_obj=branch_obj,
-            max_length=5,
-        )
         updated_node_data = {
-            # Name of the branch is kept to the original(first) branch
+            # Name of the branch, exposed in the schema
             "name": branch_name,
-            # This will be None for every target other than alias
-            "resolve_chain": resolve_chain if resolve_chain else None,
-            "target_type": branch_obj.target_type.value if branch_obj else None,
-            "target_hash": branch_obj.target if branch_obj else None,
+            # Type of the branch, exposed in the schema
+            "type": branch_obj.target_type.value if branch_obj else None,
+            # not exposed in the schema, to be used by the target object
+            "snapshot_id": self._get_snapshot_swhid().object_id,
+            # not exposed in the schema, to be used by the target object
+            "branch_obj": branch_obj,
         }
         return super()._get_node_from_data(updated_node_data)
-
-    @property
-    def targetType(self):  # To support the schema naming convention
-        return self._node.target_type
-
-    @property
-    def resolveChain(self):
-        return self._node.resolve_chain
 
     def _get_snapshot_swhid(self) -> CoreSWHID:
         from .snapshot import BaseSnapshotNode

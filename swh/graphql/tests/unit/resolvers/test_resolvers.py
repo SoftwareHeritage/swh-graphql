@@ -65,25 +65,6 @@ class TestResolvers:
         # assert the right object is returned
         assert isinstance(connection_obj, connection_cls)
 
-    @pytest.mark.parametrize(
-        "branch_type, node_cls",
-        [
-            ("revision", resolvers.revision.TargetRevisionNode),
-            ("release", resolvers.release.TargetReleaseNode),
-            ("directory", resolvers.directory.TargetDirectoryNode),
-            ("content", resolvers.content.TargetContentNode),
-            ("snapshot", resolvers.snapshot.TargetSnapshotNode),
-        ],
-    )
-    def test_snapshot_branch_target_resolver(
-        self, mocker, dummy_node, branch_type, node_cls
-    ):
-        obj = mocker.Mock(targetType=branch_type)
-        mock_get = mocker.patch.object(node_cls, "_get_node", return_value=dummy_node)
-        node_obj = rs.snapshot_branch_target_resolver(obj, None)
-        assert isinstance(node_obj, node_cls)
-        assert mock_get.assert_called
-
     def test_union_resolver(self, mocker):
         obj = mocker.Mock()
         obj.is_type_of.return_value = "test"

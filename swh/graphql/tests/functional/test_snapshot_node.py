@@ -18,7 +18,7 @@ def test_get_snapshot(client, snapshot):
         swhid
         branches(first:5) {
           nodes {
-            targetType
+            type
             name {
               text
             }

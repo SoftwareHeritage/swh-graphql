@@ -11,7 +11,6 @@ from swh.model.model import Sha1Git
 
 from .base_node import BaseSWHNode
 from .search import SearchResultNode
-from .snapshot_branch import SnapshotBranchNode
 
 
 class BaseReleaseNode(BaseSWHNode):
@@ -53,10 +52,10 @@ class TargetReleaseNode(BaseReleaseNode):
     Node resolver for a release requested as a target
     """
 
-    from .target import TargetNode
+    from .target import BranchTargetNode, TargetNode
 
     _can_be_null = True
-    obj: Union[TargetNode, SnapshotBranchNode, SearchResultNode]
+    obj: Union[TargetNode, BranchTargetNode, SearchResultNode]
 
     def _get_node_data(self) -> Optional[ModelRelease]:
         # self.obj.target_hash is the requested release id

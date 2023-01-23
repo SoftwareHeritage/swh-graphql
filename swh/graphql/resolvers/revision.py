@@ -12,8 +12,7 @@ from swh.model.swhids import CoreSWHID, ObjectType
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseSWHNode
 from .search import SearchResultNode
-from .snapshot_branch import SnapshotBranchNode
-from .target import TargetNode
+from .target import BranchTargetNode, TargetNode
 
 
 class BaseRevisionNode(BaseSWHNode):
@@ -65,7 +64,7 @@ class TargetRevisionNode(BaseRevisionNode):
 
     _can_be_null = True
     obj: Union[
-        SnapshotBranchNode,
+        BranchTargetNode,
         TargetNode,
         SearchResultNode,
     ]

@@ -137,10 +137,11 @@ def test_get_revision_as_target(client):
       snapshot(swhid: $swhid) {
         branches(first: 1, types: [revision]) {
           nodes {
-            targetType
             target {
-              ...on Revision {
-                swhid
+              node {
+                ...on Revision {
+                  swhid
+                }
               }
             }
           }
@@ -149,7 +150,7 @@ def test_get_revision_as_target(client):
     }
     """
     data, _ = utils.get_query_response(client, query_str, swhid=snapshot_swhid)
-    revision_obj = data["snapshot"]["branches"]["nodes"][0]["target"]
+    revision_obj = data["snapshot"]["branches"]["nodes"][0]["target"]["node"]
     assert revision_obj == {
         "swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c"
     }

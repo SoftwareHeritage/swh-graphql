@@ -97,15 +97,17 @@ def test_query_cost_snapshots(client):
         branches(first: 50) {
           nodes {
             target {
-              ...on Revision {
-                swhid
-              }
-              ...on Directory {
-                swhid
-                entries(first: 3) {
-                  nodes {
-                    name {
-                      text
+              node {
+                ...on Revision {
+                  swhid
+                }
+                ...on Directory {
+                  swhid
+                  entries(first: 3) {
+                    nodes {
+                      name {
+                        text
+                      }
                     }
                   }
                 }
@@ -117,7 +119,8 @@ def test_query_cost_snapshots(client):
     }
     """
     # Total cost here is 157
-    # 1 (snapshot) + 2 *50 (branches) + 50 * 2 (revision or Directory) +  3 * 2 = 207
+    # 1 (snapshot) + 2 *50 (branches) + 50 * 1 (branch target)
+    # + 50 * 1 (revision or Directory) +  3 * 2 = 207
     # parent multiplier is not applied when schema introspection is used
     # ie: directory entry connection cost is 3 * 2 and not 50 * 3 * 2
     errors = utils.get_error_response(

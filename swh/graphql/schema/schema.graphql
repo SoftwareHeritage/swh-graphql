@@ -416,9 +416,9 @@ type Snapshot implements SWHNode & Node {
     after: String
 
     """
-    Filter by branch target types
+    Filter by branch types
     """
-    types: [BranchTargetType]
+    types: [BranchType]  # Filter by original branch type (not the final target type)
 
     """
     Return branches whose name contains the given substring
@@ -496,14 +496,9 @@ type Person {
 }
 
 """
-Possible branch target objects
+Possible branch types
 """
-union BranchTarget = Revision | Release | Content | Directory | Snapshot
-
-"""
-Possible Branch target types
-"""
-enum BranchTargetType {
+enum BranchType {
   revision
   release
   alias
@@ -522,20 +517,57 @@ type Branch {
   name: BinaryString
 
   """
-  Type of Branch target
+  Branch type
   """
-  targetType: BranchTargetType
+  type: BranchType
+
+  """
+  Branch target object
+  """
+  target: BranchTarget @cost(complexity: 1)  # This has a cost because of possible alias chains
+}
+
+"""
+Possible branch target nodes
+"""
+union BranchTargetNode = Revision | Release | Content | Directory | Snapshot
+
+"""
+Possible branch target types
+"""
+enum BranchTargetType {
+  revision
+  release
+  content
+  directory
+  snapshot
+}
+
+"""
+A branch target object
+"""
+type BranchTarget {
+  """
+  Branch target node type
+  This will be different from the BranchType for an alias branch
+  """
+  type: BranchTargetType
 
   """
   The chain of alias branch names from the requested branch to the final target.
   This is empty for most references, and typically has a single item for `HEAD`.
   """
-  resolveChain: [BinaryString]  # FIXME, requesting this alone is as complex as the target, will be fixed with the target structure fix
+  resolveChain: [BinaryString]
 
   """
-  Branch target object
+  Branch target node SWHID
   """
-  target: BranchTarget @cost(complexity: 2)  # This costs more because of possible alias chains
+  swhid: SWHID
+
+  """
+  Branch target node
+  """
+  node: BranchTargetNode @cost(complexity: 1)
 }
 
 """

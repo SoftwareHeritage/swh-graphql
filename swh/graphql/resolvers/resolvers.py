@@ -45,12 +45,13 @@ directory_entry: ObjectType = ObjectType("DirectoryEntry")
 search_result: ObjectType = ObjectType("SearchResult")
 binary_string: ObjectType = ObjectType("BinaryString")
 date: ObjectType = ObjectType("Date")
+branch_target: ObjectType = ObjectType("BranchTarget")
 release_target: ObjectType = ObjectType("ReleaseTarget")
 directory_entry_target: ObjectType = ObjectType("DirectoryEntryTarget")
 
+branch_target_node: UnionType = UnionType("BranchTargetNode")
 release_target_node: UnionType = UnionType("ReleaseTargetNode")
 directory_entry_target_node: UnionType = UnionType("DirectoryEntryTargetNode")
-branch_target: UnionType = UnionType("BranchTarget")
 search_result_target: UnionType = UnionType("SearchResultTarget")
 
 # Node resolvers
@@ -95,26 +96,6 @@ def visit_snapshot_resolver(
     obj: rs.visit_status.BaseVisitStatusNode, info: GraphQLResolveInfo, **kw
 ) -> Optional[rs.snapshot.VisitSnapshotNode]:
     return NodeObjectFactory.create("visit-snapshot", obj, info, **kw)
-
-
-@snapshot_branch.field("target")
-def snapshot_branch_target_resolver(
-    obj: rs.snapshot_branch.SnapshotBranchNode, info: GraphQLResolveInfo, **kw
-) -> Union[
-    rs.revision.BaseRevisionNode,
-    rs.release.BaseReleaseNode,
-    rs.directory.BaseDirectoryNode,
-    rs.content.BaseContentNode,
-    rs.snapshot.BaseSnapshotNode,
-]:
-    """
-    Snapshot branch target can be a revision, release, directory,
-    content or a snapshot
-    """
-
-    # FIXME, this will fail and raise an error for a branch with None target
-    # will be fixed with the target structure fix
-    return NodeObjectFactory.create(f"branch-{obj.targetType}", obj, info, **kw)
 
 
 @query.field("revision")
@@ -162,16 +143,30 @@ def generic_target_resolver(
     return NodeObjectFactory.create("generic-target", obj, info, **kw)
 
 
+@snapshot_branch.field("target")
+def snapshot_branch_target_resolver(
+    obj: rs.snapshot_branch.SnapshotBranchNode, info: GraphQLResolveInfo, **kw
+) -> rs.target.BranchTargetNode:
+    # Snapshot branch target is a special case
+    return NodeObjectFactory.create("branch-target", obj, info, **kw)
+
+
 @directory_entry_target.field("node")
 @release_target.field("node")
+@branch_target.field("node")
 def generic_target_node_resolver(
     obj: rs.target.TargetNode, info: GraphQLResolveInfo, **kw
-) -> Union[
-    rs.revision.BaseRevisionNode,
-    rs.release.BaseReleaseNode,
-    rs.directory.BaseDirectoryNode,
-    rs.content.BaseContentNode,
+) -> Optional[
+    Union[
+        rs.revision.BaseRevisionNode,
+        rs.release.BaseReleaseNode,
+        rs.directory.BaseDirectoryNode,
+        rs.content.BaseContentNode,
+    ]
 ]:
+    if not obj or not obj.type:
+        # Target can be None for a branch, return None in that case
+        return None
     return NodeObjectFactory.create(f"target-{obj.type}", obj, info, **kw)
 
 
@@ -317,7 +312,7 @@ def release_author_resolver(
 
 @release_target_node.type_resolver
 @directory_entry_target_node.type_resolver
-@branch_target.type_resolver
+@branch_target_node.type_resolver
 @search_result_target.type_resolver
 def union_resolver(
     obj: Union[
