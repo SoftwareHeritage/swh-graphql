@@ -9,15 +9,14 @@ from . import utils
 def test_search_origins(client):
     query_str = """
     query doSearch($query: String!, $first: Int!) {
-      search(query: $query, first: $first) {
+      originSearch(query: $query, first: $first) {
         nodes {
-          targetType
-          target {
-            ...on Origin {
-              url
-              latestVisit {
-                date
-              }
+          type
+          url
+          node {
+            url
+            latestVisit {
+              date
             }
           }
         }
@@ -29,16 +28,17 @@ def test_search_origins(client):
     }
     """
     data, _ = utils.get_query_response(client, query_str, query="fox", first=1)
-    assert len(data["search"]["nodes"]) == 1
+    assert len(data["originSearch"]["nodes"]) == 1
     assert data == {
-        "search": {
+        "originSearch": {
             "nodes": [
                 {
-                    "target": {
+                    "type": "origin",
+                    "url": "https://somewhere.org/den/fox",
+                    "node": {
                         "url": "https://somewhere.org/den/fox",
                         "latestVisit": {"date": "2018-11-27T17:20:39+00:00"},
                     },
-                    "targetType": "origin",
                 }
             ],
             "pageInfo": {"endCursor": "MQ==", "hasNextPage": True},
@@ -49,9 +49,9 @@ def test_search_origins(client):
 def test_search_missing_url(client):
     query_str = """
     query doSearch($query: String!, $first: Int!) {
-      search(query: $query, first: $first) {
+      originSearch(query: $query, first: $first) {
         nodes {
-          targetType
+          type
         }
         pageInfo {
           hasNextPage
@@ -61,4 +61,4 @@ def test_search_missing_url(client):
     }
     """
     data, _ = utils.get_query_response(client, query_str, query="missing-fox", first=1)
-    assert len(data["search"]["nodes"]) == 0
+    assert len(data["originSearch"]["nodes"]) == 0

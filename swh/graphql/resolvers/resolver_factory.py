@@ -26,7 +26,7 @@ from .revision import (
     RevisionNode,
     TargetRevisionNode,
 )
-from .search import ResolveSwhidList, SearchConnection
+from .search import OriginSearchConnection, ResolveSwhidList
 from .snapshot import (
     OriginSnapshotConnection,
     SnapshotNode,
@@ -53,7 +53,6 @@ class NodeObjectFactory:
         "directory": DirectoryNode,
         "directory-entry": DirectoryEntryNode,
         "content-by-hashes": ContentbyHashesNode,
-        "search-result-origin": TargetOriginNode,
         "search-result-snapshot": TargetSnapshotNode,
         "search-result-revision": TargetRevisionNode,
         "search-result-release": TargetReleaseNode,
@@ -61,6 +60,7 @@ class NodeObjectFactory:
         "search-result-content": TargetContentNode,
         "generic-target": TargetNode,
         "branch-target": BranchTargetNode,
+        "target-origin": TargetOriginNode,
         "target-snapshot": TargetSnapshotNode,
         "target-revision": TargetRevisionNode,
         "target-release": TargetReleaseNode,
@@ -91,7 +91,7 @@ class ConnectionObjectFactory:
         "revision-parents": ParentRevisionConnection,
         "revision-log": LogRevisionConnection,
         "directory-entries": DirectoryEntryConnection,
-        "search": SearchConnection,
+        "origin-search": OriginSearchConnection,
     }
 
     @classmethod

@@ -1044,10 +1044,9 @@ type SearchResultEdge {
   node: SearchResult
 }
 
-union SearchResultTarget = Origin | Revision | Release | Content | Directory | Snapshot
+union SearchResultTarget =  Revision | Release | Content | Directory | Snapshot
 
 enum SearchResultTargetType {
-  origin
   revision
   release
   content
@@ -1068,6 +1067,65 @@ type SearchResult {
   Result target object
   """
   target: SearchResultTarget @cost(complexity: 1)
+}
+
+"""
+Connection to OriginSearchResults
+"""
+type OriginSearchResultConnection {
+  """
+  List of SearchOriginResult edges
+  """
+  edges: [OriginSearchResultEdge]
+
+  """
+  List of SearchOriginResult objects
+  """
+  nodes: [OriginSearchResult]
+
+  """
+  Information for pagination
+  """
+  pageInfo: PageInfo!
+
+  """
+  Total number of SearchOriginResult objects in the connection
+  """
+  totalCount: Int
+}
+
+"""
+Edge in OriginSearchResult connection
+"""
+type OriginSearchResultEdge {
+  # FIXME, add an item cursor here
+
+  """
+  SearchOriginResult object
+  """
+  node: OriginSearchResult
+}
+
+"""
+An OriginSearchResult object
+"""
+type OriginSearchResult {
+  # FXIME, add more information from the search
+
+  """
+  Result node type
+  """
+  type: String!  # This will always be origin
+
+  """
+  Result node URL
+  """
+  url: String!
+
+  """
+  Result origin node
+  """
+  node: Origin
 }
 
 """
@@ -1225,9 +1283,9 @@ type Query {
   ): [SearchResult] @cost(complexity: 1)
 
   """
-  Search in SWH
+  Search in SWH origins
   """
-  search(
+  originSearch(
     """
     String to search for
     """
@@ -1242,5 +1300,5 @@ type Query {
     Returns the page after the cursor
     """
     after: String
-  ): SearchResultConnection! @cost(complexity: 1, multipliers: ["first"])
+  ): OriginSearchResultConnection! @cost(complexity: 1, multipliers: ["first"])
 }

@@ -8,14 +8,11 @@ from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseSWHNode
-from .search import SearchResultNode
+from .search import OriginSearchResultNode
 
 
 class BaseOriginNode(BaseSWHNode):
-    def is_type_of(self):
-        # is_type_of is required only when resolving a UNION type
-        # This is for ariadne to return the right type
-        return "Origin"
+    pass
 
 
 class OriginNode(BaseOriginNode):
@@ -32,13 +29,16 @@ class TargetOriginNode(BaseOriginNode):
     Node resolver for an origin requested as a target
     """
 
-    obj: SearchResultNode
+    obj: OriginSearchResultNode
+    _can_be_null = True
 
     def _get_node_data(self):
         # The target origin URL is guaranteed to exist in the archive
         # Hence returning the origin object without any explicit check in the archive
         # This assumes that the search index and archive are in sync
-        return Origin(self.obj.target_url)
+        if self.obj.target_url:
+            return Origin(self.obj.target_url)
+        return None
 
 
 class OriginConnection(BaseConnection):

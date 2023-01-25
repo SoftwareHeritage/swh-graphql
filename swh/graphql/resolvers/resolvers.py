@@ -48,6 +48,7 @@ date: ObjectType = ObjectType("Date")
 branch_target: ObjectType = ObjectType("BranchTarget")
 release_target: ObjectType = ObjectType("ReleaseTarget")
 directory_entry_target: ObjectType = ObjectType("DirectoryEntryTarget")
+origin_search_result: ObjectType = ObjectType("OriginSearchResult")
 
 branch_target_node: UnionType = UnionType("BranchTargetNode")
 release_target_node: UnionType = UnionType("ReleaseTargetNode")
@@ -174,7 +175,6 @@ def generic_target_node_resolver(
 def search_result_target_resolver(
     obj: rs.search.SearchResultNode, info: GraphQLResolveInfo, **kw
 ) -> Union[
-    rs.origin.BaseOriginNode,
     rs.snapshot.BaseSnapshotNode,
     rs.revision.BaseRevisionNode,
     rs.release.BaseReleaseNode,
@@ -193,6 +193,13 @@ def content_by_hashes_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
 ) -> rs.content.ContentbyHashesNode:
     return NodeObjectFactory.create("content-by-hashes", obj, info, **kw)
+
+
+@origin_search_result.field("node")
+def origin_search_node_resolver(
+    obj: None, info: GraphQLResolveInfo, **kw
+) -> rs.origin.TargetOriginNode:
+    return NodeObjectFactory.create("target-origin", obj, info, **kw)
 
 
 # Connection resolvers
@@ -255,11 +262,11 @@ def directory_entries_resolver(
     return ConnectionObjectFactory.create("directory-entries", obj, info, **kw)
 
 
-@query.field("search")
-def search_resolver(
+@query.field("originSearch")
+def origin_search_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
-) -> rs.search.SearchConnection:
-    return ConnectionObjectFactory.create("search", obj, info, **kw)
+) -> rs.search.OriginSearchConnection:
+    return ConnectionObjectFactory.create("origin-search", obj, info, **kw)
 
 
 # Simple list resolvers (lists without paginations)
@@ -316,7 +323,6 @@ def release_author_resolver(
 @search_result_target.type_resolver
 def union_resolver(
     obj: Union[
-        rs.origin.BaseOriginNode,
         rs.revision.BaseRevisionNode,
         rs.release.BaseReleaseNode,
         rs.directory.BaseDirectoryNode,
