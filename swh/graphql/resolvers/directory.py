@@ -9,7 +9,6 @@ from swh.model.model import Directory
 from swh.model.swhids import ObjectType
 
 from .base_node import BaseSWHNode
-from .revision import BaseRevisionNode
 from .search import SearchResultNode
 
 
@@ -43,19 +42,6 @@ class DirectoryNode(BaseDirectoryNode):
             # hence the is_directory_available validation
             return self._get_directory_by_id(swhid.object_id)
         return None
-
-
-class RevisionDirectoryNode(BaseDirectoryNode):
-    """
-    Node resolver for a directory requested from a revision
-    """
-
-    _can_be_null = True
-    obj: BaseRevisionNode
-
-    def _get_node_data(self):
-        # self.obj.directory_hash is the requested directory Id
-        return self._get_directory_by_id(self.obj.directory_hash)
 
 
 class TargetDirectoryNode(BaseDirectoryNode):

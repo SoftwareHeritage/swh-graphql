@@ -65,6 +65,9 @@ def test_get_revision(client, revision):
         type
         directory {
           swhid
+          node {
+            swhid
+          }
         }
       }
     }
@@ -110,7 +113,12 @@ def test_get_revision(client, revision):
         else None,
         "type": revision.type.value,
         "directory": {
-            "swhid": str(CoreSWHID(object_id=revision.directory, object_type="dir"))
+            "swhid": str(CoreSWHID(object_id=revision.directory, object_type="dir")),
+            "node": {
+                "swhid": str(
+                    CoreSWHID(object_id=revision.directory, object_type="dir")
+                ),
+            },
         },
     }
 

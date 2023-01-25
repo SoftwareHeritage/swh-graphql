@@ -31,10 +31,6 @@ class BaseTargetNode(BaseNode):
             return CoreSWHID(object_type=mapping[self.type], object_id=self.target_hash)
         return None
 
-    def _get_node_data(self) -> Dict:
-        # No exta data to fetch; everything is available from self.obj
-        return {}
-
 
 class TargetNode(BaseTargetNode):
     """
@@ -46,8 +42,9 @@ class TargetNode(BaseTargetNode):
     if TYPE_CHECKING:  # pragma: no cover
         from .directory_entry import BaseDirectoryEntryNode
         from .release import BaseReleaseNode
+        from .revision import BaseRevisionNode
 
-        obj: Union[BaseReleaseNode, BaseDirectoryEntryNode]
+        obj: Union[BaseReleaseNode, BaseDirectoryEntryNode, BaseRevisionNode]
 
     def _get_node_data(self) -> Dict:
         # No exta data to fetch; everything is available from self.obj

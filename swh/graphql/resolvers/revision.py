@@ -3,10 +3,11 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from typing import Union
+from typing import List, Optional, Union
 
 from swh.graphql.utils import utils
-from swh.model.model import Revision
+from swh.model.model import ObjectType as ModelObjectType
+from swh.model.model import Revision, Sha1Git
 from swh.model.swhids import CoreSWHID, ObjectType
 
 from .base_connection import BaseConnection, ConnectionData
@@ -20,32 +21,44 @@ class BaseRevisionNode(BaseSWHNode):
     Base resolver for all the revision nodes
     """
 
-    def _get_revision_by_id(self, revision_id):
-        return self.archive.get_revisions([revision_id])[0]
+    def _get_revision_by_id(self, revision_id) -> Optional[Revision]:
+        revisions = self.archive.get_revisions([revision_id])
+        return revisions[0] if revisions else None
 
     @property
-    def parent_swhids(self):  # for ParentRevisionConnection resolver
+    def parent_swhids(self) -> List[CoreSWHID]:  # for ParentRevisionConnection resolver
+        assert self._node is not None
         return [
             CoreSWHID(object_type=ObjectType.REVISION, object_id=parent_id)
             for parent_id in self._node.parents
         ]
 
     @property
-    def directory_hash(self):  # for RevisionDirectoryNode resolver
-        return self._node.directory
-
-    @property
     def committerDate(self):  # To support the schema naming convention
+        assert self._node is not None
         return self._node.committer_date
 
     @property
-    def type(self):
+    def type(self) -> str:
+        assert self._node is not None
         return self._node.type.value
 
-    def is_type_of(self):
+    def is_type_of(self) -> str:
         # is_type_of is required only when resolving a UNION type
         # This is for ariadne to return the right type
         return "Revision"
+
+    def target_type(self):
+        # To resolve the revision directory
+        return ModelObjectType.DIRECTORY
+
+    def target_hash(self) -> Sha1Git:  # hash of the unique revision directory
+        # To resolve the revision directory
+        # FIXME: This function is named "target_hash" (instead of target_directory_hash)
+        # to work with the generic TargetNode class without any extra code
+        # Add a new TargetNode subclass if this creates a confusion
+        assert self._node is not None
+        return self._node.directory
 
 
 class RevisionNode(BaseRevisionNode):
@@ -53,8 +66,10 @@ class RevisionNode(BaseRevisionNode):
     Node resolver for a revision requested directly with its SWHID
     """
 
-    def _get_node_data(self):
-        return self._get_revision_by_id(self.kwargs.get("swhid").object_id)
+    def _get_node_data(self) -> Optional[Revision]:
+        revision_swhid = self.kwargs.get("swhid")
+        assert isinstance(revision_swhid, CoreSWHID)
+        return self._get_revision_by_id(revision_swhid.object_id)
 
 
 class TargetRevisionNode(BaseRevisionNode):
@@ -69,7 +84,7 @@ class TargetRevisionNode(BaseRevisionNode):
         SearchResultNode,
     ]
 
-    def _get_node_data(self):
+    def _get_node_data(self) -> Optional[Revision]:
         # self.obj.target_hash is the requested revision id
         if self.obj.target_hash:
             return self._get_revision_by_id(self.obj.target_hash)

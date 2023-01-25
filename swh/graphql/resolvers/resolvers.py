@@ -46,6 +46,7 @@ search_result: ObjectType = ObjectType("SearchResult")
 binary_string: ObjectType = ObjectType("BinaryString")
 date: ObjectType = ObjectType("Date")
 branch_target: ObjectType = ObjectType("BranchTarget")
+revision_directory_target: ObjectType = ObjectType("RevisionDirectoryTarget")
 release_target: ObjectType = ObjectType("ReleaseTarget")
 directory_entry_target: ObjectType = ObjectType("DirectoryEntryTarget")
 origin_search_result: ObjectType = ObjectType("OriginSearchResult")
@@ -106,13 +107,6 @@ def revision_resolver(
     return NodeObjectFactory.create("revision", obj, info, **kw)
 
 
-@revision.field("directory")
-def revision_directory_resolver(
-    obj: rs.revision.BaseRevisionNode, info: GraphQLResolveInfo, **kw
-) -> Optional[rs.directory.RevisionDirectoryNode]:
-    return NodeObjectFactory.create("revision-directory", obj, info, **kw)
-
-
 @query.field("release")
 def release_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
@@ -134,6 +128,7 @@ def directory_entry_resolver(
     return NodeObjectFactory.create("directory-entry", obj, info, **kw)
 
 
+@revision.field("directory")
 @directory_entry.field("target")
 @release.field("target")
 def generic_target_resolver(
@@ -152,6 +147,7 @@ def snapshot_branch_target_resolver(
     return NodeObjectFactory.create("branch-target", obj, info, **kw)
 
 
+@revision_directory_target.field("node")
 @directory_entry_target.field("node")
 @release_target.field("node")
 @branch_target.field("node")
@@ -163,6 +159,7 @@ def generic_target_node_resolver(
         rs.release.BaseReleaseNode,
         rs.directory.BaseDirectoryNode,
         rs.content.BaseContentNode,
+        rs.snapshot.BaseSnapshotNode,
     ]
 ]:
     if not obj or not obj.type:

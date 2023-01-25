@@ -43,6 +43,10 @@ def test_get_revision_directory(client):
         swhid
         directory {
           swhid
+          type
+          node {
+            swhid
+          }
         }
       }
     }
@@ -53,7 +57,9 @@ def test_get_revision_directory(client):
         swhid="swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c",
     )
     assert data["revision"]["directory"] == {
-        "swhid": "swh:1:dir:0101010101010101010101010101010101010101"
+        "swhid": "swh:1:dir:0101010101010101010101010101010101010101",
+        "type": "directory",
+        "node": {"swhid": "swh:1:dir:0101010101010101010101010101010101010101"},
     }
 
 
