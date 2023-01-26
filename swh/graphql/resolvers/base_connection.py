@@ -166,7 +166,7 @@ class BaseList(ABC):
 
         self.archive = Archive()
 
-    def get_results(self) -> List:
+    def get_results(self) -> Optional[List[Any]]:
         if self._results is None:
             # To avoid multiple calls to the backend
             self._results = self._get_results()
@@ -182,7 +182,7 @@ class BaseList(ABC):
         return self._results
 
     @abstractmethod
-    def _get_results(self) -> List:
+    def _get_results(self) -> Optional[List]:
         """
         Override for desired behaviour
         return a list of objects

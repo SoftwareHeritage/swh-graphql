@@ -42,7 +42,6 @@ revision: ObjectType = ObjectType("Revision")
 release: ObjectType = ObjectType("Release")
 directory: ObjectType = ObjectType("Directory")
 directory_entry: ObjectType = ObjectType("DirectoryEntry")
-search_result: ObjectType = ObjectType("SearchResult")
 binary_string: ObjectType = ObjectType("BinaryString")
 date: ObjectType = ObjectType("Date")
 branch_target: ObjectType = ObjectType("BranchTarget")
@@ -54,7 +53,8 @@ origin_search_result: ObjectType = ObjectType("OriginSearchResult")
 branch_target_node: UnionType = UnionType("BranchTargetNode")
 release_target_node: UnionType = UnionType("ReleaseTargetNode")
 directory_entry_target_node: UnionType = UnionType("DirectoryEntryTargetNode")
-search_result_target: UnionType = UnionType("SearchResultTarget")
+resolve_swhid_result: UnionType = UnionType("ResolveSWHIDResult")
+
 
 # Node resolvers
 # A node resolver will return either an instance of a BaseNode subclass or None
@@ -168,23 +168,6 @@ def generic_target_node_resolver(
     return NodeObjectFactory.create(f"target-{obj.type}", obj, info, **kw)
 
 
-@search_result.field("target")
-def search_result_target_resolver(
-    obj: rs.search.SearchResultNode, info: GraphQLResolveInfo, **kw
-) -> Union[
-    rs.snapshot.BaseSnapshotNode,
-    rs.revision.BaseRevisionNode,
-    rs.release.BaseReleaseNode,
-    rs.directory.BaseDirectoryNode,
-    rs.content.BaseContentNode,
-]:
-    """
-    SearchResult target can be an origin, snapshot, revision, release
-    directory or a content
-    """
-    return NodeObjectFactory.create(f"search-result-{obj.targetType}", obj, info, **kw)
-
-
 @query.field("contentByHashes")
 def content_by_hashes_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
@@ -284,9 +267,9 @@ def contnets_by_hashes_resolver(
 
 
 @query.field("resolveSWHID")
-def search_swhid_resolver(
+def resolve_swhid_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
-) -> rs.search.ResolveSwhidList:
+) -> rs.swhid.ResolveSWHIDList:
     return SimpleListFactory.create("resolve-swhid", obj, info, **kw)
 
 
@@ -317,7 +300,7 @@ def release_author_resolver(
 @release_target_node.type_resolver
 @directory_entry_target_node.type_resolver
 @branch_target_node.type_resolver
-@search_result_target.type_resolver
+@resolve_swhid_result.type_resolver
 def union_resolver(
     obj: Union[
         rs.revision.BaseRevisionNode,

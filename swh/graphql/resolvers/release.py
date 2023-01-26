@@ -10,7 +10,6 @@ from swh.model.model import Release as ModelRelease
 from swh.model.model import Sha1Git
 
 from .base_node import BaseSWHNode
-from .search import SearchResultNode
 
 
 class BaseReleaseNode(BaseSWHNode):
@@ -55,7 +54,7 @@ class TargetReleaseNode(BaseReleaseNode):
     from .target import BranchTargetNode, TargetNode
 
     _can_be_null = True
-    obj: Union[TargetNode, BranchTargetNode, SearchResultNode]
+    obj: Union[TargetNode, BranchTargetNode]
 
     def _get_node_data(self) -> Optional[ModelRelease]:
         # self.obj.target_hash is the requested release id

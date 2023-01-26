@@ -5,34 +5,8 @@
 
 from __future__ import annotations
 
-from .base_connection import BaseConnection, BaseList, ConnectionData
+from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseNode
-
-
-class SearchResultNode(BaseNode):
-    """ """
-
-    @property
-    def targetType(self):  # To support the schema naming convention
-        return self._node.type
-
-
-class ResolveSwhidList(BaseList):
-
-    _node_class = SearchResultNode
-
-    def _get_results(self) -> list:
-        swhid = self.kwargs.get("swhid")
-        results = []
-
-        if self.archive.is_object_available(swhid.object_id, swhid.object_type):
-            results = [
-                {
-                    "target_hash": swhid.object_id,
-                    "type": swhid.object_type.name.lower(),
-                }
-            ]
-        return results
 
 
 class OriginSearchResultNode(BaseNode):

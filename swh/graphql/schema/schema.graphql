@@ -1019,72 +1019,9 @@ type Content implements SWHNode & Node {
 }
 
 """
-Connection to SearchResults
 """
-type SearchResultConnection {
-  """
-  List of SearchResult edges
-  """
-  edges: [SearchResultEdge]
+union ResolveSWHIDResult =  Revision | Release | Content | Directory | Snapshot
 
-  """
-  List of SearchResult objects
-  """
-  nodes: [SearchResult]
-
-  """
-  Information for pagination
-  """
-  pageInfo: PageInfo!
-
-  """
-  Total number of result objects in the connection
-  """
-  totalCount: Int
-}
-
-"""
-Edge in SearchResult connection
-"""
-type SearchResultEdge {
-  # Cursor in this edge is removed for the time being
-  # see https://forge.softwareheritage.org/D8911 for details
-
-  # """
-  # Cursor to request the next page after the item
-  # """
-  # cursor: String!
-
-  """
-  SearchResult object
-  """
-  node: SearchResult
-}
-
-union SearchResultTarget =  Revision | Release | Content | Directory | Snapshot
-
-enum SearchResultTargetType {
-  revision
-  release
-  content
-  directory
-  snapshot
-}
-
-"""
-A SearchResult object
-"""
-type SearchResult {
-  """
-  Result target type
-  """
-  targetType: SearchResultTargetType
-
-  """
-  Result target object
-  """
-  target: SearchResultTarget @cost(complexity: 1)
-}
 
 """
 Connection to OriginSearchResults
@@ -1297,7 +1234,7 @@ type Query {
     SWHID to look for
     """
     swhid: SWHID!
-  ): [SearchResult] @cost(complexity: 1)
+  ): [ResolveSWHIDResult] @cost(complexity: 1)
 
   """
   Search in SWH origins

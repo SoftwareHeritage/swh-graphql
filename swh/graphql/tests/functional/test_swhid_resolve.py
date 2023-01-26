@@ -6,7 +6,7 @@
 import pytest
 
 from . import utils
-from ..data import (
+from ..data import (  # get_contents,; get_directories,; get_snapshots,
     get_contents,
     get_directories,
     get_releases,
@@ -19,7 +19,7 @@ def test_invalid_swhid(client):
     query_str = """
     query resolve($swhid: SWHID!) {
       resolveSWHID(swhid: $swhid) {
-        targetType
+        __typename
       }
     }
     """
@@ -43,13 +43,13 @@ def test_missing_swhid(client, swhid):
     query_str = """
     query resolve($swhid: SWHID!) {
       resolveSWHID(swhid: $swhid) {
-        targetType
+        __typename
       }
     }
     """
     data, _ = utils.get_query_response(client, query_str, swhid=swhid)
-    # API will return an empty list in case of a valid, non existing SWHID
-    assert data == {"resolveSWHID": []}
+    # API will return None in case of a valid, non existing SWHID
+    assert data == {"resolveSWHID": None}
 
 
 @pytest.mark.parametrize("snapshot", get_snapshots())
@@ -57,12 +57,9 @@ def test_snapshot_swhid_resolve(client, snapshot):
     query_str = """
     query resolve($swhid: SWHID!) {
       resolveSWHID(swhid: $swhid) {
-        targetType
-        target {
-          __typename
-          ... on Snapshot {
-            swhid
-          }
+        __typename
+        ... on Snapshot {
+          swhid
         }
       }
     }
@@ -71,12 +68,9 @@ def test_snapshot_swhid_resolve(client, snapshot):
     assert data == {
         "resolveSWHID": [
             {
-                "target": {
-                    "__typename": "Snapshot",
-                    "swhid": str(snapshot.swhid()),
-                },
-                "targetType": "snapshot",
-            }
+                "__typename": "Snapshot",
+                "swhid": str(snapshot.swhid()),
+            },
         ]
     }
 
@@ -86,12 +80,9 @@ def test_revision_swhid_resolve(client, revision):
     query_str = """
     query resolve($swhid: SWHID!) {
       resolveSWHID(swhid: $swhid) {
-        targetType
-        target {
-          __typename
-          ... on Revision {
-            swhid
-          }
+        __typename
+        ... on Revision {
+          swhid
         }
       }
     }
@@ -100,11 +91,8 @@ def test_revision_swhid_resolve(client, revision):
     assert data == {
         "resolveSWHID": [
             {
-                "target": {
-                    "__typename": "Revision",
-                    "swhid": str(revision.swhid()),
-                },
-                "targetType": "revision",
+                "__typename": "Revision",
+                "swhid": str(revision.swhid()),
             }
         ]
     }
@@ -115,12 +103,9 @@ def test_release_swhid_resolve(client, release):
     query_str = """
     query resolve($swhid: SWHID!) {
       resolveSWHID(swhid: $swhid) {
-        targetType
-        target {
-          __typename
-          ... on Release {
-            swhid
-          }
+        __typename
+        ... on Release {
+          swhid
         }
       }
     }
@@ -129,11 +114,8 @@ def test_release_swhid_resolve(client, release):
     assert data == {
         "resolveSWHID": [
             {
-                "target": {
-                    "__typename": "Release",
-                    "swhid": str(release.swhid()),
-                },
-                "targetType": "release",
+                "__typename": "Release",
+                "swhid": str(release.swhid()),
             }
         ]
     }
@@ -144,12 +126,9 @@ def test_directory_swhid_resolve(client, directory):
     query_str = """
     query resolve($swhid: SWHID!) {
       resolveSWHID(swhid: $swhid) {
-        targetType
-        target {
-          __typename
-          ... on Directory {
-            swhid
-          }
+        __typename
+        ... on Directory {
+          swhid
         }
       }
     }
@@ -158,12 +137,9 @@ def test_directory_swhid_resolve(client, directory):
     assert data == {
         "resolveSWHID": [
             {
-                "target": {
-                    "__typename": "Directory",
-                    "swhid": str(directory.swhid()),
-                },
-                "targetType": "directory",
-            }
+                "__typename": "Directory",
+                "swhid": str(directory.swhid()),
+            },
         ]
     }
 
@@ -173,12 +149,9 @@ def test_content_swhid_resolve(client, content):
     query_str = """
     query resolve($swhid: SWHID!) {
       resolveSWHID(swhid: $swhid) {
-        targetType
-        target {
-          __typename
-          ... on Content {
-            swhid
-          }
+        __typename
+        ... on Content {
+          swhid
         }
       }
     }
@@ -187,11 +160,8 @@ def test_content_swhid_resolve(client, content):
     assert data == {
         "resolveSWHID": [
             {
-                "target": {
-                    "__typename": "Content",
-                    "swhid": str(content.swhid()),
-                },
-                "targetType": "content",
-            }
+                "__typename": "Content",
+                "swhid": str(content.swhid()),
+            },
         ]
     }

@@ -9,6 +9,7 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 from swh.graphql import server
 from swh.model.model import (
     Content,
+    Directory,
     DirectoryEntry,
     Origin,
     OriginVisit,
@@ -16,6 +17,7 @@ from swh.model.model import (
     Release,
     Revision,
     Sha1Git,
+    Snapshot,
     SnapshotBranch,
 )
 from swh.model.swhids import ObjectType
@@ -87,6 +89,19 @@ class Archive:
     def get_origin_snapshots(self, origin_url: str) -> List[Sha1Git]:
         return self.storage.origin_snapshot_get_all(origin_url=origin_url)
 
+    def get_snapshot(
+        self, snapshot_id: Sha1Git, verify: bool = True
+    ) -> Optional[Snapshot]:
+        # FIXME, change to accept list of snapshot_ids if needed
+        if verify and not self.is_object_available(
+            object_id=snapshot_id, object_type=ObjectType.SNAPSHOT
+        ):
+            # verify is True and the object is missing in the archive
+            return None
+        # Return a Snapshot model object; branches is initialized as empty
+        # Same pattern is used in get_directory
+        return Snapshot(id=snapshot_id, branches={})
+
     def get_snapshot_branches(
         self,
         snapshot: Sha1Git,
@@ -115,6 +130,19 @@ class Archive:
 
     def get_releases(self, release_ids: List[Sha1Git]) -> List[Optional[Release]]:
         return self.storage.release_get(releases=release_ids)
+
+    def get_directory(
+        self, directory_id: Sha1Git, verify: bool = True
+    ) -> Optional[Directory]:
+        # FIXME, change to accept list of directory_ids if needed
+        if verify and not self.is_object_available(
+            object_id=directory_id, object_type=ObjectType.DIRECTORY
+        ):
+            # verify is True and the object is missing in the archive
+            return None
+        # Return a Directory model object; entries is initialized as empty
+        # Same pattern is used in get_snapshot
+        return Directory(id=directory_id, entries=())
 
     def get_directory_entry_by_path(
         self, directory_id: Sha1Git, path: str

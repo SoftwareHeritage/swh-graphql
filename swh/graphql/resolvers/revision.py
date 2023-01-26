@@ -12,7 +12,6 @@ from swh.model.swhids import CoreSWHID, ObjectType
 
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseSWHNode
-from .search import SearchResultNode
 from .target import BranchTargetNode, TargetNode
 
 
@@ -81,7 +80,6 @@ class TargetRevisionNode(BaseRevisionNode):
     obj: Union[
         BranchTargetNode,
         TargetNode,
-        SearchResultNode,
     ]
 
     def _get_node_data(self) -> Optional[Revision]:

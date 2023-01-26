@@ -11,7 +11,6 @@ from swh.model.model import Content
 
 from .base_connection import BaseList
 from .base_node import BaseSWHNode
-from .search import SearchResultNode
 from .target import BranchTargetNode, TargetNode
 
 
@@ -93,7 +92,6 @@ class TargetContentNode(BaseContentNode):
 
     _can_be_null = True
     obj: Union[
-        SearchResultNode,
         TargetNode,
         BranchTargetNode,
     ]

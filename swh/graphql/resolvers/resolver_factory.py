@@ -26,7 +26,7 @@ from .revision import (
     RevisionNode,
     TargetRevisionNode,
 )
-from .search import OriginSearchConnection, ResolveSwhidList
+from .search import OriginSearchConnection
 from .snapshot import (
     OriginSnapshotConnection,
     SnapshotNode,
@@ -34,6 +34,7 @@ from .snapshot import (
     VisitSnapshotNode,
 )
 from .snapshot_branch import SnapshotBranchConnection
+from .swhid import ResolveSWHIDList
 from .target import BranchTargetNode, TargetNode
 from .visit import LatestVisitNode, OriginVisitConnection, OriginVisitNode
 from .visit_status import LatestVisitStatusNode, VisitStatusConnection
@@ -52,11 +53,6 @@ class NodeObjectFactory:
         "directory": DirectoryNode,
         "directory-entry": DirectoryEntryNode,
         "content-by-hashes": ContentbyHashesNode,
-        "search-result-snapshot": TargetSnapshotNode,
-        "search-result-revision": TargetRevisionNode,
-        "search-result-release": TargetReleaseNode,
-        "search-result-directory": TargetDirectoryNode,
-        "search-result-content": TargetContentNode,
         "generic-target": TargetNode,
         "branch-target": BranchTargetNode,
         "target-origin": TargetOriginNode,
@@ -103,7 +99,7 @@ class ConnectionObjectFactory:
 
 class SimpleListFactory:
     mapping: ClassVar[Dict[str, Type[BaseList]]] = {
-        "resolve-swhid": ResolveSwhidList,
+        "resolve-swhid": ResolveSWHIDList,
         "revision-author": RevisionAuthorList,
         "revision-committer": RevisionCommitterList,
         "release-author": ReleaseAuthorList,
