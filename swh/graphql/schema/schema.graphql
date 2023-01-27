@@ -1019,9 +1019,9 @@ type Content implements SWHNode & Node {
 }
 
 """
+Possible resolveSWHID return nodes
 """
 union ResolveSWHIDResult =  Revision | Release | Content | Directory | Snapshot
-
 
 """
 Connection to OriginSearchResults

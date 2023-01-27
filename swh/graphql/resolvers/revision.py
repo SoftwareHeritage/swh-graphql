@@ -3,12 +3,12 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 from swh.graphql.utils import utils
 from swh.model.model import ObjectType as ModelObjectType
 from swh.model.model import Revision, Sha1Git
-from swh.model.swhids import CoreSWHID, ObjectType
+from swh.model.swhids import CoreSWHID
 
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseSWHNode
@@ -23,14 +23,6 @@ class BaseRevisionNode(BaseSWHNode):
     def _get_revision_by_id(self, revision_id) -> Optional[Revision]:
         revisions = self.archive.get_revisions([revision_id])
         return revisions[0] if revisions else None
-
-    @property
-    def parent_swhids(self) -> List[CoreSWHID]:  # for ParentRevisionConnection resolver
-        assert self._node is not None
-        return [
-            CoreSWHID(object_type=ObjectType.REVISION, object_id=parent_id)
-            for parent_id in self._node.parents
-        ]
 
     @property
     def committerDate(self):  # To support the schema naming convention
@@ -100,13 +92,10 @@ class ParentRevisionConnection(BaseConnection):
 
     def _get_connection_data(self) -> ConnectionData:
         # self.obj is the current(child) revision
-        # self.obj.parent_swhids is the list of parent SWHIDs
 
         # FIXME, using dummy(local) pagination, move pagination to backend
         # STORAGE-TODO (pagination)
-        parents = self.archive.get_revisions(
-            [x.object_id for x in self.obj.parent_swhids]
-        )
+        parents = self.archive.get_revisions(self.obj.parents)
         return utils.get_local_paginated_data(
             parents, self._get_first_arg(), self._get_after_arg()
         )
