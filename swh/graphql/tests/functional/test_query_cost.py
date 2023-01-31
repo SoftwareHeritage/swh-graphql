@@ -38,7 +38,8 @@ def test_query_cost_simple(client):
     )
 
 
-def test_query_cost_with_no_limit(client, max_query_cost_none_config):
+def test_query_cost_with_no_limit(client, none_query_cost):
+    # No cost validation
     query_str = """
     query getOrigins {
       origins(first: 1000) {

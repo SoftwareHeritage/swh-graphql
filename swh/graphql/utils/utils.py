@@ -5,9 +5,11 @@
 
 import base64
 from datetime import datetime
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
-from swh.graphql.resolvers.base_connection import ConnectionData
+if TYPE_CHECKING:
+    from swh.graphql.resolvers.base_connection import ConnectionData
+
 from swh.storage.interface import PagedResult
 
 ENCODING = "utf-8"
@@ -36,12 +38,13 @@ def get_formatted_date(date: datetime) -> str:
     return date.isoformat()
 
 
-def get_local_paginated_data(source: List, first: int, after=0) -> ConnectionData:
+def get_local_paginated_data(source: List, first: int, after=0) -> "ConnectionData":
     """
     Pagination at the GraphQL level
     This is a temporary fix and inefficient. Should eventually be moved to the
     backend (storage) level
     """
+    from swh.graphql.resolvers.base_connection import ConnectionData
 
     # FIXME, handle data errors here
     after = 0 if after is None else int(after)

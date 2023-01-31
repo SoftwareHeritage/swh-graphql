@@ -8,15 +8,15 @@ REGISTRY_URL=registry-1.docker.io
 
 .PHONY: run-dev
 run-dev:
-	export SWH_CONFIG_FILENAME=config/dev.yml; uvicorn swh.graphql.server:make_app_from_configfile --reload --factory
+	export SWH_CONFIG_FILENAME=swh/graphql/config/dev.yml; uvicorn swh.graphql.server:make_app_from_configfile --reload --factory
 
 .PHONY: run-dev-stable
 run-dev-stable:
-	export SWH_CONFIG_FILENAME=config/dev.yml; uvicorn swh.graphql.server:make_app_from_configfile --factory
+	export SWH_CONFIG_FILENAME=swh/graphql/config/dev.yml; uvicorn swh.graphql.server:make_app_from_configfile --factory
 
 .PHONY: run-wsgi
 run-wsgi:
-	export SWH_CONFIG_FILENAME=config/staging.yml; gunicorn 'swh.graphql.server:make_app_from_configfile()' -w 2 -k uvicorn.workers.UvicornWorker
+	export SWH_CONFIG_FILENAME=swh/graphql/config/staging.yml; gunicorn 'swh.graphql.server:make_app_from_configfile()' -w 2 -k uvicorn.workers.UvicornWorker
 
 .PHONY: run-dev-docker
 run-dev-docker:

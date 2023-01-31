@@ -14,8 +14,8 @@ def get_query_response(
 ) -> Tuple[Dict, Dict]:
     query = gql(query_str)
     response = client.post("/", json={"query": query, "variables": kwargs})
-    assert response.status_code == response_code, response.data
-    result = json.loads(response.data)
+    assert response.status_code == response_code, response.content
+    result = json.loads(response.content)
     return result.get("data"), result.get("errors")
 
 

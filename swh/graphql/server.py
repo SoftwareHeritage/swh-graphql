@@ -65,6 +65,8 @@ def make_app_from_configfile():
     configuration path to load.
     """
     from ariadne.asgi import GraphQL
+    from starlette.applications import Starlette
+    from starlette.middleware import Middleware
     from starlette.middleware.cors import CORSMiddleware
 
     from .app import schema, validation_rules
@@ -76,7 +78,18 @@ def make_app_from_configfile():
         config_path = os.environ.get("SWH_CONFIG_FILENAME")
         graphql_cfg = load_and_check_config(config_path)
 
-    application = CORSMiddleware(
+    middleware = [
+        Middleware(
+            CORSMiddleware,
+            # FIXME, restrict origins after deploying the JS client
+            allow_origins=["*"],
+            allow_methods=("GET", "POST", "OPTIONS"),
+        ),
+    ]
+
+    application = Starlette(middleware=middleware)
+    application.mount(
+        "/",
         GraphQL(
             schema,
             debug=graphql_cfg["debug"],
@@ -84,8 +97,5 @@ def make_app_from_configfile():
             validation_rules=validation_rules,
             error_formatter=format_error,
         ),
-        # FIXME, restrict origins after deploying the JS client
-        allow_origins=["*"],
-        allow_methods=("GET", "POST", "OPTIONS"),
     )
     return application

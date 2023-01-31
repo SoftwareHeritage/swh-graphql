@@ -49,12 +49,7 @@ def test_invalid_first_arg(client):
     )
 
 
-def test_too_big_first_arg(client):
-    from swh.graphql import server as app_server
-
-    # set the query cost limit to a higher value for this test
-    app_server.graphql_cfg = {"max_query_cost": {"anonymous": 2000}}
-
+def test_too_big_first_arg(client, high_query_cost):
     data, errors = get_origin_nodes(client, 1001)  # max page size is 1000
     assert data["origins"] is None
     assert (len(errors)) == 2

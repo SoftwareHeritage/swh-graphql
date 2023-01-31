@@ -31,7 +31,7 @@ def get_origins_from_api(
     )
 
 
-def test_get(client, storage):
+def test_get(client):
     data, _ = get_origins_from_api(client, first=10)
     assert len(data["origins"]["nodes"]) == len(get_origins())
 
