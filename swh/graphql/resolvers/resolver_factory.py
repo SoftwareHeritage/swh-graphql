@@ -5,6 +5,7 @@
 
 from typing import ClassVar, Dict, Type
 
+from swh.core import statsd
 from swh.graphql.errors import NullableObjectError
 
 from .base_connection import BaseConnection, BaseList
@@ -39,6 +40,8 @@ from .target import BranchTargetNode, TargetNode
 from .visit import LatestVisitNode, OriginVisitConnection, OriginVisitNode
 from .visit_status import LatestVisitStatusNode, VisitStatusConnection
 
+this_statsd = statsd.Statsd(namespace="swh_graphql")
+
 
 class NodeObjectFactory:
     mapping: ClassVar[Dict[str, Type[BaseNode]]] = {
@@ -65,14 +68,17 @@ class NodeObjectFactory:
 
     @classmethod
     def create(cls, node_type: str, obj, info, *args, **kw):
+        # FIXME, add to the sentry transaction
         resolver = cls.mapping.get(node_type)
         if not resolver:
             raise AttributeError(f"Invalid node type: {node_type}")
-        try:
-            node_obj = resolver(obj, info, *args, **kw)
-        except NullableObjectError:
-            # Return None instead of the object
-            node_obj = None
+        with this_statsd.timed("node_query_seconds", tags={"node": node_type}):
+            try:
+                node_obj = resolver(obj, info, *args, **kw)
+            except NullableObjectError:
+                # Return None instead of the object
+                # FIXME, add to the sentry transaction
+                node_obj = None
         return node_obj
 
 
@@ -91,10 +97,14 @@ class ConnectionObjectFactory:
 
     @classmethod
     def create(cls, connection_type: str, obj, info, *args, **kw):
+        # FIXME, add to the sentry transaction
         resolver = cls.mapping.get(connection_type)
         if not resolver:
             raise AttributeError(f"Invalid connection type: {connection_type}")
-        return resolver(obj, info, *args, **kw)
+        with this_statsd.timed(
+            "connection_query_seconds", tags={"connection": connection_type}
+        ):
+            return resolver(obj, info, *args, **kw)
 
 
 class SimpleListFactory:
@@ -109,9 +119,10 @@ class SimpleListFactory:
 
     @classmethod
     def create(cls, list_type: str, obj, info, *args, **kw):
+        # FIXME, add to the sentry transaction
         resolver = cls.mapping.get(list_type)
-
         if not resolver:
             raise AttributeError(f"Invalid list type: {list_type}")
-        # invoke the get_results method to return the list
-        return resolver(obj, info, *args, **kw).get_results()
+        with this_statsd.timed("list_query_seconds", tags={"list": list_type}):
+            # invoke the get_results method to return the list
+            return resolver(obj, info, *args, **kw).get_results()

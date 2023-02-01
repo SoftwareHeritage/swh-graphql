@@ -71,6 +71,7 @@ def make_app_from_configfile():
 
     from .app import schema, validation_rules
     from .errors import format_error
+    from .middlewares.logger import LogMiddleware
 
     global graphql_cfg
 
@@ -85,6 +86,7 @@ def make_app_from_configfile():
             allow_origins=["*"],
             allow_methods=("GET", "POST", "OPTIONS"),
         ),
+        Middleware(LogMiddleware),
     ]
 
     application = Starlette(middleware=middleware)
