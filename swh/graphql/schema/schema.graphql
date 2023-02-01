@@ -708,11 +708,6 @@ type Revision implements SWHNode & Node {
 
 type RevisionDirectoryTarget {
   """
-  Directory target node type
-  """
-  type: String!  # This will always be a Directory
-
-  """
   Directory target node SWHID
   """
   swhid: SWHID
