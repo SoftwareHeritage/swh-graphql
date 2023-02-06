@@ -58,6 +58,4 @@ class TargetReleaseNode(BaseReleaseNode):
 
     def _get_node_data(self) -> Optional[ModelRelease]:
         # self.obj.target_hash is the requested release id
-        if self.obj.target_hash:
-            return self._get_release_by_id(self.obj.target_hash)
-        return None
+        return self._get_release_by_id(self.obj.target_hash)

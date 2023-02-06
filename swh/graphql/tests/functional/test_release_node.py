@@ -14,6 +14,7 @@ from ..data import (
     get_contents,
     get_directories,
     get_releases,
+    get_releases_with_empty_target,
     get_releases_with_target,
     get_revisions,
 )
@@ -208,3 +209,18 @@ def test_get_release_with_unknown_swhid(client):
         obj_type="release",
         swhid=f"swh:1:rel:{unknown_sha1}",
     )
+
+
+def test_get_release_with_empty_target(client):
+    swhid = get_releases_with_empty_target()[0].swhid()
+    query_str = """
+    query getRelease($swhid: SWHID!) {
+      release(swhid: $swhid) {
+        target {
+          type
+        }
+      }
+    }"""
+    data, err = utils.get_query_response(client, query_str, swhid=str(swhid))
+    assert data == {"release": {"target": None}}
+    assert err is None

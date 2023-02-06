@@ -96,6 +96,18 @@ def get_releases_with_target():
     return [with_revision, with_release, with_directory, with_content]
 
 
+def get_releases_with_empty_target():
+    return [
+        Release(
+            name=b"v0.0.1",
+            target_type=ObjectType.REVISION,
+            target=b"",
+            message=b"foo",
+            synthetic=False,
+        )
+    ]
+
+
 def get_revisions_with_parents():
     """
     Revisions with real revisions as parents
@@ -244,7 +256,7 @@ def get_snapshots_with_multiple_alias():
 
 GRAPHQL_EXTRA_TEST_OBJECTS = {
     "snapshot": get_snapshots_with_multiple_alias(),
-    "release": get_releases_with_target(),
+    "release": get_releases_with_target() + get_releases_with_empty_target(),
     "revision": get_revisions_with_parents() + get_revisions_with_none_date(),
     "directory": get_directories_with_nested_path()
     + get_directories_with_special_name_entries(),

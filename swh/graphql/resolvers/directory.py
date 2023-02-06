@@ -3,7 +3,9 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Optional, Union
+
+from swh.model.model import Directory
 
 from .base_node import BaseSWHNode
 
@@ -41,10 +43,8 @@ class TargetDirectoryNode(BaseDirectoryNode):
         ]
     _can_be_null = True
 
-    def _get_node_data(self):
-        if self.obj.target_hash:
-            # existing directory in the archive, hence verify is False
-            return self.archive.get_directory(
-                directory_id=self.obj.target_hash, verify=False
-            )
-        return None
+    def _get_node_data(self) -> Optional[Directory]:
+        # existing directory in the archive, hence verify is False
+        return self.archive.get_directory(
+            directory_id=self.obj.target_hash, verify=False
+        )

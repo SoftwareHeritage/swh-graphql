@@ -97,8 +97,6 @@ class TargetContentNode(BaseContentNode):
     ]
 
     def _get_node_data(self) -> Optional[Content]:
-        if not self.obj.target_hash:
-            return None
         # FIXME, this is not considering hash collisions
         # and could return a wrong object in very rare situations
         contents = self.archive.get_contents(hashes={"sha1_git": self.obj.target_hash})

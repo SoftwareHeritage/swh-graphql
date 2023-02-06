@@ -76,9 +76,7 @@ class TargetRevisionNode(BaseRevisionNode):
 
     def _get_node_data(self) -> Optional[Revision]:
         # self.obj.target_hash is the requested revision id
-        if self.obj.target_hash:
-            return self._get_revision_by_id(self.obj.target_hash)
-        return None
+        return self._get_revision_by_id(self.obj.target_hash)
 
 
 class ParentRevisionConnection(BaseConnection):

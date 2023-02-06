@@ -3,10 +3,11 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 from swh.graphql.errors import NullableObjectError
 from swh.graphql.utils import utils
+from swh.model.model import CoreSWHID, Snapshot
 
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseSWHNode
@@ -30,9 +31,10 @@ class SnapshotNode(BaseSnapshotNode):
     Node resolver for a snapshot requested directly with its SWHID
     """
 
-    def _get_node_data(self):
+    def _get_node_data(self) -> Optional[Snapshot]:
         """ """
         swhid = self.kwargs.get("swhid")
+        assert isinstance(swhid, CoreSWHID)
         return self.archive.get_snapshot(snapshot_id=swhid.object_id, verify=True)
 
 
@@ -64,11 +66,7 @@ class TargetSnapshotNode(BaseSnapshotNode):
     _can_be_null = True
 
     def _get_node_data(self):
-        if self.obj.target_hash:
-            return self.archive.get_snapshot(
-                snapshot_id=self.obj.target_hash, verify=False
-            )
-        return None
+        return self.archive.get_snapshot(snapshot_id=self.obj.target_hash, verify=False)
 
 
 class OriginSnapshotConnection(BaseConnection):

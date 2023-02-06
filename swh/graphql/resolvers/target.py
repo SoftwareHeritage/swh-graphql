@@ -46,10 +46,15 @@ class TargetNode(BaseTargetNode):
 
         obj: Union[BaseReleaseNode, BaseDirectoryEntryNode, BaseRevisionNode]
 
-    def _get_node_data(self) -> Dict:
+    _can_be_null = True
+
+    def _get_node_data(self) -> Optional[Dict]:
         # No exta data to fetch; everything is available from self.obj
+        if not self.obj.target_hash():
+            # No information to load the target, consider it as a None target
+            return None
         return {
-            # field exposed in the schema
+            # field exposed in the schema for some nodes
             "type": self.obj.target_type().value,
             # field NOT exposed in the schema
             # to be used while retrieving the node object
