@@ -31,7 +31,7 @@ def serialize_datetime(value: Optional[datetime.datetime]) -> Optional[str]:
 
 
 @swhid_scalar.value_parser
-def validate_swhid(value):
+def validate_swhid(value) -> CoreSWHID:
     try:
         swhid = CoreSWHID.from_string(value)
     except ValidationError as e:
@@ -40,5 +40,5 @@ def validate_swhid(value):
 
 
 @swhid_scalar.serializer
-def serialize_swhid(value):
+def serialize_swhid(value) -> str:
     return str(value)

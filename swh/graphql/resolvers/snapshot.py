@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Optional, Union
 
 from swh.graphql.errors import NullableObjectError
 from swh.graphql.utils import utils
-from swh.model.model import CoreSWHID, Snapshot
+from swh.model.model import Snapshot
 
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseSWHNode
@@ -20,7 +20,9 @@ class BaseSnapshotNode(BaseSWHNode):
     Base resolver for all the snapshot nodes
     """
 
-    def is_type_of(self):
+    _node: Snapshot
+
+    def is_type_of(self) -> str:
         # is_type_of is required only when resolving a UNION type
         # This is for ariadne to return the right type
         return "Snapshot"
@@ -34,8 +36,7 @@ class SnapshotNode(BaseSnapshotNode):
     def _get_node_data(self) -> Optional[Snapshot]:
         """ """
         swhid = self.kwargs.get("swhid")
-        assert isinstance(swhid, CoreSWHID)
-        return self.archive.get_snapshot(snapshot_id=swhid.object_id, verify=True)
+        return self.archive.get_snapshot(snapshot_id=swhid.object_id, verify=True)  # type: ignore # noqa: B950
 
 
 class VisitSnapshotNode(BaseSnapshotNode):
@@ -46,11 +47,13 @@ class VisitSnapshotNode(BaseSnapshotNode):
     _can_be_null = True
     obj: BaseVisitStatusNode
 
-    def _get_node_data(self):
-        if self.obj.snapshotSWHID is None:
+    def _get_node_data(self) -> Snapshot:
+        snapshot_id = self.obj.snapshot_id()
+        if snapshot_id is None:
             raise NullableObjectError()
-        snapshot_id = self.obj.snapshotSWHID.object_id
-        return self.archive.get_snapshot(snapshot_id=snapshot_id, verify=False)
+        snapshot = self.archive.get_snapshot(snapshot_id=snapshot_id, verify=False)
+        assert snapshot is not None
+        return snapshot
 
 
 class TargetSnapshotNode(BaseSnapshotNode):
@@ -65,8 +68,12 @@ class TargetSnapshotNode(BaseSnapshotNode):
 
     _can_be_null = True
 
-    def _get_node_data(self):
-        return self.archive.get_snapshot(snapshot_id=self.obj.target_hash, verify=False)
+    def _get_node_data(self) -> Snapshot:
+        snapshot = self.archive.get_snapshot(
+            snapshot_id=self.obj.target_hash, verify=False
+        )
+        assert snapshot is not None
+        return snapshot
 
 
 class OriginSnapshotConnection(BaseConnection):

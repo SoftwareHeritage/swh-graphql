@@ -7,7 +7,7 @@ from typing import Dict, List, Optional, Union
 
 from swh.graphql.errors import DataError, InvalidInputError
 from swh.model import hashutil
-from swh.model.model import Content
+from swh.model.model import Content, Sha1Git
 
 from .base_connection import BaseList
 from .base_node import BaseSWHNode
@@ -30,17 +30,19 @@ class BaseContentNode(BaseSWHNode):
     Base resolver for all the content nodes
     """
 
+    _node: Content
+
     @property
-    def hashes(self):
+    def hashes(self) -> Dict:
         # FIXME, use a Node instead
         return {k: v.hex() for (k, v) in self._node.hashes().items()}
 
     @property
-    def id(self):
+    def id(self) -> Sha1Git:
         return self._node.sha1_git
 
     @property
-    def data(self):
+    def data(self) -> Dict:
         # FIXME, return a Node object
         # FIXME, add more ways to retrieve data like binary string
         archive_url = "https://archive.softwareheritage.org/api/1/"
@@ -64,7 +66,7 @@ class BaseContentNode(BaseSWHNode):
         # FIXME, fetch data from the indexers
         return None
 
-    def is_type_of(self):
+    def is_type_of(self) -> str:
         # is_type_of is required only when resolving a UNION type
         # This is for ariadne to return the right type
         return "Content"

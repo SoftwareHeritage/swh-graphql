@@ -132,10 +132,14 @@ def directory_entry_resolver(
 @directory_entry.field("target")
 @release.field("target")
 def generic_target_resolver(
-    obj: Union[rs.release.BaseReleaseNode, rs.directory_entry.BaseDirectoryEntryNode],
+    obj: Union[
+        rs.release.BaseReleaseNode,
+        rs.directory_entry.BaseDirectoryEntryNode,
+        rs.directory_entry.BaseDirectoryEntryNode,
+    ],
     info: GraphQLResolveInfo,
     **kw,
-) -> rs.target.TargetNode:
+) -> Optional[rs.target.TargetNode]:
     return NodeObjectFactory.create("generic-target", obj, info, **kw)
 
 
@@ -152,7 +156,9 @@ def snapshot_branch_target_resolver(
 @release_target.field("node")
 @branch_target.field("node")
 def generic_target_node_resolver(
-    obj: rs.target.TargetNode, info: GraphQLResolveInfo, **kw
+    obj: Union[rs.target.TargetNode, rs.target.BranchTargetNode],
+    info: GraphQLResolveInfo,
+    **kw,
 ) -> Optional[
     Union[
         rs.revision.BaseRevisionNode,

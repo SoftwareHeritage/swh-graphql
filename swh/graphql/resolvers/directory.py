@@ -15,7 +15,9 @@ class BaseDirectoryNode(BaseSWHNode):
     Base resolver for all the directory nodes
     """
 
-    def is_type_of(self):
+    _node: Directory
+
+    def is_type_of(self) -> str:
         return "Directory"
 
 
@@ -24,9 +26,9 @@ class DirectoryNode(BaseDirectoryNode):
     Node resolver for a directory requested directly with its SWHID
     """
 
-    def _get_node_data(self):
+    def _get_node_data(self) -> Optional[Directory]:
         swhid = self.kwargs.get("swhid")
-        return self.archive.get_directory(directory_id=swhid.object_id, verify=True)
+        return self.archive.get_directory(directory_id=swhid.object_id, verify=True)  # type: ignore  # noqa: B950
 
 
 class TargetDirectoryNode(BaseDirectoryNode):

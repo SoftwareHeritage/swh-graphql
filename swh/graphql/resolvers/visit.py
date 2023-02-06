@@ -3,7 +3,10 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+from typing import Optional
+
 from swh.graphql.utils import utils
+from swh.model.model import OriginVisit
 
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseNode
@@ -15,13 +18,15 @@ class BaseVisitNode(BaseNode):
     Base resolver for all the visit nodes
     """
 
+    _node: OriginVisit
+
     @property
-    def id(self):
+    def id(self) -> str:
         # FIXME, use a better id
         return utils.get_b64_string(f"{self.origin}-{str(self.visit)}")
 
     @property
-    def visitId(self):  # To support the schema naming convention
+    def visitId(self) -> Optional[int]:  # To support the schema naming convention
         return self._node.visit
 
 
@@ -31,10 +36,10 @@ class OriginVisitNode(BaseVisitNode):
     and a visit ID
     """
 
-    def _get_node_data(self):
-        return self.archive.get_origin_visit(
-            self.kwargs.get("originUrl"), int(self.kwargs.get("visitId"))
-        )
+    def _get_node_data(self) -> Optional[OriginVisit]:
+        origin_url = self.kwargs.get("originUrl")
+        visit_id = self.kwargs.get("visitId")
+        return self.archive.get_origin_visit(origin_url=origin_url, visit_id=visit_id)  # type: ignore # noqa: B950
 
 
 class LatestVisitNode(BaseVisitNode):

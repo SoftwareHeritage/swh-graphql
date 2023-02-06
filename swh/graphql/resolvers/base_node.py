@@ -11,6 +11,7 @@ from graphql.type import GraphQLResolveInfo
 from swh.graphql import resolvers as rs
 from swh.graphql.backends.archive import Archive
 from swh.graphql.errors import NullableObjectError, ObjectNotFoundError
+from swh.model.swhids import CoreSWHID
 
 
 class BaseNode:
@@ -20,7 +21,7 @@ class BaseNode:
 
     _can_be_null: ClassVar[bool] = False
 
-    def __init__(self, obj, info, node_data: Optional[Any] = None, **kwargs) -> None:
+    def __init__(self, obj, info, node_data: Optional[Any] = None, **kwargs):
         self.obj: Optional[Union[BaseNode, rs.base_connection.BaseConnection]] = obj
         self.info: GraphQLResolveInfo = info
         self.kwargs = kwargs
@@ -88,5 +89,6 @@ class BaseSWHNode(BaseNode):
     """
 
     @property
-    def swhid(self):
+    def swhid(self) -> CoreSWHID:
+        assert self._node is not None
         return self._node.swhid()

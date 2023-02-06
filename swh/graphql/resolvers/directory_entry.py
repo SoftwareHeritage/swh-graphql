@@ -13,8 +13,10 @@ from .base_node import BaseNode
 
 
 class BaseDirectoryEntryNode(BaseNode):
+
+    _node: DirectoryEntry
+
     def target_hash(self) -> Sha1Git:
-        assert self._node is not None
         return self._node.target
 
     def target_type(self) -> ObjectType:
@@ -23,7 +25,6 @@ class BaseDirectoryEntryNode(BaseNode):
             "dir": ObjectType.DIRECTORY,
             "rev": ObjectType.REVISION,
         }
-        assert self._node is not None
         return mapping[self._node.type]
 
 

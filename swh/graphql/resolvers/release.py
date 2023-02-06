@@ -5,7 +5,7 @@
 
 from typing import Optional, Union
 
-from swh.model.model import CoreSWHID, ObjectType
+from swh.model.model import ObjectType
 from swh.model.model import Release as ModelRelease
 from swh.model.model import Sha1Git
 
@@ -17,16 +17,16 @@ class BaseReleaseNode(BaseSWHNode):
     Base resolver for all the release nodes
     """
 
+    _node: ModelRelease
+
     def _get_release_by_id(self, release_id: Sha1Git) -> Optional[ModelRelease]:
         releases = self.archive.get_releases([release_id])
         return releases[0] if releases else None
 
     def target_hash(self) -> Optional[Sha1Git]:
-        assert self._node is not None
         return self._node.target
 
     def target_type(self) -> ObjectType:
-        assert self._node is not None
         return self._node.target_type
 
     def is_type_of(self) -> str:
@@ -42,8 +42,7 @@ class ReleaseNode(BaseReleaseNode):
 
     def _get_node_data(self) -> Optional[ModelRelease]:
         release_swhid = self.kwargs.get("swhid")
-        assert isinstance(release_swhid, CoreSWHID)
-        return self._get_release_by_id(release_swhid.object_id)
+        return self._get_release_by_id(release_swhid.object_id)  # type: ignore
 
 
 class TargetReleaseNode(BaseReleaseNode):

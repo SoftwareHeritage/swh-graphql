@@ -3,6 +3,8 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+from typing import Optional
+
 from swh.model.model import Origin
 from swh.storage.interface import PagedResult
 
@@ -12,7 +14,7 @@ from .search import OriginSearchResultNode
 
 
 class BaseOriginNode(BaseSWHNode):
-    pass
+    _node: Origin
 
 
 class OriginNode(BaseOriginNode):
@@ -20,8 +22,8 @@ class OriginNode(BaseOriginNode):
     Node resolver for an origin requested directly with its URL
     """
 
-    def _get_node_data(self):
-        return self.archive.get_origin(self.kwargs.get("url"))
+    def _get_node_data(self) -> Optional[Origin]:
+        return self.archive.get_origin(url=self.kwargs.get("url"))  # type: ignore
 
 
 class TargetOriginNode(BaseOriginNode):
@@ -32,7 +34,7 @@ class TargetOriginNode(BaseOriginNode):
     obj: OriginSearchResultNode
     _can_be_null = True
 
-    def _get_node_data(self):
+    def _get_node_data(self) -> Optional[Origin]:
         # The target origin URL is guaranteed to exist in the archive
         # Hence returning the origin object without any explicit check in the archive
         # This assumes that the search index and archive are in sync

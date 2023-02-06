@@ -8,7 +8,6 @@ from typing import Optional, Union
 from swh.graphql.utils import utils
 from swh.model.model import ObjectType as ModelObjectType
 from swh.model.model import Revision, Sha1Git
-from swh.model.swhids import CoreSWHID
 
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseSWHNode
@@ -20,18 +19,18 @@ class BaseRevisionNode(BaseSWHNode):
     Base resolver for all the revision nodes
     """
 
+    _node: Revision
+
     def _get_revision_by_id(self, revision_id) -> Optional[Revision]:
         revisions = self.archive.get_revisions([revision_id])
         return revisions[0] if revisions else None
 
     @property
     def committerDate(self):  # To support the schema naming convention
-        assert self._node is not None
         return self._node.committer_date
 
     @property
     def type(self) -> str:
-        assert self._node is not None
         return self._node.type.value
 
     def is_type_of(self) -> str:
@@ -48,7 +47,6 @@ class BaseRevisionNode(BaseSWHNode):
         # FIXME: This function is named "target_hash" (instead of target_directory_hash)
         # to work with the generic TargetNode class without any extra code
         # Add a new TargetNode subclass if this creates a confusion
-        assert self._node is not None
         return self._node.directory
 
 
@@ -59,8 +57,7 @@ class RevisionNode(BaseRevisionNode):
 
     def _get_node_data(self) -> Optional[Revision]:
         revision_swhid = self.kwargs.get("swhid")
-        assert isinstance(revision_swhid, CoreSWHID)
-        return self._get_revision_by_id(revision_swhid.object_id)
+        return self._get_revision_by_id(revision_swhid.object_id)  # type: ignore
 
 
 class TargetRevisionNode(BaseRevisionNode):

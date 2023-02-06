@@ -116,7 +116,7 @@ class BaseConnection(ABC):
         """
         # FIXME, make this call async (not for v1)
 
-    def _get_after_arg(self):
+    def _get_after_arg(self) -> Optional[str]:
         """
         Return the decoded next page token. Override to support a different
         cursor type

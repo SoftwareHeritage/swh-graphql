@@ -5,7 +5,7 @@
 
 from typing import List, Optional
 
-from swh.model.model import Person as StoragePerson
+from swh.model.model import Person as ModelPerson
 
 from .base_connection import BaseList
 from .base_node import BaseNode
@@ -14,10 +14,10 @@ from .revision import BaseRevisionNode
 
 
 class Person(BaseNode):
-    pass
+    _node: ModelPerson
 
 
-def get_person_list(person: Optional[StoragePerson]) -> List[StoragePerson]:
+def get_person_list(person: Optional[ModelPerson]) -> List[ModelPerson]:
     return [person] if person else []
 
 
@@ -30,7 +30,7 @@ class RevisionAuthorList(BaseList):
 
     _node_class = Person
 
-    def _get_results(self) -> List[StoragePerson]:
+    def _get_results(self) -> List[ModelPerson]:
         """
         Author is a single object in the current data model,
         return it as a list to support future evolutions
@@ -47,7 +47,7 @@ class RevisionCommitterList(BaseList):
 
     _node_class = Person
 
-    def _get_results(self) -> List[StoragePerson]:
+    def _get_results(self) -> List[ModelPerson]:
         """
         Committer is a single object in the current data model,
         return it as a list to support future evolutions
@@ -64,7 +64,7 @@ class ReleaseAuthorList(BaseList):
 
     _node_class = Person
 
-    def _get_results(self) -> List[StoragePerson]:
+    def _get_results(self) -> List[ModelPerson]:
         """
         Author is a single object in the current data model,
         return it as a list to support future evolutions

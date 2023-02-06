@@ -111,7 +111,7 @@ def test_latest_visit_allowed_statuses_filter(client):
       }
     }
     """
-    data, _ = utils.get_query_response(
+    data, err = utils.get_query_response(
         client,
         query_str,
         url=get_origins()[1].url,
