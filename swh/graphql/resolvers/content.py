@@ -3,18 +3,19 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from typing import Dict, List, Optional, Union
+from typing import List, Optional, Union
 
 from swh.graphql.errors import DataError, InvalidInputError
 from swh.model import hashutil
 from swh.model.model import Content
+from swh.storage.interface import HashDict, TotalHashDict
 
 from .base_connection import BaseList
 from .base_node import BaseSWHNode
 from .target import BranchTargetNode, TargetNode
 
 
-def read_and_validate_content_hashes(hashes) -> Dict[str, bytes]:
+def read_and_validate_content_hashes(hashes):
     try:
         return {
             hash_type: hashutil.hash_to_bytes(hash_value)
@@ -77,7 +78,7 @@ class ContentbyHashesNode(BaseContentNode):
     """
 
     def _get_node_data(self) -> Optional[Content]:
-        hashes = read_and_validate_content_hashes(self.kwargs.items())
+        hashes: TotalHashDict = read_and_validate_content_hashes(self.kwargs.items())
         contents = self.archive.get_contents(hashes=hashes)
         if len(contents) > 1:
             # This situation is not expected to happen IRL
@@ -126,7 +127,7 @@ class ContentHashList(BaseList):
     _node_class = BaseContentNode
 
     def _get_results(self) -> List[Content]:
-        hashes = read_and_validate_content_hashes(self.kwargs.items())
+        hashes: HashDict = read_and_validate_content_hashes(self.kwargs.items())
         if not hashes:
             raise InvalidInputError("At least one of the four hashes must be provided")
         return self.archive.get_contents(hashes=hashes)

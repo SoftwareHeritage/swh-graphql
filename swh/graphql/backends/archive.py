@@ -22,7 +22,12 @@ from swh.model.model import (
 )
 from swh.model.swhids import ObjectType
 from swh.storage.algos.snapshot import snapshot_resolve_branch_target
-from swh.storage.interface import PagedResult, PartialBranches, StorageInterface
+from swh.storage.interface import (
+    HashDict,
+    PagedResult,
+    PartialBranches,
+    StorageInterface,
+)
 
 
 class Archive:
@@ -169,7 +174,7 @@ class Archive:
         }
         return not list(mapping[object_type]([object_id]))
 
-    def get_contents(self, hashes: Dict[str, Any]) -> List[Content]:
+    def get_contents(self, hashes: HashDict) -> List[Content]:
         return self.storage.content_find(content=hashes)
 
     # def get_content_data(self, content_sha1: Sha1) -> Optional[bytes]:
