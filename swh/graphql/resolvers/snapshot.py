@@ -47,9 +47,9 @@ class VisitSnapshotNode(BaseSnapshotNode):
     obj: BaseVisitStatusNode
 
     def _get_node_data(self):
-        if self.obj.snapshotSWHID is None:
+        snapshot_id = self.obj.snapshot_id()
+        if snapshot_id is None:
             raise NullableObjectError()
-        snapshot_id = self.obj.snapshotSWHID.object_id
         return self.archive.get_snapshot(snapshot_id=snapshot_id, verify=False)
 
 

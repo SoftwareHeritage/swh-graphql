@@ -3,8 +3,10 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+from typing import Optional
+
 from swh.graphql.utils import utils
-from swh.model.swhids import CoreSWHID, ObjectType
+from swh.model.model import Sha1Git
 
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseNode
@@ -16,11 +18,11 @@ class BaseVisitStatusNode(BaseNode):
     Base resolver for all the visit-status nodes
     """
 
-    @property
-    def snapshotSWHID(self):  # To support the schema naming convention
+    def snapshot_id(self) -> Optional[Sha1Git]:
+        assert self._node is not None
         if self._node.snapshot is None:
             return None
-        return CoreSWHID(object_type=ObjectType.SNAPSHOT, object_id=self._node.snapshot)
+        return self._node.snapshot
 
 
 class LatestVisitStatusNode(BaseVisitStatusNode):
