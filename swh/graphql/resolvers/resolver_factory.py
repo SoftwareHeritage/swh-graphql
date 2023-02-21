@@ -16,7 +16,7 @@ from .content import (
     ContentSwhidList,
     TargetContentNode,
 )
-from .directory import DirectoryNode, TargetDirectoryNode
+from .directory import DirectoryNode, RevisionDirectoryNode, TargetDirectoryNode
 from .directory_entry import DirectoryEntryConnection, DirectoryEntryNode
 from .origin import OriginConnection, OriginNode, TargetOriginNode
 from .person import ReleaseAuthorList, RevisionAuthorList, RevisionCommitterList
@@ -52,6 +52,7 @@ class NodeObjectFactory:
         "visit-snapshot": VisitSnapshotNode,
         "snapshot": SnapshotNode,
         "revision": RevisionNode,
+        "revision-directory": RevisionDirectoryNode,
         "release": ReleaseNode,
         "directory": DirectoryNode,
         "directory-entry": DirectoryEntryNode,

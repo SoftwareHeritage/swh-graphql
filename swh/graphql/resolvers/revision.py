@@ -6,7 +6,6 @@
 from typing import Optional, Union
 
 from swh.graphql.utils import utils
-from swh.model.model import ObjectType as ModelObjectType
 from swh.model.model import Revision, Sha1Git
 from swh.model.swhids import CoreSWHID
 
@@ -39,15 +38,8 @@ class BaseRevisionNode(BaseSWHNode):
         # This is for ariadne to return the right type
         return "Revision"
 
-    def target_type(self):
-        # To resolve the revision directory
-        return ModelObjectType.DIRECTORY
-
-    def target_hash(self) -> Sha1Git:  # hash of the unique revision directory
-        # To resolve the revision directory
-        # FIXME: This function is named "target_hash" (instead of target_directory_hash)
-        # to work with the generic TargetNode class without any extra code
-        # Add a new TargetNode subclass if this creates a confusion
+    def directory_hash(self) -> Sha1Git:  # hash of the unique revision directory
+        # To be used while resolving the revision directory
         assert self._node is not None
         return self._node.directory
 

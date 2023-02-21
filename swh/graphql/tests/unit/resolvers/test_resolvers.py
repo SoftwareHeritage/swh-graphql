@@ -28,6 +28,7 @@ class TestResolvers:
             ),
             (rs.snapshot_resolver, resolvers.snapshot.SnapshotNode),
             (rs.revision_resolver, resolvers.revision.RevisionNode),
+            (rs.revision_directory_resolver, resolvers.directory.RevisionDirectoryNode),
             (rs.release_resolver, resolvers.release.ReleaseNode),
             (rs.directory_resolver, resolvers.directory.DirectoryNode),
             (rs.content_by_hashes_resolver, resolvers.content.ContentbyHashesNode),

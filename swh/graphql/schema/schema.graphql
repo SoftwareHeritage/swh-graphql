@@ -672,7 +672,7 @@ type Revision implements SWHNode & Node {
   """
   The unique directory object that revision points to
   """
-  directory: RevisionDirectoryTarget
+  directory: Directory @cost(complexity: 1)
 
   """
   Connection to all the parents of the revision
@@ -704,18 +704,6 @@ type Revision implements SWHNode & Node {
     """
     after: String
   ): RevisionConnection @cost(complexity: 2, multipliers: ["first"]) # This costs more because of local (graphql level) pagination
-}
-
-type RevisionDirectoryTarget {
-  """
-  Directory target node SWHID
-  """
-  swhid: SWHID
-
-  """
-  Directory target node
-  """
-  node: Directory @cost(complexity: 1)
 }
 
 """

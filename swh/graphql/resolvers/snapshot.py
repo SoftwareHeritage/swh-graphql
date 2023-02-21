@@ -43,6 +43,9 @@ class VisitSnapshotNode(BaseSnapshotNode):
     Node resolver for a snapshot requested from a visit-status
     """
 
+    # Visit snapshot is not using the target indirection,
+    # hence this implementation (not using TargetSnapshotNode)
+
     _can_be_null = True
     obj: BaseVisitStatusNode
 
