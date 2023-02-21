@@ -19,4 +19,4 @@ def test_auth_error(client, authentication_error):
     errors = utils.get_error_response(
         client, query_str, response_code=401, url="http://example.com"
     )
-    assert "auth error" in errors
+    assert "Authentication error" in errors[0]["message"]

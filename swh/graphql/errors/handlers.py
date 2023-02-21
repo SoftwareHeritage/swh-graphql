@@ -20,7 +20,6 @@ def format_error(error: GraphQLError, debug: bool = False):
     if debug:
         # If debug is enabled, reuse Ariadne's formatting logic with stack trace
         return original_format
-
     expected_errors = [ObjectNotFoundError, PaginationError, InvalidInputError]
     formatted = error.formatted
     formatted["message"] = error.message
@@ -32,4 +31,7 @@ def format_error(error: GraphQLError, debug: bool = False):
 
 
 def on_auth_error(request: Request, exc: Exception):
-    return JSONResponse({"errors": [str(exc)]}, status_code=401)
+    # this error is raised outside the resolver context
+    # using the default error formatter to log in sentry
+    wrapped_error = GraphQLError("Authentication error", original_error=exc)
+    return JSONResponse({"errors": [format_error(wrapped_error)]}, status_code=401)
