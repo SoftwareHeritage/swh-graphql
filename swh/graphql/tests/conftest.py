@@ -4,6 +4,7 @@
 # See top-level LICENSE file for more information
 
 import os
+from typing import Any, Optional
 
 import pytest
 from starlette.authentication import AuthCredentials, AuthenticationError, SimpleUser
@@ -13,6 +14,16 @@ from swh.auth.starlette.backends import BearerTokenAuthBackend
 from swh.graphql import server as app_server
 
 from .data import populate_dummy_data, populate_search_data
+
+
+def mock_async(return_value: Any = None, error: Optional[Exception] = None):
+    # FIXME, mock function for async. Can be removed on Python.3.8+
+    async def func(*args, **kw):
+        if error:
+            raise error
+        return return_value
+
+    return func
 
 
 @pytest.fixture(scope="session")
@@ -26,31 +37,29 @@ def test_app():
 
 @pytest.fixture(autouse=True)
 def authenticated_user(mocker):
-    async def authenticate(*args, **kw):
-        return AuthCredentials(["Authenticated"]), SimpleUser("user")
-
+    return_value = AuthCredentials(["Authenticated"]), SimpleUser("user")
     mocker.patch.object(
-        BearerTokenAuthBackend, "authenticate", side_effect=authenticate
+        BearerTokenAuthBackend,
+        "authenticate",
+        side_effect=mock_async(return_value=return_value),
     )
 
 
 @pytest.fixture
 def anonymous_user(mocker):
-    async def authenticate(*args, **kw):
-        return None
-
     mocker.patch.object(
-        BearerTokenAuthBackend, "authenticate", side_effect=authenticate
+        BearerTokenAuthBackend,
+        "authenticate",
+        side_effect=mock_async(return_value=None),
     )
 
 
 @pytest.fixture
 def authentication_error(mocker):
-    async def authenticate(*args, **kw):
-        raise AuthenticationError("auth error")
-
     mocker.patch.object(
-        BearerTokenAuthBackend, "authenticate", side_effect=authenticate
+        BearerTokenAuthBackend,
+        "authenticate",
+        side_effect=mock_async(error=AuthenticationError("auth error")),
     )
 
 
