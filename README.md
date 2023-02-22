@@ -1,21 +1,75 @@
 # swh-graphql
 
-## dev mode inside docker
+This repository holds the development of Software Heritage GraphQL API.
+A staging version of this service is available at https://graphql.staging.swh.network/
 
-* make run-dev-docker
+## Running locally
 
-## dev mode without docker
+Refer to https://docs.softwareheritage.org/devel/getting-started.html#getting-started for
+running software heritage services locally.
 
-* make run-dev
+If you wish to run SWH-GraphQL independently, and have access to SWH storage services,
+following make targets can be used.
 
-## dev mode without auto reload
+- make run-dev\
+Use the config file at 'swh/graphql/config/dev.yml' and start the service in
+auto-reload mode using uvicorn
 
-* make run-dev-stable
+- make run-dev-stable\
+Use the config file at 'swh/graphql/config/dev.yml' and start the service
+using uvicorn
 
-## staging mode inside docker
+- make run-wsgi\
+Use the config file at 'swh/graphql/config/staging.yml' and start the service
+in gunicorn using uvicorn workers
 
-* make run-staging
+- make run-dev-docker\
+Run the service inside a docker container and Use the config file
+at 'swh/graphql/config/dev.yml'
 
-## visit
+- make run-wsgi-docker\
+Run the service inside a docker container and Use the config file
+at 'swh/graphql/config/staging.yml'
 
-* http://localhost:8000/
+- visit http://localhost:8000/ to use the query explorer
+
+## Running a query
+
+The easiest way to run a query is using the query explorer.
+Please provide an SWH API token if you wish to run bigger queries.
+
+### Using curl
+
+```
+curl -i -H 'Content-Type: application/json' -H "Authorization: bearer my-token" -X POST -d '{"query": "query {origins(first: 2) {nodes {url}}}"}' http://127.0.0.1:8000
+```
+
+### Using Python requests
+
+```
+import requests
+
+url = 'http://127.0.0.1:8000/'
+query = """
+{
+    origins(first: 2) {
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
+        edges {
+            node {
+                url
+            }
+        }
+    }
+}
+"""
+json = {'query' : query}
+api_token = "your api token"
+headers = {'Authorization': 'Bearer %s' % api_token}
+
+r = requests.post(url=url, json=json, headers=headers)
+print (r.json())
+
+```

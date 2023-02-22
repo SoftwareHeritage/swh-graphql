@@ -25,8 +25,3 @@ run-dev-docker:
 .PHONY: run-wsgi-docker
 run-wsgi-docker:
 	docker-compose -f docker-compose.yml -f docker-compose-staging.yml up --build
-
-.PHONY: update-desktop6
-update-desktop6:
-	git pull origin master
-	docker-compose -f docker-compose.yml -f docker-compose-staging.yml restart
