@@ -18,6 +18,5 @@ auth:
   server: https://auth.softwareheritage.org/auth/
   relam: SoftwareHeritageStaging
   client: swh-web
-
-cache:
-  url: memory://
+  cache:
+    url: memory://

@@ -18,6 +18,5 @@ auth:
   server: dummy
   relam: dummy
   client: dummy
-
-cache:
-  url: memory://
+  cache:
+    url: memory://

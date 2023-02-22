@@ -2,4 +2,4 @@ ariadne
 uvicorn
 starlette
 httpx
-aiocache
+aiocache[memcached]

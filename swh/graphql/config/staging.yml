@@ -18,8 +18,6 @@ auth:
   server: https://auth.softwareheritage.org/auth/
   relam: SoftwareHeritageStaging
   client: swh-web
-
-# FIXME, temporary simple memory cache
-# slow and very often cause a cache miss
-cache:
-  url: memory://
+  cache:
+    # used to cache auth tokens
+    url: memcached://localhost:11211

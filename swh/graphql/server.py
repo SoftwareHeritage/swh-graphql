@@ -104,7 +104,7 @@ def make_app_from_configfile():
                 realm_name=graphql_cfg["auth"]["relam"],
                 client_id=graphql_cfg["auth"]["client"],
                 # FIXME, improve this with response cache implementation
-                cache=Cache.from_url(url=graphql_cfg["cache"]["url"]),
+                cache=Cache.from_url(url=graphql_cfg["auth"]["cache"]["url"]),
             ),
             on_error=on_auth_error,
         ),
