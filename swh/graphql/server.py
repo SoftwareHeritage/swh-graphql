@@ -101,7 +101,7 @@ def make_app_from_configfile():
             AuthenticationMiddleware,
             backend=BearerTokenAuthBackend(
                 server_url=graphql_cfg["auth"]["server"],
-                realm_name=graphql_cfg["auth"]["relam"],
+                realm_name=graphql_cfg["auth"]["realm"],
                 client_id=graphql_cfg["auth"]["client"],
                 # FIXME, improve this with response cache implementation
                 cache=Cache.from_url(url=graphql_cfg["auth"]["cache"]["url"]),

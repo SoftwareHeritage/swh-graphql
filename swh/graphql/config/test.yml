@@ -16,7 +16,7 @@ max_query_cost:
 
 auth:
   server: dummy
-  relam: dummy
+  realm: dummy
   client: dummy
   cache:
     url: memory://

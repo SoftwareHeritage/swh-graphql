@@ -16,7 +16,7 @@ max_query_cost:
 
 auth:
   server: https://auth.softwareheritage.org/auth/
-  relam: SoftwareHeritageStaging
+  realm: SoftwareHeritageStaging
   client: swh-web
   cache:
     url: memory://
