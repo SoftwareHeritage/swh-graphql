@@ -20,4 +20,4 @@ auth:
   client: swh-web
   cache:
     # used to cache auth tokens
-    url: memcached://localhost:11211
+    url: memcached://memcached:11211

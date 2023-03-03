@@ -19,9 +19,6 @@ following make targets can be used.
 * make run-dev-stable: Use the config file at ``swh/graphql/config/dev.yml`` and start the
   service using uvicorn
 
-* make run-wsgi: Use the config file at ``swh/graphql/config/staging.yml`` and start the
-  service in gunicorn using uvicorn workers
-
 * make run-dev-docker: Run the service inside a docker container and Use the config file
   at ``swh/graphql/config/dev.yml``
 

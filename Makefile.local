@@ -14,10 +14,6 @@ run-dev:
 run-dev-stable:
 	export SWH_CONFIG_FILENAME=swh/graphql/config/dev.yml; uvicorn swh.graphql.server:make_app_from_configfile --factory
 
-.PHONY: run-wsgi
-run-wsgi:
-	export SWH_CONFIG_FILENAME=swh/graphql/config/staging.yml; gunicorn 'swh.graphql.server:make_app_from_configfile()' -w 2 -k uvicorn.workers.UvicornWorker
-
 .PHONY: run-dev-docker
 run-dev-docker:
 	docker-compose -f docker-compose.yml -f docker-compose-dev.yml up --build
