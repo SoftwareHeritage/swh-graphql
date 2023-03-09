@@ -1,3 +1,14 @@
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+  inheritMaxAge: Boolean
+) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
+
 directive @cost(complexity: Int, multipliers: [String!], useMultipliers: Boolean) on FIELD | FIELD_DEFINITION
 
 """
@@ -107,7 +118,7 @@ type OriginEdge {
 """
 A software origin object
 """
-type Origin implements Node {
+type Origin implements Node @cacheControl(maxAge: 1000) {
   """
   Unique identifier
   """
@@ -131,7 +142,7 @@ type Origin implements Node {
     Returns the page after this cursor
     """
     after: String
-  ): VisitConnection! @cost(complexity: 1, multipliers: ["first"])
+  ): VisitConnection! @cost(complexity: 1, multipliers: ["first"]) @cacheControl(maxAge: 100)
 
   """
   Latest visit object for the origin
@@ -151,7 +162,7 @@ type Origin implements Node {
     If True, the latest visit with a snapshot will be returned
     """
     requireSnapshot: Boolean
-  ): Visit @cost(complexity: 1)
+  ): Visit @cost(complexity: 1) @cacheControl(maxAge: 100)
 
   """
   Connection to all the snapshots for the origin
@@ -166,7 +177,7 @@ type Origin implements Node {
     Returns the page after this cursor
     """
     after: String
-  ): SnapshotConnection @cost(complexity: 2, multipliers: ["first"])  # This costs more because of local (graphql level) pagination
+  ): SnapshotConnection @cost(complexity: 2, multipliers: ["first"])  @cacheControl(maxAge: 100) # This costs more because of local (graphql level) pagination
 }
 
 """
@@ -227,7 +238,7 @@ enum VisitStatusState {
 """
 An origin visit object
 """
-type Visit implements Node {
+type Visit implements Node @cacheControl(maxAge: 1000) {
   """
   Unique identifier
   """
@@ -261,7 +272,7 @@ type Visit implements Node {
     Returns the page after this cursor
     """
     after: String
-  ): VisitStatusConnection @cost(complexity: 3)  # here first is optional, hence adding a higher value for cost
+  ): VisitStatusConnection @cost(complexity: 3)  @cacheControl(maxAge: 100) # here first is optional, hence adding a higher value for cost
 
   """
   Latest status object for the Visit
@@ -276,7 +287,7 @@ type Visit implements Node {
     Filter by the availability of a snapshot in the status
     """
     requireSnapshot: Boolean
-  ): VisitStatus @cost(complexity: 1)
+  ): VisitStatus @cost(complexity: 1) @cacheControl(maxAge: 100)
 }
 
 """

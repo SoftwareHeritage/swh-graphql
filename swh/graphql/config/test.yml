@@ -21,3 +21,6 @@ auth:
   client: dummy
   cache:
     url: memory://
+
+cache:
+  url: memory://    

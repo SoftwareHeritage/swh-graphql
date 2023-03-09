@@ -68,6 +68,7 @@ class NodeObjectFactory:
     }
 
     @classmethod
+    # @cached(key_builder=lambda *args, **kw: "key")
     def create(cls, node_type: str, obj, info, *args, **kw):
         # FIXME, add to the sentry transaction
         resolver = cls.mapping.get(node_type)
@@ -97,6 +98,7 @@ class ConnectionObjectFactory:
     }
 
     @classmethod
+    # @cached(key_builder=lambda *args, **kw: "key")
     def create(cls, connection_type: str, obj, info, *args, **kw):
         # FIXME, add to the sentry transaction
         resolver = cls.mapping.get(connection_type)
@@ -119,6 +121,7 @@ class SimpleListFactory:
     }
 
     @classmethod
+    # @cached(key_builder=lambda *args, **kw: "key")
     def create(cls, list_type: str, obj, info, *args, **kw):
         # FIXME, add to the sentry transaction
         resolver = cls.mapping.get(list_type)

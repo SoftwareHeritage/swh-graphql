@@ -22,3 +22,6 @@ auth:
   cache:
     # used to cache auth tokens
     url: memcached://memcached:11211
+
+cache:
+  url: memory://    

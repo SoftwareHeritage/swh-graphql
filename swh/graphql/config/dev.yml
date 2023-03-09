@@ -21,3 +21,6 @@ auth:
   client: swh-web
   cache:
     url: memory://
+
+cache:
+  url: memory://
