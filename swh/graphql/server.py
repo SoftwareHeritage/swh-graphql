@@ -12,7 +12,7 @@ from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.cors import CORSMiddleware
-from starlette.routing import Mount
+from starlette.routing import Route
 
 from swh.auth.starlette.backends import BearerTokenAuthBackend
 from swh.core import config
@@ -20,6 +20,8 @@ from swh.search import get_search as get_swh_search
 from swh.search.interface import SearchInterface
 from swh.storage import get_storage as get_swh_storage
 from swh.storage.interface import StorageInterface
+
+from .client.view import explorer_page
 
 graphql_cfg: Dict[str, Any] = {}
 storage: Optional[StorageInterface] = None
@@ -110,10 +112,12 @@ def make_app_from_configfile():
         ),
         Middleware(LogMiddleware),
     ]
+
     # Mount under a starlette application
     application = Starlette(
         routes=[
-            Mount("/", ariadne_app),
+            Route("/", ariadne_app, methods=["POST"]),
+            Route("/", explorer_page, methods=["GET"]),
         ],
         middleware=middleware,
     )
