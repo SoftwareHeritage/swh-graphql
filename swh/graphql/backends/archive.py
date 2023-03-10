@@ -66,7 +66,7 @@ class Archive:
             require_snapshot=require_snapshot,
         )
 
-    def get_visit_status(
+    def get_visit_statuses(
         self,
         origin_url: str,
         visit_id: int,

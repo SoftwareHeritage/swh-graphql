@@ -54,7 +54,7 @@ class VisitStatusConnection(BaseConnection):
     def _get_connection_data(self) -> ConnectionData:
         # self.obj.origin is the origin URL
         return ConnectionData(
-            paged_result=self.archive.get_visit_status(
+            paged_result=self.archive.get_visit_statuses(
                 self.obj.origin,
                 self.obj.visitId,
                 after=self._get_after_arg(),
