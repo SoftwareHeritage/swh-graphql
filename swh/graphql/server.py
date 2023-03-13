@@ -116,7 +116,7 @@ def make_app_from_configfile():
     # Mount under a starlette application
     application = Starlette(
         routes=[
-            Route("/", ariadne_app, methods=["POST"]),
+            Route("/", ariadne_app, methods=["POST"], name="graphql_api"),
             Route("/", explorer_page, methods=["GET"]),
         ],
         middleware=middleware,

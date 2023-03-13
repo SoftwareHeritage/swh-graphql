@@ -57,7 +57,7 @@
       ReactDOM.render(
         React.createElement(GraphiQL, {
         fetcher: GraphiQL.createFetcher({
-            url: '/',
+            url: window.location.href,
           }),
           query: DEFAULT_QUERY,
           defaultEditorToolsVisibility: true,
