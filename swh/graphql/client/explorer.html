@@ -32,6 +32,10 @@
         <a class="navbar-brand" href="/">
           <span>Software Heritage GraphQL Explorer</span>
         </a>
+        {% if auth %}
+          <div id="swh-auth-info" class="float-right">
+          </div>
+        {% endif %}
       </div>
     </nav>
     <div id="graphiql">Loading...</div>
@@ -40,30 +44,100 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
+    {% if auth %}
+      <script src="https://cdn.jsdelivr.net/npm/keycloak-js@21.0.1/dist/keycloak.min.js"
+              integrity="sha256-8xhYXd4t68ydWwydSA5+3SakzW9NRiXGhmKOzk79P3o="
+              crossorigin="anonymous"></script>
+    {% endif %}
     <script>
+      async function graphQLFetcher(graphQLParams, opts) {
+        const { headers = {} } = opts;
+
+        headers['Accept'] = 'application/json';
+        headers['Content-Type'] = 'application/json';
+
+        {% if auth %}
+          if (keycloak.authenticated) {
+            // ensure to renew access token if expired
+            await keycloak.updateToken(10);
+            headers['Authorization'] = 'Bearer ' + keycloak.token;
+          }
+        {% endif %}
+
+        const response = await fetch(window.location.href, {
+          method: 'post',
+          headers: headers,
+          body: JSON.stringify(graphQLParams),
+        });
+
+        return response.json();
+      }
+
       function dedent(str) {
         str = str.replace(/^\n/, "");
         let match = str.match(/^\s+/);
         return match ? str.replace(new RegExp("^"+match[0], "gm"), "") : str;
       }
-      const DEFAULT_QUERY = dedent(`
-      query getOrigins {
-        origins(first: 2) {
-          nodes {
-            url
-          }
-        }
-      }`);
-      ReactDOM.render(
-        React.createElement(GraphiQL, {
-        fetcher: GraphiQL.createFetcher({
-            url: window.location.href,
+
+      function initGraphiQL() {
+        const DEFAULT_QUERY = dedent(`
+          query getOrigins {
+            origins(first: 2) {
+              nodes {
+                url
+              }
+            }
+          }`);
+        ReactDOM.render(
+          React.createElement(GraphiQL, {
+          fetcher: graphQLFetcher,
+            query: DEFAULT_QUERY,
+            defaultEditorToolsVisibility: true,
           }),
-          query: DEFAULT_QUERY,
-          defaultEditorToolsVisibility: true,
-        }),
-        document.getElementById('graphiql'),
-      );
+          document.getElementById('graphiql'),
+        );
+      }
+
+      {% if auth %}
+        const keycloak = new Keycloak({
+          url: '{{ auth.public_server }}',
+          realm: '{{ auth.realm }}',
+          clientId: '{{ auth.client }}',
+        });
+
+        function kcLogin(event) {
+          event.preventDefault();
+          keycloak.login();
+        }
+
+        function kcLogout(event) {
+          event.preventDefault();
+          keycloak.logout();
+        }
+
+        async function kcInitSuccess(authenticated) {
+          const authInfo = document.querySelector('#swh-auth-info');
+          if (authenticated) {
+            const profile = await keycloak.loadUserProfile();
+            authInfo.innerHTML = `Logged in as <b>${profile.username}</b>`;
+            authInfo.innerHTML += " - <a href='#' onclick='kcLogout(event)'>logout</a>";
+          } else {
+            authInfo.innerHTML = "<a href='#' onclick='kcLogin(event)'>login</a>";
+          }
+          initGraphiQL();
+        }
+
+        keycloak.init({
+          onLoad: 'check-sso',
+          pkceMethod: 'S256',
+          checkLoginIframe: false,
+        })
+        .success(kcInitSuccess)
+        .error(initGraphiQL);
+      {% else %}
+        initGraphiQL();
+      {% endif %}
+
     </script>
   </body>
 </html>

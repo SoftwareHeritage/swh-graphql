@@ -16,6 +16,7 @@ max_query_cost:
 
 auth:
   server: dummy
+  public_server: dummy
   realm: dummy
   client: dummy
   cache:

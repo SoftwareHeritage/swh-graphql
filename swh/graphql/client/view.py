@@ -9,5 +9,14 @@ from starlette.templating import Jinja2Templates
 
 
 async def explorer_page(request):
+    from swh.graphql.server import graphql_cfg
+
+    auth = graphql_cfg.get("auth")
+    if auth and "public_server" not in auth:
+        # ensure to not break already deployed service
+        auth["public_server"] = auth["server"]
+
     templates = Jinja2Templates(directory=os.path.dirname(__file__))
-    return templates.TemplateResponse("explorer.html", {"request": request})
+    return templates.TemplateResponse(
+        "explorer.html", {"request": request, "auth": auth}
+    )
