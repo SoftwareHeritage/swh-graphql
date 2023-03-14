@@ -9,6 +9,11 @@ from typing import Any, Dict, Optional
 from aiocache import Cache
 from ariadne.asgi import GraphQL
 from starlette.applications import Starlette
+from starlette.authentication import (
+    AuthCredentials,
+    AuthenticationBackend,
+    UnauthenticatedUser,
+)
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.cors import CORSMiddleware
@@ -40,6 +45,11 @@ def get_search() -> SearchInterface:
     if not search:
         search = get_swh_search(**graphql_cfg["search"])
     return search
+
+
+class AnonymousAuthBackend(AuthenticationBackend):
+    async def authenticate(self, conn):
+        return AuthCredentials(["anonymous"]), UnauthenticatedUser()
 
 
 def load_and_check_config(config_path: Optional[str]) -> Dict[str, Any]:
@@ -84,6 +94,7 @@ def make_app_from_configfile():
     if not graphql_cfg:
         config_path = os.environ.get("SWH_CONFIG_FILENAME")
         graphql_cfg = load_and_check_config(config_path)
+
     ariadne_app = GraphQL(
         schema,
         debug=graphql_cfg["debug"],
@@ -91,6 +102,18 @@ def make_app_from_configfile():
         validation_rules=validation_rules,
         error_formatter=format_error,
     )
+
+    if "auth" in graphql_cfg:
+        auth_backend = BearerTokenAuthBackend(
+            server_url=graphql_cfg["auth"]["server"],
+            realm_name=graphql_cfg["auth"]["realm"],
+            client_id=graphql_cfg["auth"]["client"],
+            # FIXME, improve this with response cache implementation
+            cache=Cache.from_url(url=graphql_cfg["auth"]["cache"]["url"]),
+        )
+    else:
+        auth_backend = AnonymousAuthBackend()
+
     middleware = [
         Middleware(
             CORSMiddleware,
@@ -101,13 +124,7 @@ def make_app_from_configfile():
         ),
         Middleware(
             AuthenticationMiddleware,
-            backend=BearerTokenAuthBackend(
-                server_url=graphql_cfg["auth"]["server"],
-                realm_name=graphql_cfg["auth"]["realm"],
-                client_id=graphql_cfg["auth"]["client"],
-                # FIXME, improve this with response cache implementation
-                cache=Cache.from_url(url=graphql_cfg["auth"]["cache"]["url"]),
-            ),
+            backend=auth_backend,
             on_error=on_auth_error,
         ),
         Middleware(LogMiddleware),

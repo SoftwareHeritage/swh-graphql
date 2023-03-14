@@ -3,6 +3,13 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+import os
+
+from starlette.testclient import TestClient
+import yaml
+
+from swh.graphql import server
+
 from . import utils
 from ..data import get_snapshots
 
@@ -133,7 +140,7 @@ def test_query_cost_snapshots(client):
     )
 
 
-def test_reduced_cost_for_anonymous(client, anonymous_user):
+def _test_reduced_cost_for_anonymous(client):
     # max cost is 10 for a test anonymous user
     query_str = """
     query getOrigins {
@@ -149,3 +156,20 @@ def test_reduced_cost_for_anonymous(client, anonymous_user):
         "The query exceeds the maximum cost of 10. Actual cost is 11"
         in errors[0]["message"]
     )
+
+
+def test_reduced_cost_for_anonymous_user(client, anonymous_user):
+    _test_reduced_cost_for_anonymous(client)
+
+
+def test_reduced_cost_for_no_auth_client(mocker):
+    mocker.patch.object(server, "graphql_cfg", {})
+    with open(
+        os.path.join(os.path.dirname(server.__file__), "config/test.yml"), "r"
+    ) as config_file:
+        config = yaml.load(config_file.read(), Loader=yaml.SafeLoader)
+        del config["auth"]
+    mocker.patch.object(server, "load_and_check_config").return_value = config
+    app = server.make_app_from_configfile()
+    client = TestClient(app)
+    _test_reduced_cost_for_anonymous(client)
