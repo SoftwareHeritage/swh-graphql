@@ -336,7 +336,7 @@ type VisitStatusEdge {
 """
 A visit status object
 """
-type VisitStatus {
+type VisitStatus @cacheControl(maxAge: 1000) {
   """
   Status string of the visit (either full, partial or ongoing)
   """
@@ -350,7 +350,7 @@ type VisitStatus {
   """
   Snapshot object
   """
-  snapshot: Snapshot @cost(complexity: 1)
+  snapshot: Snapshot @cost(complexity: 1) @cacheControl(maxAge: 1000)
 
   """
   Type of the origin visited. Eg: git/hg/svn/tar/deb
@@ -401,7 +401,7 @@ type SnapshotEdge {
 """
 A snapshot object
 """
-type Snapshot implements SWHNode & Node {
+type Snapshot implements SWHNode & Node @cacheControl(maxAge: 1000) {
   """
   Unique identifier
   """
@@ -440,7 +440,7 @@ type Snapshot implements SWHNode & Node {
     Do not return branches whose name contains the given prefix
     """
     nameExcludePrefix: String
-  ): BranchConnection @cost(complexity: 2, multipliers: ["first"]) # This costs more because of local (graphql level) pagination
+  ): BranchConnection @cost(complexity: 2, multipliers: ["first"]) @cacheControl(maxAge: 1000) # This costs more because of local (graphql level) pagination
 }
 
 """
@@ -489,7 +489,7 @@ type BranchConnectionEdge {
 """
 A user object
 """
-type Person {
+type Person @cacheControl(maxAge: 1000) {
   """
   User's email address
   """
@@ -521,7 +521,7 @@ enum BranchType {
 """
 A snapshot branch object
 """
-type Branch {
+type Branch @cacheControl(maxAge: 1000) {
   """
   Branch name
   """
@@ -535,7 +535,7 @@ type Branch {
   """
   Branch target object
   """
-  target: BranchTarget @cost(complexity: 1)  # This has a cost because of possible alias chains
+  target: BranchTarget @cost(complexity: 1) @cacheControl(maxAge: 1000) # This has a cost because of possible alias chains
 }
 
 """
@@ -639,7 +639,7 @@ type Date {
 """
 A revision object
 """
-type Revision implements SWHNode & Node {
+type Revision implements SWHNode & Node @cacheControl(maxAge: 1000) {
   """
   Unique identifier
   """
@@ -683,7 +683,7 @@ type Revision implements SWHNode & Node {
   """
   The unique directory object that revision points to
   """
-  directory: Directory @cost(complexity: 1)
+  directory: Directory @cost(complexity: 1) @cacheControl(maxAge: 1000)
 
   """
   Connection to all the parents of the revision
@@ -720,7 +720,7 @@ type Revision implements SWHNode & Node {
 """
 A release object
 """
-type Release implements SWHNode & Node {
+type Release implements SWHNode & Node @cacheControl(maxAge: 1000) {
   """
   Unique identifier
   """
@@ -754,7 +754,7 @@ type Release implements SWHNode & Node {
   """
   Release target object
   """
-  target: ReleaseTarget
+  target: ReleaseTarget @cacheControl(maxAge: 1000)
 }
 
 """
@@ -835,7 +835,7 @@ type DirectoryEntryEdge {
 """
 A directory entry object
 """
-type DirectoryEntry {
+type DirectoryEntry @cacheControl(maxAge: 1000) {
   """
   The directory entry name
   """
@@ -884,7 +884,7 @@ type DirectoryEntryTarget {
 """
 A directory object
 """
-type Directory implements SWHNode & Node {
+type Directory implements SWHNode & Node @cacheControl(maxAge: 1000) {
   """
   Unique identifier
   """
@@ -965,7 +965,7 @@ type ContentLicense {
 """
 A content object
 """
-type Content implements SWHNode & Node {
+type Content implements SWHNode & Node @cacheControl(maxAge: 1000) {
   """
   Unique identifier
   """
