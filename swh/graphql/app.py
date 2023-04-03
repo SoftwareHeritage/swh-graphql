@@ -31,6 +31,7 @@ schema = make_executable_schema(
     resolvers.release,
     resolvers.directory,
     resolvers.directory_entry,
+    resolvers.content,
     resolvers.branch_target,
     resolvers.branch_target_node,
     resolvers.release_target,
@@ -48,12 +49,12 @@ schema = make_executable_schema(
 
 
 def validation_rules(context, document, data):
-    from .server import graphql_cfg
+    from .server import get_config
 
     if context["request"].user.is_authenticated:
-        max_query_cost = graphql_cfg["max_query_cost"]["user"]
+        max_query_cost = get_config()["max_query_cost"]["user"]
     else:
-        max_query_cost = graphql_cfg["max_query_cost"]["anonymous"]
+        max_query_cost = get_config()["max_query_cost"]["anonymous"]
 
     if max_query_cost:
         return [

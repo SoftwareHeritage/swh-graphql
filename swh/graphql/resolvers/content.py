@@ -41,16 +41,6 @@ class BaseContentNode(BaseSWHNode):
         return self._node.sha1_git
 
     @property
-    def data(self):
-        # FIXME, return a Node object
-        # FIXME, add more ways to retrieve data like binary string
-        archive_url = "https://archive.softwareheritage.org/api/1/"
-        content_sha1 = self._node.hashes()["sha1"]
-        return {
-            "url": f"{archive_url}content/sha1:{content_sha1.hex()}/raw/",
-        }
-
-    @property
     def mimeType(self):
         # FIXME, fetch data from the indexers
         return None

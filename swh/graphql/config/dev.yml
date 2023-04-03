@@ -14,6 +14,8 @@ max_query_cost:
   anonymous: 50
   user: 500
 
+max_raw_content_size: 10000
+
 auth:
   server: https://auth.softwareheritage.org/auth/
   public_server: https://auth.softwareheritage.org/auth/

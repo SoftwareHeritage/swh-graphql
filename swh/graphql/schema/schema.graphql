@@ -951,6 +951,12 @@ type ContentData {
   URL to download the file data
   """
   url: String
+
+  """
+  Raw content data
+  This is available only for contents with a reasonable size, use the url field to download larger files otherwise.
+  """
+  raw: BinaryString @cost(complexity: 5)  # contents could be as long as 10000 bytes, hence a higher cost
 }
 
 type ContentMimeType {

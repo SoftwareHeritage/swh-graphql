@@ -42,6 +42,7 @@ revision: ObjectType = ObjectType("Revision")
 release: ObjectType = ObjectType("Release")
 directory: ObjectType = ObjectType("Directory")
 directory_entry: ObjectType = ObjectType("DirectoryEntry")
+content: ObjectType = ObjectType("Content")
 binary_string: ObjectType = ObjectType("BinaryString")
 date: ObjectType = ObjectType("Date")
 branch_target: ObjectType = ObjectType("BranchTarget")
@@ -184,6 +185,13 @@ def content_by_hashes_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
 ) -> rs.content.ContentbyHashesNode:
     return NodeObjectFactory.create("content-by-hashes", obj, info, **kw)
+
+
+@content.field("data")
+def content_data_resolver(
+    obj: rs.content.BaseContentNode, info: GraphQLResolveInfo, **kw
+) -> rs.content_data.ContentDataNode:
+    return NodeObjectFactory.create("content-data", obj, info, **kw)
 
 
 @origin_search_result.field("node")

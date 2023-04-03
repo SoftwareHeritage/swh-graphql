@@ -47,6 +47,14 @@ def get_search() -> SearchInterface:
     return search
 
 
+def get_config() -> Dict[str, Any]:
+    global graphql_cfg
+    if not graphql_cfg:
+        config_path = os.environ.get("SWH_CONFIG_FILENAME")
+        graphql_cfg = load_and_check_config(config_path)
+    return graphql_cfg
+
+
 class AnonymousAuthBackend(AuthenticationBackend):
     async def authenticate(self, conn):
         return AuthCredentials(["anonymous"]), UnauthenticatedUser()
@@ -89,12 +97,7 @@ def make_app_from_configfile():
     from .errors import format_error, on_auth_error
     from .middlewares.logger import LogMiddleware
 
-    global graphql_cfg
-
-    if not graphql_cfg:
-        config_path = os.environ.get("SWH_CONFIG_FILENAME")
-        graphql_cfg = load_and_check_config(config_path)
-
+    graphql_cfg = get_config()
     ariadne_app = GraphQL(
         schema,
         debug=graphql_cfg["debug"],

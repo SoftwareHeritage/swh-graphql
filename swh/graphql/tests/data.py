@@ -6,8 +6,10 @@
 import datetime
 
 from swh.model.model import (
+    Content,
     Directory,
     DirectoryEntry,
+    MultiHash,
     ObjectType,
     OriginVisitStatus,
     Release,
@@ -254,6 +256,17 @@ def get_snapshots_with_multiple_alias():
     ]
 
 
+def get_too_big_contents():
+    return [
+        Content(
+            length=20000,
+            data="too big data".encode(),
+            status="visible",
+            **MultiHash.from_data("too big data".encode()).digest(),
+        )
+    ]
+
+
 GRAPHQL_EXTRA_TEST_OBJECTS = {
     "snapshot": get_snapshots_with_multiple_alias(),
     "release": get_releases_with_target() + get_releases_with_empty_target(),
@@ -261,6 +274,7 @@ GRAPHQL_EXTRA_TEST_OBJECTS = {
     "directory": get_directories_with_nested_path()
     + get_directories_with_special_name_entries(),
     "origin_visit_status": get_visit_with_multiple_status(),
+    "content": get_too_big_contents(),
 }
 
 

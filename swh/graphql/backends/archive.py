@@ -16,6 +16,7 @@ from swh.model.model import (
     OriginVisitStatus,
     Release,
     Revision,
+    Sha1,
     Sha1Git,
     Snapshot,
     SnapshotBranch,
@@ -188,8 +189,8 @@ class Archive:
     def get_contents(self, hashes: HashDict) -> List[Content]:
         return self.storage.content_find(content=hashes)
 
-    # def get_content_data(self, content_sha1: Sha1) -> Optional[bytes]:
-    #     return self.storage.content_get_data(content=content_sha1)
+    def get_content_data(self, content_sha1: Sha1) -> Optional[bytes]:
+        return self.storage.content_get_data(content=content_sha1)
 
     def get_branch_target(
         self,

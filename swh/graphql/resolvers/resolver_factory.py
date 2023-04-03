@@ -17,6 +17,7 @@ from .content import (
     ContentSwhidList,
     TargetContentNode,
 )
+from .content_data import ContentDataNode
 from .directory import DirectoryNode, RevisionDirectoryNode, TargetDirectoryNode
 from .directory_entry import DirectoryEntryConnection, DirectoryEntryNode
 from .origin import OriginConnection, OriginNode, TargetOriginNode
@@ -61,6 +62,7 @@ class NodeObjectFactory:
         "directory": DirectoryNode,
         "directory-entry": DirectoryEntryNode,
         "content-by-hashes": ContentbyHashesNode,
+        "content-data": ContentDataNode,
         "generic-target": TargetNode,
         "branch-target": BranchTargetNode,
         "target-origin": TargetOriginNode,
