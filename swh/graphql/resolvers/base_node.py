@@ -46,7 +46,7 @@ class BaseNode:
         In case of a dict, convert it to an object
         Override to support different data structures
         """
-        if type(node_data) is dict:
+        if isinstance(node_data, dict):
             return namedtuple("NodeObj", node_data.keys())(*node_data.values())
         return node_data
 

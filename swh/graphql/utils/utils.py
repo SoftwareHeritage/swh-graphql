@@ -16,7 +16,7 @@ ENCODING = "utf-8"
 
 
 def get_b64_string(source) -> str:
-    if type(source) is str:
+    if isinstance(source, str):
         source = source.encode(ENCODING)
     return base64.b64encode(source).decode("ascii")
 

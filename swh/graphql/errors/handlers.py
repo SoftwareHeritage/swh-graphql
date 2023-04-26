@@ -20,10 +20,10 @@ def format_error(error: GraphQLError, debug: bool = False):
     if debug:
         # If debug is enabled, reuse Ariadne's formatting logic with stack trace
         return original_format
-    expected_errors = [ObjectNotFoundError, PaginationError, InvalidInputError]
+    expected_errors = (ObjectNotFoundError, PaginationError, InvalidInputError)
     formatted = error.formatted
     formatted["message"] = error.message
-    if type(error.original_error) not in expected_errors:
+    if not isinstance(error.original_error, expected_errors):
         # a crash, send to sentry
         sentry_sdk.capture_exception(error)
     # FIXME log the original_format to kibana (with stack trace)

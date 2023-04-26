@@ -20,14 +20,14 @@ id_scalar = ScalarType("ID")
 
 @id_scalar.serializer
 def serialize_id(value) -> str:
-    if type(value) is str:
+    if isinstance(value, str):
         value = value.encode()
     return value.hex()
 
 
 @datetime_scalar.serializer
 def serialize_datetime(value: Optional[datetime.datetime]) -> Optional[str]:
-    return utils.get_formatted_date(value) if type(value) == datetime.datetime else None
+    return None if value is None else utils.get_formatted_date(value)
 
 
 @swhid_scalar.value_parser
