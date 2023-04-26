@@ -32,4 +32,4 @@ def test_serialize_datetime_from_datetime():
 
 
 def test_serialize_datetime_invalid_input():
-    assert scalars.serialize_datetime("test") is None
+    assert scalars.serialize_datetime(None) is None
