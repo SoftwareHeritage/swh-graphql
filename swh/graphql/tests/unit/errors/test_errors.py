@@ -3,7 +3,7 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from graphql import GraphQLError
+from graphql import GraphQLError, GraphQLSyntaxError
 import pytest
 import sentry_sdk
 
@@ -50,4 +50,11 @@ def test_format_error_skip_sentry(mocker, error):
     err = GraphQLError("test error")
     err.original_error = error("test error")
     errors.format_error(err)
-    mocked_senty_call.assert_not_called
+    mocked_senty_call.assert_not_called()
+
+
+def test_format_error_query_syntax_error_skip_sentry(mocker):
+    mocked_senty_call = mocker.patch.object(sentry_sdk, "capture_exception")
+    error = GraphQLSyntaxError(source=None, position=[1], description="test")
+    errors.format_error(error)
+    mocked_senty_call.assert_not_called()
