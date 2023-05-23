@@ -3,6 +3,7 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+import logging
 from typing import ClassVar, Dict, Type
 
 from swh.core import statsd
@@ -41,6 +42,7 @@ from .visit import LatestVisitNode, OriginVisitConnection, OriginVisitNode
 from .visit_status import LatestVisitStatusNode, VisitStatusConnection
 
 this_statsd = statsd.Statsd(namespace="swh_graphql")
+logger = logging.getLogger(__name__)
 
 
 class NodeObjectFactory:
@@ -79,6 +81,7 @@ class NodeObjectFactory:
             except NullableObjectError:
                 # Return None instead of the object
                 # FIXME, add to the sentry transaction
+                logger.warning("Null %s object", node_type)
                 node_obj = None
         return node_obj
 
