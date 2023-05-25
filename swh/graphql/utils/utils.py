@@ -7,10 +7,12 @@ import base64
 from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
+from swh.graphql.errors import InvalidInputError
+
 if TYPE_CHECKING:
     from swh.graphql.resolvers.base_connection import ConnectionData
 
-from swh.storage.interface import PagedResult
+from swh.storage.interface import ListOrder, PagedResult
 
 ENCODING = "utf-8"
 
@@ -36,6 +38,13 @@ def get_decoded_cursor(cursor: Optional[str]) -> Optional[str]:
 def get_formatted_date(date: datetime) -> str:
     # FIXME, handle error + return other formats
     return date.isoformat()
+
+
+def get_storage_list_order(order: str) -> ListOrder:
+    mapping = {"ASC": ListOrder.ASC, "DESC": ListOrder.DESC}
+    if order not in mapping:
+        raise InvalidInputError("Invalid sort order")
+    return mapping[order]
 
 
 def get_local_paginated_data(source: List, first: int, after=0) -> "ConnectionData":

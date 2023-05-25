@@ -68,6 +68,36 @@ def test_invalid_get_visit(client):
     utils.assert_missing_object(client, query_str, "visit")
 
 
+@pytest.mark.parametrize("sort", ["ASC", "DESC"])
+def test_visit_status_sort_order(client, storage, sort):
+    query_str = """
+    query getVisit($origin: String!, $visitId: Int!, $sort: ListOrder) {
+      visit(originUrl: $origin, visitId: $visitId) {
+        visitId
+        statuses(sort: $sort) {
+          nodes {
+            date
+          }
+        }
+      }
+    }
+    """
+    # Testing the only test visit object with multiple statuses
+    origin = get_origins()[0].url
+    visit = 1
+    response, _ = utils.get_query_response(
+        client, query_str, origin=origin, visitId=visit, sort=sort
+    )
+    data_statuses = response["visit"]["statuses"]["nodes"]
+    if sort == "DESC":
+        data_statuses.reverse()
+    original_data = [
+        {"date": x.date.isoformat()}
+        for x in storage.origin_visit_status_get(origin=origin, visit=visit).results
+    ]
+    assert data_statuses == original_data
+
+
 def test_get_latest_visit_status_filter_by_status_return_null(client):
     query_str = """
     query getVisit($origin: String!, $visitId: Int!) {

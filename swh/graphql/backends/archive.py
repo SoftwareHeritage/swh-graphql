@@ -24,6 +24,7 @@ from swh.model.swhids import ObjectType
 from swh.storage.algos.snapshot import snapshot_resolve_branch_target
 from swh.storage.interface import (
     HashDict,
+    ListOrder,
     PagedResult,
     PartialBranches,
     StorageInterface,
@@ -43,10 +44,14 @@ class Archive:
         return self.storage.origin_list(page_token=after, limit=first)
 
     def get_origin_visits(
-        self, origin_url: str, after: Optional[str] = None, first: int = 50
+        self,
+        origin_url: str,
+        order: ListOrder,
+        after: Optional[str] = None,
+        first: int = 50,
     ) -> PagedResult[OriginVisit]:
         return self.storage.origin_visit_get(
-            origin=origin_url, page_token=after, limit=first
+            origin=origin_url, page_token=after, limit=first, order=order
         )
 
     def get_origin_visit(self, origin_url: str, visit_id: int) -> Optional[OriginVisit]:
@@ -70,11 +75,16 @@ class Archive:
         self,
         origin_url: str,
         visit_id: int,
+        order: ListOrder,
         after: Optional[str] = None,
         first: int = 50,
     ) -> PagedResult[OriginVisitStatus]:
         return self.storage.origin_visit_status_get(
-            origin=origin_url, visit=visit_id, page_token=after, limit=first
+            origin=origin_url,
+            visit=visit_id,
+            page_token=after,
+            limit=first,
+            order=order,
         )
 
     def get_latest_visit_status(

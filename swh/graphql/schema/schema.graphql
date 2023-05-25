@@ -47,6 +47,14 @@ type PageInfo {
 }
 
 """
+Possible ways to order a list
+"""
+enum ListOrder {
+  ASC
+  DESC
+}
+
+"""
 Binary string with multiple encodings
 """
 type BinaryString {
@@ -131,6 +139,11 @@ type Origin implements Node {
     Returns the page after this cursor
     """
     after: String
+
+    """
+    Sort order on visitId; ascending by default
+    """
+    sort: ListOrder = ASC    # FIXME: Change this to VisitSortOrder type to support orderby specific/multiple columns
   ): VisitConnection! @cost(complexity: 1, multipliers: ["first"])
 
   """
@@ -261,6 +274,11 @@ type Visit implements Node {
     Returns the page after this cursor
     """
     after: String
+
+    """
+    Sort order on status date; ascending by default
+    """
+    sort: ListOrder = ASC
   ): VisitStatusConnection @cost(complexity: 3)  # here first is optional, hence adding a higher value for cost
 
   """

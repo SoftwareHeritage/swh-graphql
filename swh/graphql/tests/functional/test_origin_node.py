@@ -56,6 +56,31 @@ def test_get(client, storage, origin):
     assert len(data_origin["snapshots"]["nodes"]) == len(snapshots)
 
 
+@pytest.mark.parametrize("origin", get_origins())
+@pytest.mark.parametrize("sort", ["ASC", "DESC"])
+def test_visits_sort_order(client, storage, origin, sort):
+    query_str = """
+    query getOrigin($url: String!, $sort: ListOrder) {
+      origin(url: $url) {
+        url
+        id
+        visits(first: 10, sort: $sort) {
+          nodes {
+            visitId
+          }
+        }
+      }
+    }
+    """
+    response, _ = utils.get_query_response(client, query_str, url=origin.url, sort=sort)
+    data_visits = response["origin"]["visits"]["nodes"]
+    if sort == "DESC":
+        data_visits.reverse()
+    assert [
+        {"visitId": x.visit} for x in storage.origin_visit_get(origin.url).results
+    ] == data_visits
+
+
 def test_latest_visit_type_filter(client):
     query_str = """
     query getOrigin($url: String!, $visitType: String!) {

@@ -68,6 +68,9 @@ class OriginVisitConnection(BaseConnection):
         # self.obj.url is the origin URL
         return ConnectionData(
             paged_result=self.archive.get_origin_visits(
-                self.obj.url, after=self._get_after_arg(), first=self._get_first_arg()
+                self.obj.url,
+                after=self._get_after_arg(),
+                first=self._get_first_arg(),
+                order=utils.get_storage_list_order(self.kwargs.get("sort")),
             )
         )
