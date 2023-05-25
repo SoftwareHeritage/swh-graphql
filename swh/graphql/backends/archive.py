@@ -21,6 +21,7 @@ from swh.model.model import (
     SnapshotBranch,
 )
 from swh.model.swhids import ObjectType
+from swh.storage.algos.origin import origin_get_latest_visit_status
 from swh.storage.algos.snapshot import snapshot_resolve_branch_target
 from swh.storage.interface import (
     HashDict,
@@ -201,4 +202,11 @@ class Archive:
             snapshot_id=snapshot_id,
             branch_obj=branch_obj,
             max_length=max_length,
+        )
+
+    def get_latest_origin_visit_status(
+        self, origin: str, require_snapshot: bool = True
+    ):
+        return origin_get_latest_visit_status(
+            storage=self.storage, origin_url=origin, require_snapshot=require_snapshot
         )

@@ -30,6 +30,7 @@ from .revision import (
 )
 from .search import OriginSearchConnection
 from .snapshot import (
+    LatestSnapshotNode,
     OriginSnapshotConnection,
     SnapshotNode,
     TargetSnapshotNode,
@@ -51,6 +52,7 @@ class NodeObjectFactory:
         "visit": OriginVisitNode,
         "latest-visit": LatestVisitNode,
         "latest-status": LatestVisitStatusNode,
+        "latest-snapshot": LatestSnapshotNode,
         "visit-snapshot": VisitSnapshotNode,
         "snapshot": SnapshotNode,
         "revision": RevisionNode,

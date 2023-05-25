@@ -145,3 +145,33 @@ def test_latest_visit_allowed_statuses_filter(client):
     assert data["origin"] == {
         "latestVisit": {"statuses": {"nodes": [{"status": "partial"}]}, "visitId": 2}
     }
+
+
+@pytest.mark.parametrize("origin", get_origins())
+def test_latest_snashot(client, origin):
+    query_str = """
+    query getOrigin($url: String!) {
+      origin(url: $url) {
+        latestSnapshot {
+          swhid
+        }
+        latestVisit(requireSnapshot: true) {
+          latestStatus(requireSnapshot: true) {
+            snapshot {
+              swhid
+            }
+          }
+        }
+      }
+    }
+    """
+    data, _ = utils.get_query_response(
+        client,
+        query_str,
+        url=origin.url,
+    )
+    # origin.latestSnapshot and origin.latestVisit.latestStatus.snapshot must be the same
+    assert (
+        data["origin"]["latestSnapshot"]
+        == data["origin"]["latestVisit"]["latestStatus"]["snapshot"]
+    )

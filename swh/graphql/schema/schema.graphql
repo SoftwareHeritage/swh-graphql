@@ -180,6 +180,11 @@ type Origin implements Node {
     """
     after: String
   ): SnapshotConnection @cost(complexity: 2, multipliers: ["first"])  # This costs more because of local (graphql level) pagination
+
+  """
+  Latest snapshot for the Origin
+  """
+  latestSnapshot: Snapshot @cost(complexity: 1)
 }
 
 """

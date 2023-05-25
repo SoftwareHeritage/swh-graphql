@@ -71,6 +71,13 @@ def latest_visit_resolver(
     return NodeObjectFactory.create("latest-visit", obj, info, **kw)
 
 
+@origin.field("latestSnapshot")
+def latest_snapshot_resolver(
+    obj: rs.origin.BaseOriginNode, info: GraphQLResolveInfo, **kw
+) -> Optional[rs.snapshot.LatestSnapshotNode]:
+    return NodeObjectFactory.create("latest-snapshot", obj, info, **kw)
+
+
 @query.field("visit")
 def visit_resolver(
     obj: None, info: GraphQLResolveInfo, **kw

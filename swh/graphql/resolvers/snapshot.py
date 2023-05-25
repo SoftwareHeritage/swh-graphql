@@ -72,6 +72,27 @@ class TargetSnapshotNode(BaseSnapshotNode):
         return self.archive.get_snapshot(snapshot_id=self.obj.target_hash, verify=False)
 
 
+class LatestSnapshotNode(BaseSnapshotNode):
+    """
+    Node resolver for the latest snapshot in an origin
+    """
+
+    obj: OriginNode
+
+    _can_be_null = True
+
+    def _get_node_data(self):
+        latest_status_with_snapshot = self.archive.get_latest_origin_visit_status(
+            origin=self.obj.url,
+            require_snapshot=True,
+        )
+        if not latest_status_with_snapshot:
+            return None
+        return self.archive.get_snapshot(
+            snapshot_id=latest_status_with_snapshot.snapshot, verify=False
+        )
+
+
 class OriginSnapshotConnection(BaseConnection):
     """
     Connection resolver for the snapshots in an origin
