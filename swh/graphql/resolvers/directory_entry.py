@@ -53,19 +53,23 @@ class DirectoryEntryConnection(BaseConnection):
 
     _node_class = BaseDirectoryEntryNode
 
+    def _name_filter(self, dir_entry_name, name_include):
+        if not self.kwargs.get("caseSensitive", False):
+            return name_include.casefold() in dir_entry_name.decode().casefold()
+        return name_include in dir_entry_name.decode()
+
     def _get_connection_data(self) -> ConnectionData:
         # FIXME, using dummy(local) pagination, move pagination to backend
         # STORAGE-TODO
         entries: List[DirectoryEntry] = self.archive.get_directory_entries(
             self.obj.swhid.object_id
         ).results
-        name_include = self.kwargs.get("nameInclude")
-        if name_include is not None:
+        if self.kwargs.get("nameInclude") is not None:
             # STORAGE-TODO, move this filter to swh-storage
             entries = [
-                x
-                for x in entries
-                if name_include.casefold() in x.name.decode().casefold()
+                entry
+                for entry in entries
+                if self._name_filter(entry.name, self.kwargs.get("nameInclude"))
             ]
         return utils.get_local_paginated_data(
             entries, self._get_first_arg(), self._get_after_arg()

@@ -925,6 +925,11 @@ type Directory implements SWHNode & Node {
     Filter by entry name
     """
     nameInclude: String
+
+    """
+    Case-sensitivity of the nameInclude argument, False by default
+    """
+    caseSensitive: Boolean = false
   ): DirectoryEntryConnection @cost(complexity: 2, multipliers: ["first"]) # pagination is local, hence adding a higher value for cost
 }
 

@@ -210,3 +210,42 @@ def test_directory_entry_connection_filter_by_name_special_chars(client):
             "type": "content",
         },
     }
+
+
+def test_directory_entry_connection_filter_by_path_case_sensitive(client):
+    directory = get_directories()[1]
+    query_str = """
+    query getDirectory($swhid: SWHID!, $nameInclude: String, $caseSensitive: Boolean) {
+      directory(swhid: $swhid) {
+        entries(nameInclude: $nameInclude, caseSensitive: $caseSensitive) {
+          nodes {
+            name {
+              text
+            }
+            target {
+              type
+            }
+          }
+        }
+      }
+    }
+    """
+    data, _ = utils.get_query_response(
+        client,
+        query_str,
+        swhid=str(directory.swhid()),
+        nameInclude="diR",
+        caseSensitive=False,
+    )
+    assert data["directory"]["entries"]["nodes"] == [
+        {"name": {"text": "dir1"}, "target": {"type": "directory"}}
+    ]
+
+    data, _ = utils.get_query_response(
+        client,
+        query_str,
+        swhid=str(directory.swhid()),
+        nameInclude="diR",
+        caseSensitive=True,
+    )
+    assert data["directory"]["entries"]["nodes"] == []
