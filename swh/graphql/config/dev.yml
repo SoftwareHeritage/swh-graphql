@@ -16,10 +16,12 @@ max_query_cost:
 
 max_raw_content_size: 10000
 
-auth:
-  server: https://auth.softwareheritage.org/auth/
-  public_server: https://auth.softwareheritage.org/auth/
-  realm: SoftwareHeritageStaging
-  client: swh-web
-  cache:
-    url: memory://
+## Uncomment the block below to enable auth support
+
+# auth:
+#   server: https://auth.softwareheritage.org/auth/
+#   public_server: https://auth.softwareheritage.org/auth/
+#   realm: SoftwareHeritageStaging
+#   client: swh-web
+#   cache:
+#     url: memory://
