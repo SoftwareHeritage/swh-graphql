@@ -46,111 +46,111 @@
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
     {% if auth %}
-      <script src="https://cdn.jsdelivr.net/npm/keycloak-js@21.0.1/dist/keycloak.min.js"
-              integrity="sha256-8xhYXd4t68ydWwydSA5+3SakzW9NRiXGhmKOzk79P3o="
-              crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/keycloak-js@21.0.1/dist/keycloak.min.js"
+            integrity="sha256-8xhYXd4t68ydWwydSA5+3SakzW9NRiXGhmKOzk79P3o="
+            crossorigin="anonymous"></script>
     {% endif %}
     <script>
-      async function graphQLFetcher(graphQLParams, opts) {
-        const { headers = {} } = opts;
+     const QUERIES = {
+         'default': `query FindCodeMeta {directoryEntry(directorySWHID:"swh:1:dir:ec88e5b901c034d5a91aa133e824d65cff3788a3"
+                         path:"codemeta.json"){name {text} target {node {... on Content {data {url raw{text base64}}}}}}}`,
+             'lastCommits': `query latestCommits {origin(url: "https://github.com/hylang/hy") {url latestVisit(requireSnapshot: true) { date
+                             latestStatus(requireSnapshot: true, allowedStatuses: [full]) {snapshot {swhid branches(first: 1) {nodes {
+                             name {text} type target { swhid type node {... on Revision {revisionLog(first: 10) {nodes {swhid date {date
+                             }author {fullname {text}} message {text}}}}}}}}}}}}}`,
+             'originVisits': `fragment visitsFragment on VisitConnection {nodes {visitId date}} query originVisits {origin(url:
+                              "https://github.com/python/cpython") {first: visits(first: 1, sort: ASC) {...visitsFragment}
+                              last: visits(first: 1, sort: DESC) {...visitsFragment}}}`,
+             'originEntries': `query getOriginEntries {origin(url: "https://github.com/hylang/hy") {url latestVisit(requireSnapshot: true) {
+                               date latestStatus(requireSnapshot: true, allowedStatuses: [full]) {snapshot {swhid branches(first: 1, types: [revision]) {
+                               pageInfo {endCursor hasNextPage} nodes {name {text} target {type node {... on Revision {swhid directory {
+                               entries(first: 5, nameInclude: "A", after: "NQ==") {pageInfo {endCursor hasNextPage} edges {cursor node {
+                               name {text}}}}}}}}}}}}}}}`,
+             'latestSnapshot': `query latestSnapshot {origin(url: "https://github.com/python/cpython") {latestSnapshot {swhid}}}`
+     };
 
-        headers['Accept'] = 'application/json';
-        headers['Content-Type'] = 'application/json';
+     async function graphQLFetcher(graphQLParams, opts) {
+         const { headers = {} } = opts;
 
-        {% if auth %}
-          if (keycloak.authenticated) {
-            // ensure to renew access token if expired
-            await keycloak.updateToken(10);
-            headers['Authorization'] = 'Bearer ' + keycloak.token;
-          }
-        {% endif %}
+         headers['Accept'] = 'application/json';
+         headers['Content-Type'] = 'application/json';
 
-        const response = await fetch(window.location.href, {
-          method: 'post',
-          headers: headers,
-          body: JSON.stringify(graphQLParams),
-        });
+         {% if auth %}
+         if (keycloak.authenticated) {
+             // ensure to renew access token if expired
+             await keycloak.updateToken(10);
+             headers['Authorization'] = 'Bearer ' + keycloak.token;
+         }
+         {% endif %}
 
-        return response.json();
+         const response = await fetch(window.location.href, {
+             method: 'post',
+             headers: headers,
+             body: JSON.stringify(graphQLParams),
+         });
+
+         return response.json();
+     }
+
+     function getQuery() {
+         const urlParams = new URLSearchParams(window.location.search);
+         let queryId = urlParams.get('queryId');
+
+         if (!queryId || !(queryId in QUERIES)) {
+             queryId = 'default';
+         }
+         const query = QUERIES[queryId];
+         return GraphiQL.GraphQL.print(GraphiQL.GraphQL.parse(query));
+     }
+
+     function initGraphiQL() {
+         const query = getQuery();
+         ReactDOM.render(React.createElement(GraphiQL, {
+             fetcher: graphQLFetcher,
+             query: query,
+             defaultEditorToolsVisibility: true,
+         }), document.getElementById('graphiql'));
       }
 
-      function dedent(str) {
-        str = str.replace(/^\n/, "");
-        let match = str.match(/^\s+/);
-        return match ? str.replace(new RegExp("^"+match[0], "gm"), "") : str;
-      }
+     {% if auth %}
+     const keycloak = new Keycloak({
+         url: '{{ auth.public_server }}',
+         realm: '{{ auth.realm }}',
+         clientId: '{{ auth.client }}',
+     });
 
-      function initGraphiQL() {
-        const DEFAULT_QUERY = dedent(`
-          query FindCodeMeta {
-            directoryEntry(
-              directorySWHID: "swh:1:dir:ec88e5b901c034d5a91aa133e824d65cff3788a3"
-              path: "codemeta.json"
-            ) {
-              name {
-                text
-              }
-              target {
-                node {
-                  ... on Content {
-                    data {
-                      url
-                    }
-                  }
-                }
-              }
-            }
-          }`);
-        ReactDOM.render(
-          React.createElement(GraphiQL, {
-          fetcher: graphQLFetcher,
-            query: DEFAULT_QUERY,
-            defaultEditorToolsVisibility: true,
-          }),
-          document.getElementById('graphiql'),
-        );
-      }
+     function kcLogin(event) {
+         event.preventDefault();
+         keycloak.login();
+     }
 
-      {% if auth %}
-        const keycloak = new Keycloak({
-          url: '{{ auth.public_server }}',
-          realm: '{{ auth.realm }}',
-          clientId: '{{ auth.client }}',
-        });
+     function kcLogout(event) {
+            event.preventDefault();
+         keycloak.logout();
+     }
 
-        function kcLogin(event) {
-          event.preventDefault();
-          keycloak.login();
-        }
+     async function kcInitSuccess(authenticated) {
+         const authInfo = document.querySelector('#swh-auth-info');
+         if (authenticated) {
+             const profile = await keycloak.loadUserProfile();
+             authInfo.innerHTML = `Logged in as <strong>${profile.username.replace(/(<([^>]+)>)/ig, '')}</strong>`;
+             authInfo.innerHTML += " - <a href='#' onclick='kcLogout(event)'>logout</a>";
+         } else {
+             authInfo.innerHTML = "<a href='#' onclick='kcLogin(event)'>login</a>";
+         }
+         initGraphiQL();
+     }
 
-        function kcLogout(event) {
-          event.preventDefault();
-          keycloak.logout();
-        }
-
-        async function kcInitSuccess(authenticated) {
-          const authInfo = document.querySelector('#swh-auth-info');
-          if (authenticated) {
-            const profile = await keycloak.loadUserProfile();
-            authInfo.innerHTML = `Logged in as <b>${profile.username}</b>`;
-            authInfo.innerHTML += " - <a href='#' onclick='kcLogout(event)'>logout</a>";
-          } else {
-            authInfo.innerHTML = "<a href='#' onclick='kcLogin(event)'>login</a>";
-          }
-          initGraphiQL();
-        }
-
-        keycloak.init({
-          onLoad: 'check-sso',
-          pkceMethod: 'S256',
-          checkLoginIframe: false,
-        })
-        .success(kcInitSuccess)
-        .error(initGraphiQL);
-      {% else %}
-        initGraphiQL();
-      {% endif %}
-
+     keycloak.init({
+         onLoad: 'check-sso',
+         pkceMethod: 'S256',
+         checkLoginIframe: false,
+     })
+             .then(kcInitSuccess)
+             .catch(initGraphiQL);
+     {% else %}
+     initGraphiQL();
+     {% endif %}
     </script>
   </body>
 </html>
