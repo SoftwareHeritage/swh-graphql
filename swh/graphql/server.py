@@ -17,7 +17,8 @@ from starlette.authentication import (
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.cors import CORSMiddleware
-from starlette.routing import Route
+from starlette.routing import Mount, Route
+from starlette.staticfiles import StaticFiles
 
 from swh.auth.starlette.backends import BearerTokenAuthBackend
 from swh.core import config
@@ -138,6 +139,11 @@ def make_app_from_configfile():
         routes=[
             Route("/", ariadne_app, methods=["POST"], name="graphql_api"),
             Route("/", explorer_page, methods=["GET"]),
+            Mount(
+                "/static",
+                app=StaticFiles(packages=[("swh.graphql.client", "static")]),
+                name="static",
+            ),
         ],
         middleware=middleware,
     )
