@@ -856,7 +856,7 @@ type DirectoryEntry {
   """
   Directory entry target object
   """
-  target: DirectoryEntryTarget @cost(complexity: 1)
+  target: DirectoryEntryTarget
 }
 
 """
