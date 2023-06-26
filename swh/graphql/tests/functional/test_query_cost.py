@@ -126,7 +126,7 @@ def test_query_cost_snapshots(client):
       }
     }
     """
-    # Total cost here is 157
+    # Total cost here is 207
     # 1 (snapshot) + 2 *50 (branches) + 50 * 1 (branch target)
     # + 50 * 1 (revision or Directory) +  3 * 2 = 207
     # parent multiplier is not applied when schema introspection is used
