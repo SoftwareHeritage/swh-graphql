@@ -88,7 +88,7 @@ def test_query_cost_origin(client):
       }
     }
     """
-    # Total cost here is 170
+    # Total cost here is 320
     # 10 (origin) + 10 (latestVisit) + 10*5 (visits) + 10 * 5 * 3 (status) +
     # 10 * 5*2 (snapshots) = 320
     errors = utils.get_error_response(client, query_str, response_code=400)
@@ -126,16 +126,16 @@ def test_query_cost_snapshots(client):
       }
     }
     """
-    # Total cost here is 207
+    # Total cost here is 501
     # 1 (snapshot) + 2 *50 (branches) + 50 * 1 (branch target)
-    # + 50 * 1 (revision or Directory) +  3 * 2 = 207
+    # + 50 * 1 (revision or Directory) +  50 * 3 * 2 = 501
     # parent multiplier is not applied when schema introspection is used
     # ie: directory entry connection cost is 3 * 2 and not 50 * 3 * 2
     errors = utils.get_error_response(
         client, query_str, swhid=str(get_snapshots()[0].swhid()), response_code=400
     )
     assert (
-        "The query exceeds the maximum cost of 100. Actual cost is 207"
+        "The query exceeds the maximum cost of 100. Actual cost is 501"
         in errors[0]["message"]
     )
 

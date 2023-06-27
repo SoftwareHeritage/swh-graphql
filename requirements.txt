@@ -1,4 +1,4 @@
-ariadne==0.19.1
+ariadne>=0.20.1
 uvicorn
 starlette
 httpx
