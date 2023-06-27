@@ -54,24 +54,6 @@
             crossorigin="anonymous"></script>
     {% endif %}
     <script>
-     const QUERIES = {
-         'default': `query FindCodeMeta {directoryEntry(directorySWHID:"swh:1:dir:ec88e5b901c034d5a91aa133e824d65cff3788a3"
-                         path:"codemeta.json"){name {text} target {node {... on Content {data {url raw{text base64}}}}}}}`,
-             'lastCommits': `query latestCommits {origin(url: "https://github.com/hylang/hy") {url latestVisit(requireSnapshot: true) { date
-                             latestStatus(requireSnapshot: true, allowedStatuses: [full]) {snapshot {swhid branches(first: 1) {nodes {
-                             name {text} type target { swhid type node {... on Revision {revisionLog(first: 10) {nodes {swhid date {date
-                             }author {fullname {text}} message {text}}}}}}}}}}}}}`,
-             'originVisits': `fragment visitsFragment on VisitConnection {nodes {visitId date}} query originVisits {origin(url:
-                              "https://github.com/python/cpython") {first: visits(first: 1, sort: ASC) {...visitsFragment}
-                              last: visits(first: 1, sort: DESC) {...visitsFragment}}}`,
-             'originEntries': `query getOriginEntries {origin(url: "https://github.com/hylang/hy") {url latestVisit(requireSnapshot: true) {
-                               date latestStatus(requireSnapshot: true, allowedStatuses: [full]) {snapshot {swhid branches(first: 1, types: [revision]) {
-                               pageInfo {endCursor hasNextPage} nodes {name {text} target {type node {... on Revision {swhid directory {
-                               entries(first: 5, nameInclude: "A", after: "NQ==") {pageInfo {endCursor hasNextPage} edges {cursor node {
-                               name {text}}}}}}}}}}}}}}}`,
-             'latestSnapshot': `query latestSnapshot {origin(url: "https://github.com/python/cpython") {latestSnapshot {swhid}}}`
-     };
-
      async function graphQLFetcher(graphQLParams, opts) {
          const { headers = {} } = opts;
 
@@ -95,19 +77,8 @@
          return response.json();
      }
 
-     function getQuery() {
-         const urlParams = new URLSearchParams(window.location.search);
-         let queryId = urlParams.get('queryId');
-
-         if (!queryId || !(queryId in QUERIES)) {
-             queryId = 'default';
-         }
-         const query = QUERIES[queryId];
-         return GraphiQL.GraphQL.print(GraphiQL.GraphQL.parse(query));
-     }
-
      function initGraphiQL() {
-         const query = getQuery();
+         const query = GraphiQL.GraphQL.print(GraphiQL.GraphQL.parse('{{query}}'));
          ReactDOM.render(React.createElement(GraphiQL, {
              fetcher: graphQLFetcher,
              query: query,
