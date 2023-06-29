@@ -4,22 +4,30 @@
 # See top-level LICENSE file for more information
 
 import os
+from urllib.request import urlopen
 
 from starlette.templating import Jinja2Templates
 
 
 def get_query(query_url=None):
-    #FIXME hack to make sharing a query easy
+    # FIXME hack to make sharing a query easy
     # can be removed after the SWH-explorer client app
 
     # read from SWH gitlab snippets
     # this is safe as we support only GET at the moment
 
-    if query_url is None or not query_url.startswith(""):
-        return ""
-    return ""
+    query_url = (
+        "https://gitlab.softwareheritage.org/-/snippets/1580/raw/main/snippetfile1.txt"
+    )
+    f = urlopen(query_url)
+    # if query_url is None or not query_url.startswith(""):
+    #     return ""
+    # return f.read().decode()
     # default_query = """ """
+    query = f.read().decode().replace("\n", "").replace("\t", "")
+    return query
     # return "query getDir { origins(first: 1) { nodes {  url  }  } }"
+
 
 async def explorer_page(request):
     from swh.graphql.server import graphql_cfg

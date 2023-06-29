@@ -78,7 +78,7 @@
      }
 
      function initGraphiQL() {
-         const query = GraphiQL.GraphQL.print(GraphiQL.GraphQL.parse('{{query}}'));
+         const query = GraphiQL.GraphQL.print(GraphiQL.GraphQL.parse('{{query|safe}}'));
          ReactDOM.render(React.createElement(GraphiQL, {
              fetcher: graphQLFetcher,
              query: query,
