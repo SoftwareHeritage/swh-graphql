@@ -108,10 +108,18 @@
 
      function initGraphiQL() {
          const query = getQuery();
+         const defaultTabs = [];
+         for (const [title, query] of Object.entries(QUERIES)) {
+             defaultTabs.push({
+                 title: title,
+                 query: GraphiQL.GraphQL.print(GraphiQL.GraphQL.parse(query))
+             });
+         }
          ReactDOM.render(React.createElement(GraphiQL, {
              fetcher: graphQLFetcher,
              query: query,
              defaultEditorToolsVisibility: true,
+             defaultTabs: defaultTabs
          }), document.getElementById('graphiql'));
       }
 
