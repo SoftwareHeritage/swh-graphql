@@ -55,7 +55,7 @@
     {% endif %}
     <script>
      const QUERIES = {
-         'default': `query FindCodeMeta {directoryEntry(directorySWHID:"swh:1:dir:ec88e5b901c034d5a91aa133e824d65cff3788a3"
+         'default': `query findCodeMeta {directoryEntry(directorySWHID:"swh:1:dir:ec88e5b901c034d5a91aa133e824d65cff3788a3"
                          path:"codemeta.json"){name {text} target {node {... on Content {data {url raw{text base64}}}}}}}`,
              'lastCommits': `query latestCommits {origin(url: "https://github.com/hylang/hy") {url latestVisit(requireSnapshot: true) { date
                              latestStatus(requireSnapshot: true, allowedStatuses: [full]) {snapshot {swhid branches(first: 1) {nodes {
