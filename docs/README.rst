@@ -31,15 +31,15 @@ following make targets can be used.
 Running a query
 ---------------
 
-The easiest way to run a query is using the query explorer.
-Please provide an SWH API token if you wish to run bigger queries.
+The easiest way to run a query is using the query explorer here https://archive.softwareheritage.org/graphql/
+Please login using the SWH credentials if you wish to run bigger queries.
 
 Using curl
 ----------
 
 .. code-block:: console
 
-   curl -i -H 'Content-Type: application/json' -H "Authorization: bearer your-api-token" -X POST -d '{"query": "query {origins(first: 2) {nodes {url}}}"}' http://127.0.0.1:8000
+   curl -i -H 'Content-Type: application/json' -H "Authorization: bearer your-api-token" -X POST -d '{"query": "query {origins(first: 2) {nodes {url}}}"}' https://archive.softwareheritage.org/graphql/
 
 
 Using Python requests
@@ -49,7 +49,7 @@ Using Python requests
 
    import requests
 
-   url = "http://127.0.0.1:8000"
+   url = "https://archive.softwareheritage.org/graphql/"
    query = """
    {
      origins(first: 2) {
@@ -66,9 +66,9 @@ Using Python requests
    }
    """
    json = {"query" : query}
-   api_token = "your-api-token"
-   headers = {'Authorization': 'Bearer %s' % api_token}
-
+   headers = {}
+   # api_token = "your-api-token"
+   # headers = {'Authorization': 'Bearer %s' % api_token}
    r = requests.post(url=url, json=json, headers=headers)
    print (r.json())
 
