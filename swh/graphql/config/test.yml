@@ -14,7 +14,7 @@ max_query_cost:
   anonymous: 10
   user: 100
 
-max_raw_content_size: 10000  
+max_raw_content_size: 10000
 
 auth:
   server: dummy
