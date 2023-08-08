@@ -68,7 +68,7 @@ def test_get_data(client):
         "type": "revision",
         "target": {
             "type": "revision",
-            "resolveChain": None,
+            "resolveChain": [{"text": "target/revision"}],
             "swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c",
             "node": {
                 "__typename": "Revision",
@@ -82,14 +82,13 @@ def test_get_branches_with_one_level_alias(client):
     swhid = "swh:1:snp:0e7f84ede9a254f2cd55649ad5240783f557e65f"
     data, _ = get_branches(client, swhid=swhid, first=10, types=["alias"])
     node = data["snapshot"]["branches"]["nodes"][0]
-
     assert node == {
         "name": {"text": "target/alias"},  # original name
         "type": "alias",
         "target": {
             "swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c",
             "type": "revision",
-            "resolveChain": [{"text": "target/revision"}],
+            "resolveChain": [{"text": "target/alias"}, {"text": "target/revision"}],
             "node": {
                 "__typename": "Revision",
                 "swhid": "swh:1:rev:66c7c1cd9673275037140f2abff7b7b11fc9439c",
@@ -115,7 +114,7 @@ def test_get_branches_alias_without_a_target(client):
             "node": None,
             "type": None,
             "swhid": None,
-            "resolveChain": [{"text": "target/alias2"}, {"text": "target/alias3"}],
+            "resolveChain": [{"text": "target/alias1"}, {"text": "target/alias2"}],
         },
     }
 
@@ -135,37 +134,13 @@ def test_get_branches_with_multiple_alias_redirects(client):
         "type": "alias",
         "target": {
             "type": "release",
-            "resolveChain": [{"text": "target/alias2"}, {"text": "target/release"}],
+            "resolveChain": [
+                {"text": "target/alias1"},
+                {"text": "target/alias2"},
+                {"text": "target/release"},
+            ],
             "swhid": str(get_releases()[0].swhid()),
             "node": {"__typename": "Release", "swhid": str(get_releases()[0].swhid())},
-        },
-    }
-
-
-def test_get_branches_with_too_many_alias_redirects(client):
-    snapshot = get_snapshots_with_multiple_alias()[2]
-    data, errors = get_branches(
-        client,
-        swhid=str(snapshot.swhid()),
-        first=1,
-        types=["alias"],
-        nameInclude="alias1",
-    )
-    node = data["snapshot"]["branches"]["nodes"][0]
-    assert node == {
-        "name": {"text": "target/alias1"},  # original name
-        "type": "alias",
-        "target": {
-            "node": None,
-            "type": None,
-            "swhid": None,
-            "resolveChain": [
-                {"text": "target/alias2"},
-                {"text": "target/alias3"},
-                {"text": "target/alias4"},
-                {"text": "target/alias5"},
-                {"text": "target/alias6"},
-            ],
         },
     }
 
@@ -188,9 +163,9 @@ def test_get_branches_with_infinite_alias_redirects(client):
             "type": None,
             "swhid": None,
             "resolveChain": [
-                {"text": "target/alias2"},
                 {"text": "target/alias1"},
                 {"text": "target/alias2"},
+                {"text": "target/alias1"},
             ],
         },
     }
@@ -211,7 +186,7 @@ def test_get_type_filter(client, filter_type, count, target_type, swhid_pattern)
     data, _ = get_branches(client, swhid=swhid, first=10, types=[filter_type])
     assert len(data["snapshot"]["branches"]["nodes"]) == count
     for node in data["snapshot"]["branches"]["nodes"]:
-        assert node["target"]["resolveChain"] is None
+        assert len(node["target"]["resolveChain"]) == 1
         assert node["target"]["swhid"].startswith(swhid_pattern)
         assert node["target"]["node"]["__typename"] == target_type
 

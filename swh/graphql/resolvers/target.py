@@ -63,22 +63,27 @@ class TargetNode(BaseTargetNode):
 
 
 class BranchTargetNode(BaseTargetNode):
-    # Return the final target and the chain
+    # Return the final branch target and the chain
 
     obj: SnapshotBranchNode
 
     def _get_node_data(self) -> Dict:
-        branch, chain = self.archive.get_branch_target(
-            snapshot_id=self.obj.snapshot_id,
-            branch_obj=self.obj.branch_obj,
-            max_length=5,
-        )
+        target = self.obj.target
+        resolve_chain = [self.obj.name]
+        if self.obj.type == "alias" and target is not None:
+            # resolve the final target
+            final_obj = self.archive.get_branch_by_name(
+                snapshot_id=self.obj.snapshot_id, branch_name=self.obj.name
+            )
+            assert final_obj is not None
+            resolve_chain = final_obj.aliases_followed
+            target = final_obj.target
         return {
             # field exposed in the schema, return None instead of an empty list
-            "resolveChain": chain if chain else None,
+            "resolveChain": resolve_chain,
             # field exposed in the schema
-            "type": branch.target_type.value if branch else None,
+            "type": target.target_type.value if target else None,
             # field NOT exposed in the schema
             # to be used while retrieving the node object
-            "target_hash": branch.target if branch else None,
+            "target_hash": target.target if target else None,
         }

@@ -4,7 +4,7 @@
 # See top-level LICENSE file for more information
 
 import os
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional
 
 from swh.graphql import server
 from swh.model.model import (
@@ -19,16 +19,15 @@ from swh.model.model import (
     Sha1,
     Sha1Git,
     Snapshot,
-    SnapshotBranch,
 )
 from swh.model.swhids import ObjectType
 from swh.storage.algos.origin import origin_get_latest_visit_status
-from swh.storage.algos.snapshot import snapshot_resolve_branch_target
 from swh.storage.interface import (
     HashDict,
     ListOrder,
     PagedResult,
     PartialBranches,
+    SnapshotBranchByNameResponse,
     StorageInterface,
 )
 
@@ -192,17 +191,11 @@ class Archive:
     def get_content_data(self, content_sha1: Sha1) -> Optional[bytes]:
         return self.storage.content_get_data(content=content_sha1)
 
-    def get_branch_target(
-        self,
-        snapshot_id: Sha1Git,
-        branch_obj: Optional[SnapshotBranch],
-        max_length: int,
-    ) -> Tuple[Optional[SnapshotBranch], List[bytes]]:
-        return snapshot_resolve_branch_target(
-            storage=self.storage,
-            snapshot_id=snapshot_id,
-            branch_obj=branch_obj,
-            max_length=max_length,
+    def get_branch_by_name(
+        self, snapshot_id: Sha1Git, branch_name: bytes
+    ) -> Optional[SnapshotBranchByNameResponse]:
+        return self.storage.snapshot_branch_get_by_name(
+            snapshot_id=snapshot_id, branch_name=branch_name
         )
 
     def get_latest_origin_visit_status(

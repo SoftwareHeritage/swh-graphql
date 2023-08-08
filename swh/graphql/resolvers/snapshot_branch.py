@@ -30,7 +30,7 @@ class SnapshotBranchNode(BaseNode):
             # not exposed in the schema, to be used by the target object
             "snapshot_id": self._get_snapshot_swhid().object_id,
             # not exposed in the schema, to be used by the target object
-            "branch_obj": branch_obj,
+            "target": branch_obj,
         }
         return super()._get_node_from_data(updated_node_data)
 
