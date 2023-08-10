@@ -453,6 +453,11 @@ type Snapshot implements SWHNode & Node {
     """
     nameExcludePrefix: String
   ): BranchConnection @cost(complexity: 2, multipliers: ["first"]) # This costs more because of local (graphql level) pagination
+
+  """
+  Head branch for the snapshot
+  """
+  headBranch: Branch @cost(complexity: 1)
 }
 
 """

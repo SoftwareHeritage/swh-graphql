@@ -5,18 +5,16 @@
 
 from typing import List, Optional, Tuple
 
-from swh.graphql.errors import DataError
-from swh.graphql.utils import utils
+from swh.graphql.errors import NullableObjectError
 from swh.model.model import CoreSWHID, SnapshotBranch
 from swh.storage.interface import PagedResult
 
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseNode
+from .snapshot import BaseSnapshotNode
 
 
-class SnapshotBranchNode(BaseNode):
-    obj: "SnapshotBranchConnection"
-
+class BaseSnapshotBranchNode(BaseNode):
     def _get_node_from_data(self, node_data: Tuple[bytes, Optional[SnapshotBranch]]):
         # node_data is a tuple as returned by _get_connection_data in SnapshotBranchConnection
         # overriding to support this special data structure
@@ -33,18 +31,44 @@ class SnapshotBranchNode(BaseNode):
         }
         return super()._get_node_from_data(updated_node_data)
 
-    def _get_snapshot_swhid(self) -> CoreSWHID:
-        from .snapshot import BaseSnapshotNode
 
-        # As of now parent of SnapshotBranch will always be a SnapshotBranchConnection
-        # and self.obj.obj will always be a BaseSnapshot object
-        # override this method for SnapshotBranch nodes reachable by some other path
-        if not isinstance(self.obj.obj, BaseSnapshotNode):
-            # This is not expected to happen with the existing endpoints
-            raise DataError(
-                "SnapshotBranch is accessed outside a SnapshotBranchConnection context"
-            )
+class SnapshotBranchConnectionNode(BaseSnapshotBranchNode):
+    """
+    Node resolver for an item in the snapshot branch connection
+    """
+
+    obj: "SnapshotBranchConnection"
+
+    def _get_snapshot_swhid(self) -> CoreSWHID:
+        # As of now parent of a SnapshotBranchConnection will always be a snapshot object
+        # so, self.obj.obj will always be a BaseSnapshot object
+        assert isinstance(self.obj.obj, BaseSnapshotNode)
         return self.obj.obj.swhid
+
+
+class SnapshotHeadBranchNode(BaseSnapshotBranchNode):
+    """
+    Node resolver for a snapshot.headBranch object
+    """
+
+    obj: BaseSnapshotNode
+
+    _can_be_null = True
+
+    def _get_node_data(self):
+        snapshot_id = self._get_snapshot_swhid().object_id
+        name = b"HEAD"
+        # Get just the branch without following the alias chain
+        # final target will be resolved only on requesting the target
+        head_branch = self.archive.get_branch_by_name(
+            snapshot_id=snapshot_id, branch_name=name, follow_chain=False
+        )
+        if head_branch.branch_found is False:
+            raise NullableObjectError()
+        return (name, head_branch.target)
+
+    def _get_snapshot_swhid(self) -> CoreSWHID:
+        return self.obj.swhid
 
 
 class SnapshotBranchConnection(BaseConnection):
@@ -52,11 +76,9 @@ class SnapshotBranchConnection(BaseConnection):
     Connection resolver for the branches in a snapshot
     """
 
-    from .snapshot import BaseSnapshotNode
-
     obj: BaseSnapshotNode
 
-    _node_class = SnapshotBranchNode
+    _node_class = SnapshotBranchConnectionNode
 
     def _get_connection_data(self) -> ConnectionData:
         branches = self.archive.get_snapshot_branches(
@@ -96,7 +118,3 @@ class SnapshotBranchConnection(BaseConnection):
     def _get_name_exclude_prefix_arg(self):
         name_exclude_prefix = self.kwargs.get("nameExcludePrefix", None)
         return name_exclude_prefix.encode() if name_exclude_prefix else None
-
-    def _get_index_cursor(self, index: int, node: SnapshotBranchNode):
-        # Snapshot branch is using a different cursor, hence the override
-        return utils.get_encoded_cursor(node.name)

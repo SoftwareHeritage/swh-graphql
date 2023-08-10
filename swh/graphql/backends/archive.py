@@ -192,10 +192,12 @@ class Archive:
         return self.storage.content_get_data(content=content_sha1)
 
     def get_branch_by_name(
-        self, snapshot_id: Sha1Git, branch_name: bytes
+        self, snapshot_id: Sha1Git, branch_name: bytes, follow_chain: bool = True
     ) -> Optional[SnapshotBranchByNameResponse]:
         return self.storage.snapshot_branch_get_by_name(
-            snapshot_id=snapshot_id, branch_name=branch_name
+            snapshot_id=snapshot_id,
+            branch_name=branch_name,
+            follow_alias_chain=follow_chain,
         )
 
     def get_latest_origin_visit_status(

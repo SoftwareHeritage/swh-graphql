@@ -107,6 +107,13 @@ def visit_snapshot_resolver(
     return NodeObjectFactory.create("visit-snapshot", obj, info, **kw)
 
 
+@snapshot.field("headBranch")
+def snapshot_head_branch_resolver(
+    obj: None, info: GraphQLResolveInfo, **kw
+) -> rs.snapshot_branch.SnapshotHeadBranchNode:
+    return NodeObjectFactory.create("snapshot-headbranch", obj, info, **kw)
+
+
 @query.field("revision")
 def revision_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
@@ -154,7 +161,7 @@ def generic_target_resolver(
 
 @snapshot_branch.field("target")
 def snapshot_branch_target_resolver(
-    obj: rs.snapshot_branch.SnapshotBranchNode, info: GraphQLResolveInfo, **kw
+    obj: rs.snapshot_branch.BaseSnapshotBranchNode, info: GraphQLResolveInfo, **kw
 ) -> rs.target.BranchTargetNode:
     # Snapshot branch target is a special case
     return NodeObjectFactory.create("branch-target", obj, info, **kw)

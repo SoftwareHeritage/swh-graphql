@@ -256,6 +256,22 @@ def get_snapshots_with_multiple_alias():
     ]
 
 
+def get_snapshots_with_head_branch():
+    return [
+        Snapshot(
+            # This branch alias chain breaks without a target
+            branches={
+                b"HEAD": SnapshotBranch(
+                    target_type=TargetType.ALIAS, target=b"target/revision"
+                ),
+                b"target/revision": SnapshotBranch(
+                    target_type=TargetType.REVISION, target=get_revisions()[0].id
+                ),
+            },
+        ),
+    ]
+
+
 def get_too_big_contents():
     return [
         Content(
@@ -268,7 +284,7 @@ def get_too_big_contents():
 
 
 GRAPHQL_EXTRA_TEST_OBJECTS = {
-    "snapshot": get_snapshots_with_multiple_alias(),
+    "snapshot": get_snapshots_with_multiple_alias() + get_snapshots_with_head_branch(),
     "release": get_releases_with_target() + get_releases_with_empty_target(),
     "revision": get_revisions_with_parents() + get_revisions_with_none_date(),
     "directory": get_directories_with_nested_path()

@@ -6,7 +6,13 @@
 import pytest
 
 from . import utils
-from ..data import get_releases, get_snapshots_with_multiple_alias
+from ..data import (
+    get_releases,
+    get_revisions,
+    get_snapshots,
+    get_snapshots_with_head_branch,
+    get_snapshots_with_multiple_alias,
+)
 
 
 def get_branches(client, **kwargs) -> tuple:
@@ -237,3 +243,48 @@ def test_get_after_arg(client):
     assert len(branches["nodes"]) == 3
     for node in branches["nodes"]:
         assert node["name"]["text"] > node_name
+
+
+@pytest.mark.parametrize("snapshot", get_snapshots_with_head_branch())
+def test_get_head_branch(client, snapshot):
+    query_str = """
+    query getSnapshotHeadBranch($swhid: SWHID!) {
+      snapshot(swhid: $swhid) {
+        swhid
+        headBranch {
+          name {
+            text
+          }
+          target {
+            swhid
+          }
+        }
+      }
+    }"""
+    data, err = utils.get_query_response(client, query_str, swhid=str(snapshot.swhid()))
+    assert err is None
+    assert data["snapshot"]["headBranch"] == {
+        "name": {"text": "HEAD"},
+        "target": {"swhid": str(get_revisions()[0].swhid())},
+    }
+
+
+def test_get_head_branch_none_target(client):
+    snapshot = get_snapshots()[0]
+    query_str = """
+    query getSnapshotHeadBranch($swhid: SWHID!) {
+      snapshot(swhid: $swhid) {
+        swhid
+        headBranch {
+          name {
+            text
+          }
+          target {
+            swhid
+          }
+        }
+      }
+    }"""
+    data, err = utils.get_query_response(client, query_str, swhid=str(snapshot.swhid()))
+    assert err is None
+    assert data["snapshot"]["headBranch"] is None

@@ -9,7 +9,7 @@ from swh.model.model import CoreSWHID
 from swh.model.swhids import ObjectType as SwhidObjectType
 
 from .base_node import BaseNode
-from .snapshot_branch import SnapshotBranchNode
+from .snapshot_branch import BaseSnapshotBranchNode
 
 
 class BaseTargetNode(BaseNode):
@@ -64,7 +64,7 @@ class TargetNode(BaseTargetNode):
 class BranchTargetNode(BaseTargetNode):
     # Return the final branch target and the chain
 
-    obj: SnapshotBranchNode
+    obj: BaseSnapshotBranchNode
 
     def _get_node_data(self) -> Dict:
         target = self.obj.target

@@ -37,7 +37,7 @@ from .snapshot import (
     TargetSnapshotNode,
     VisitSnapshotNode,
 )
-from .snapshot_branch import SnapshotBranchConnection
+from .snapshot_branch import SnapshotBranchConnection, SnapshotHeadBranchNode
 from .swhid import ResolveSWHIDList
 from .target import BranchTargetNode, TargetNode
 from .visit import LatestVisitNode, OriginVisitConnection, OriginVisitNode
@@ -55,6 +55,7 @@ class NodeObjectFactory:
         "latest-status": LatestVisitStatusNode,
         "latest-snapshot": LatestSnapshotNode,
         "visit-snapshot": VisitSnapshotNode,
+        "snapshot-headbranch": SnapshotHeadBranchNode,
         "snapshot": SnapshotNode,
         "revision": RevisionNode,
         "revision-directory": RevisionDirectoryNode,
