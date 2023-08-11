@@ -52,7 +52,7 @@ class OriginConnection(BaseConnection):
         # Use the search backend if a urlPattern is given
         if self.kwargs.get("urlPattern"):
             origins = self.search.get_origins(
-                query=self.kwargs.get("urlPattern"),
+                query=self.kwargs["urlPattern"],
                 after=self._get_after_arg(),
                 first=self._get_first_arg(),
             )

@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, List, Optional
 
 from swh.graphql.errors import InvalidInputError
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from swh.graphql.resolvers.base_connection import ConnectionData
 
 from swh.storage.interface import ListOrder, PagedResult

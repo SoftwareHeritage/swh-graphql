@@ -59,7 +59,7 @@ class VisitStatusConnection(BaseConnection):
                 self.obj.visitId,
                 after=self._get_after_arg(),
                 first=self._get_first_arg(),
-                order=utils.get_storage_list_order(self.kwargs.get("sort")),
+                order=utils.get_storage_list_order(self.kwargs.get("sort", "ASC")),
             )
         )
 

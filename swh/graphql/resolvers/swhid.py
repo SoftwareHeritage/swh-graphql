@@ -3,7 +3,9 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from typing import List, Optional
+from typing import Any, List, Optional
+
+from swh.model.swhids import CoreSWHID
 
 from .base_connection import BaseList
 from .content import BaseContentNode
@@ -15,10 +17,11 @@ from .snapshot import BaseSnapshotNode
 
 class ResolveSWHIDList(BaseList):
     def _get_results(self) -> Optional[List]:
-        swhid = self.kwargs.get("swhid")
+        swhid = self.kwargs["swhid"]
+        assert isinstance(swhid, CoreSWHID)
         object_type = swhid.object_type
         object_id = swhid.object_id
-        nodes = None
+        nodes: Any = None
         if object_type.name == "REVISION":
             self._node_class = BaseRevisionNode
             nodes = self.archive.get_revisions([object_id])

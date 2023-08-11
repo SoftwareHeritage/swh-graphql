@@ -104,7 +104,7 @@ class ContentSwhidList(BaseList):
     _node_class = BaseContentNode
 
     def _get_results(self) -> List[Content]:
-        hashes = {"sha1_git": self.kwargs.get("swhid").object_id}
+        hashes = HashDict(sha1_git=self.kwargs["swhid"].object_id)
         return self.archive.get_contents(hashes=hashes)
 
 

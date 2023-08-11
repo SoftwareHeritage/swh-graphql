@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+from typing import Any, Optional
+
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseNode
 
@@ -12,7 +14,7 @@ from .base_node import BaseNode
 class OriginSearchResultNode(BaseNode):
     obj: OriginSearchConnection
 
-    def _get_node_from_data(self, node_data: dict):
+    def _get_node_from_data(self, node_data: dict) -> Optional[Any]:
         # overriding to enrich the node_data returned
         # by OriginSearchConnection._get_connection_data
         updated_node_data = {
@@ -31,7 +33,7 @@ class OriginSearchConnection(BaseConnection):
 
     def _get_connection_data(self) -> ConnectionData:
         origins = self.search.get_origins(
-            query=self.kwargs.get("query"),
+            query=self.kwargs["query"],
             after=self._get_after_arg(),
             first=self._get_first_arg(),
         )

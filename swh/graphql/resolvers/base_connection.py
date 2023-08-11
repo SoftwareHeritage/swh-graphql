@@ -46,7 +46,7 @@ class BaseConnection(ABC):
     _page_size: int = 50  # default page size (default value for the first arg)
     _max_page_size: int = 1000  # maximum page size(max value for the first arg)
 
-    def __init__(self, obj, info, data=None, **kwargs):
+    def __init__(self, obj, info, data=None, **kwargs) -> None:
         self.obj: Optional[BaseNode] = obj
         self.info: GraphQLResolveInfo = info
         self._connection_data: ConnectionData = data
@@ -158,7 +158,7 @@ class BaseList(ABC):
 
     _node_class: Optional[Type[BaseNode]] = None
 
-    def __init__(self, obj, info, results=None, **kwargs):
+    def __init__(self, obj, info, results=None, **kwargs) -> None:
         self.obj: Optional[BaseNode] = obj
         self.info: GraphQLResolveInfo = info
         self.kwargs = kwargs

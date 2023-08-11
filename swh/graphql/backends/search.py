@@ -11,7 +11,7 @@ from swh.storage.interface import PagedResult
 
 
 class Search:
-    def __init__(self):
+    def __init__(self) -> None:
         self.search: SearchInterface = server.get_search()
 
     def get_origins(

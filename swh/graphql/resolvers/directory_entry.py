@@ -3,10 +3,8 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from typing import List
-
 from swh.graphql.utils import utils
-from swh.model.model import DirectoryEntry, ObjectType, Sha1Git
+from swh.model.model import ObjectType, Sha1Git
 
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseNode
@@ -61,9 +59,9 @@ class DirectoryEntryConnection(BaseConnection):
     def _get_connection_data(self) -> ConnectionData:
         # FIXME, using dummy(local) pagination, move pagination to backend
         # STORAGE-TODO
-        entries: List[DirectoryEntry] = self.archive.get_directory_entries(
-            self.obj.swhid.object_id
-        ).results
+        response = self.archive.get_directory_entries(self.obj.swhid.object_id)
+        assert response is not None  # directory is available in this case
+        entries = response.results
         if self.kwargs.get("nameInclude") is not None:
             # STORAGE-TODO, move this filter to swh-storage
             entries = [
