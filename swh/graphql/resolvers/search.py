@@ -10,7 +10,6 @@ from .base_node import BaseNode
 
 
 class OriginSearchResultNode(BaseNode):
-
     obj: OriginSearchConnection
 
     def _get_node_from_data(self, node_data: dict):
@@ -28,7 +27,6 @@ class OriginSearchResultNode(BaseNode):
 
 
 class OriginSearchConnection(BaseConnection):
-
     _node_class = OriginSearchResultNode
 
     def _get_connection_data(self) -> ConnectionData:

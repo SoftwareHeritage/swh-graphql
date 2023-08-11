@@ -13,7 +13,6 @@ from .snapshot_branch import SnapshotBranchNode
 
 
 class BaseTargetNode(BaseNode):
-
     # 'node' field in this object is resolved in the top level
 
     @property

@@ -15,7 +15,6 @@ from .base_node import BaseNode
 
 
 class SnapshotBranchNode(BaseNode):
-
     obj: "SnapshotBranchConnection"
 
     def _get_node_from_data(self, node_data: Tuple[bytes, Optional[SnapshotBranch]]):
