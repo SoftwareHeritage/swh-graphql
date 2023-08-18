@@ -5,6 +5,9 @@
 
 import datetime
 
+import pytest
+
+from swh.graphql.errors import InvalidInputError
 from swh.graphql.utils import utils
 
 
@@ -61,3 +64,7 @@ class TestUtils:
         response = utils.get_local_paginated_data(source, first=2, after="10")
         assert response.paged_result.results == []
         assert response.paged_result.next_page_token is None
+
+    def test_get_storage_list_order_invalid(self):
+        with pytest.raises(InvalidInputError):
+            utils.get_storage_list_order("INVALID")

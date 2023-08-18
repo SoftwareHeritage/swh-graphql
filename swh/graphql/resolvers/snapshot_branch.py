@@ -55,7 +55,7 @@ class SnapshotHeadBranchNode(BaseSnapshotBranchNode):
 
     _can_be_null = True
 
-    def _get_node_data(self):
+    def _get_node_data(self) -> Tuple[bytes, Optional[SnapshotBranch]]:
         snapshot_id = self._get_snapshot_swhid().object_id
         name = b"HEAD"
         # Get just the branch without following the alias chain
@@ -63,7 +63,7 @@ class SnapshotHeadBranchNode(BaseSnapshotBranchNode):
         head_branch = self.archive.get_branch_by_name(
             snapshot_id=snapshot_id, branch_name=name, follow_chain=False
         )
-        if head_branch.branch_found is False:
+        if head_branch is None or head_branch.branch_found is False:
             raise NullableObjectError()
         return (name, head_branch.target)
 
