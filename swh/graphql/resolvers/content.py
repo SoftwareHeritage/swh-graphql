@@ -71,7 +71,7 @@ class ContentbyHashesNode(BaseContentNode):
         hashes: TotalHashDict = read_and_validate_content_hashes(self.kwargs.items())
         contents = self.archive.get_contents(hashes=hashes)
         if len(contents) > 1:
-            # This situation is not expected to happen IRL
+            # Conflict on all the hashes, this is not expected to happen
             raise DataError("Content hash conflict for the set ", hashes)
         return contents[0] if contents else None
 

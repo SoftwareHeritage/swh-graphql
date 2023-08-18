@@ -5,6 +5,7 @@
 
 from typing import TYPE_CHECKING, Dict, Optional, Union
 
+from swh.graphql.errors import DataError
 from swh.model.model import CoreSWHID
 from swh.model.swhids import ObjectType as SwhidObjectType
 
@@ -70,11 +71,13 @@ class BranchTargetNode(BaseTargetNode):
         target = self.obj.target
         resolve_chain = [self.obj.name]
         if self.obj.type == "alias" and target is not None:
-            # resolve the final target
+            # resolve until the final target
             final_obj = self.archive.get_branch_by_name(
                 snapshot_id=self.obj.snapshot_id, branch_name=self.obj.name
             )
-            assert final_obj is not None
+            if final_obj is None:
+                # This happens when the snapshot is missing
+                raise DataError("Snapshot is missing on branches")
             resolve_chain = final_obj.aliases_followed
             target = final_obj.target
         return {

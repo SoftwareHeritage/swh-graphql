@@ -36,4 +36,7 @@ class NullableObjectError(Exception):
 
 
 class DataError(Exception):
-    pass
+    msg: str = "Storage data error"
+
+    def __init__(self, message, errors=None):
+        super().__init__(f"{self.msg}: {message}")
