@@ -5,7 +5,6 @@
 
 from typing import TYPE_CHECKING, Optional, Union
 
-from swh.graphql.errors import NullableObjectError
 from swh.model.model import Directory
 
 from .base_node import BaseSWHNode
@@ -26,8 +25,9 @@ class DirectoryNode(BaseDirectoryNode):
     Node resolver for a directory requested directly with its SWHID
     """
 
-    def _get_node_data(self):
+    def _get_node_data(self) -> Optional[Directory]:
         swhid = self.kwargs.get("swhid")
+        assert swhid is not None
         return self.archive.get_directory(directory_id=swhid.object_id, verify=True)
 
 
@@ -42,14 +42,12 @@ class RevisionDirectoryNode(BaseDirectoryNode):
     _can_be_null = True
     obj: BaseRevisionNode
 
-    def _get_node_data(self) -> Directory:
+    def _get_node_data(self) -> Optional[Directory]:
         # self.obj.directory_hash is the requested directory Id
         directory_id = self.obj.directory_hash()
         if directory_id is None:
-            raise NullableObjectError()
-        directory = self.archive.get_directory(directory_id=directory_id, verify=False)
-        assert directory is not None
-        return directory
+            return None
+        return self.archive.get_directory(directory_id=directory_id, verify=False)
 
 
 class TargetDirectoryNode(BaseDirectoryNode):

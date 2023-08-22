@@ -5,7 +5,6 @@
 
 from typing import TYPE_CHECKING, Optional, Union
 
-from swh.graphql.errors import NullableObjectError
 from swh.graphql.utils import utils
 from swh.model.model import CoreSWHID, Snapshot
 
@@ -52,7 +51,7 @@ class VisitSnapshotNode(BaseSnapshotNode):
     def _get_node_data(self):
         snapshot_id = self.obj.snapshot_id()
         if snapshot_id is None:
-            raise NullableObjectError()
+            return None
         return self.archive.get_snapshot(snapshot_id=snapshot_id, verify=False)
 
 

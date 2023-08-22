@@ -5,7 +5,6 @@
 
 from typing import List, Optional, Tuple
 
-from swh.graphql.errors import NullableObjectError
 from swh.model.model import CoreSWHID, SnapshotBranch
 from swh.storage.interface import PagedResult
 
@@ -55,7 +54,7 @@ class SnapshotHeadBranchNode(BaseSnapshotBranchNode):
 
     _can_be_null = True
 
-    def _get_node_data(self) -> Tuple[bytes, Optional[SnapshotBranch]]:
+    def _get_node_data(self) -> Optional[Tuple[bytes, Optional[SnapshotBranch]]]:
         snapshot_id = self._get_snapshot_swhid().object_id
         name = b"HEAD"
         # Get just the branch without following the alias chain
@@ -64,7 +63,7 @@ class SnapshotHeadBranchNode(BaseSnapshotBranchNode):
             snapshot_id=snapshot_id, branch_name=name, follow_chain=False
         )
         if head_branch is None or head_branch.branch_found is False:
-            raise NullableObjectError()
+            return None
         return (name, head_branch.target)
 
     def _get_snapshot_swhid(self) -> CoreSWHID:

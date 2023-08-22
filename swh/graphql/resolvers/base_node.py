@@ -38,7 +38,9 @@ class BaseNode:
         """
         if node_data is None:
             node_data = self._get_node_data()
-        return self._get_node_from_data(node_data)
+        if node_data is not None:
+            return self._get_node_from_data(node_data)
+        return None
 
     def _get_node_from_data(self, node_data: Any) -> Optional[Any]:
         """
