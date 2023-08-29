@@ -6,7 +6,7 @@
 import pytest
 
 from . import utils
-from ..data import get_origins
+from ..data import get_origin_without_visits, get_origins
 
 
 def test_invalid_get(client):
@@ -175,3 +175,34 @@ def test_latest_snashot(client, origin):
         data["origin"]["latestSnapshot"]
         == data["origin"]["latestVisit"]["latestStatus"]["snapshot"]
     )
+
+
+@pytest.mark.parametrize("origin", get_origin_without_visits())
+def test_latest_snashot_missing(client, origin):
+    query_str = """
+    query getOrigin($url: String!) {
+      origin(url: $url) {
+        url
+        latestSnapshot {
+          swhid
+        }
+        latestVisit(requireSnapshot: true) {
+          latestStatus(requireSnapshot: true) {
+            snapshot {
+              swhid
+            }
+          }
+        }
+      }
+    }
+    """
+    data, _ = utils.get_query_response(
+        client,
+        query_str,
+        url=origin.url,
+    )
+    assert data["origin"] == {
+        "url": "https://example.com/no-visits/",
+        "latestSnapshot": None,
+        "latestVisit": None,
+    }

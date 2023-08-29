@@ -57,7 +57,7 @@ def test_query_cost_with_no_limit(client, none_query_cost):
     }
     """
     response, _ = utils.get_query_response(client, query_str)
-    assert len(response["origins"]["nodes"]) == 2
+    assert len(response["origins"]["nodes"]) == 3
 
 
 def test_query_cost_origin(client):

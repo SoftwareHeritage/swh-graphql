@@ -4,7 +4,7 @@
 # See top-level LICENSE file for more information
 
 from . import utils
-from ..data import get_directories, get_origins
+from ..data import get_directories, get_origin_without_visits, get_origins
 
 
 # Using Origin object to run functional tests for pagination
@@ -28,8 +28,9 @@ def get_origin_nodes(client, first, after=""):
 def test_pagination(client):
     # requesting the max number of nodes available
     # endCursor must be None
-    data, _ = get_origin_nodes(client, first=len(get_origins()))
-    assert len(data["origins"]["nodes"]) == len(get_origins())
+    total_num_origins = len(get_origins() + get_origin_without_visits())
+    data, _ = get_origin_nodes(client, first=total_num_origins)
+    assert len(data["origins"]["nodes"]) == total_num_origins
     assert data["origins"]["pageInfo"] == {"hasNextPage": False, "endCursor": None}
 
 
@@ -63,8 +64,8 @@ def test_after_arg(client):
     first_data, _ = get_origin_nodes(client, first=1)
     end_cursor = first_data["origins"]["pageInfo"]["endCursor"]
     # get again with endcursor as the after argument
-    data, _ = get_origin_nodes(client, first=1, after=end_cursor)
-    assert len(data["origins"]["nodes"]) == 1
+    data, _ = get_origin_nodes(client, first=2, after=end_cursor)
+    assert len(data["origins"]["nodes"]) == 2
     assert data["origins"]["pageInfo"] == {"hasNextPage": False, "endCursor": None}
 
 

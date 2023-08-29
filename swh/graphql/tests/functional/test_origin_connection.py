@@ -6,7 +6,7 @@
 from typing import Optional
 
 from . import utils
-from ..data import get_origins
+from ..data import get_origin_without_visits, get_origins
 
 
 def get_origins_from_api(
@@ -33,7 +33,9 @@ def get_origins_from_api(
 
 def test_get(client):
     data, _ = get_origins_from_api(client, first=10)
-    assert len(data["origins"]["nodes"]) == len(get_origins())
+    assert len(data["origins"]["nodes"]) == len(
+        get_origins() + get_origin_without_visits()
+    )
 
 
 def test_get_filter_by_pattern(client):
@@ -49,7 +51,8 @@ def test_get_filter_by_non_existing_pattern(client):
 
 
 def test_basic_pagination(client):
-    data, _ = get_origins_from_api(client, first=len(get_origins()))
+    total_num_origins = len(get_origins() + get_origin_without_visits())
+    data, _ = get_origins_from_api(client, first=total_num_origins)
     assert data["origins"]["totalCount"] is None
-    assert len(data["origins"]["nodes"]) == len(get_origins())
+    assert len(data["origins"]["nodes"]) == total_num_origins
     assert data["origins"]["pageInfo"] == {"hasNextPage": False, "endCursor": None}

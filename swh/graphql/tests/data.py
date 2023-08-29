@@ -11,6 +11,7 @@ from swh.model.model import (
     DirectoryEntry,
     MultiHash,
     ObjectType,
+    Origin,
     OriginVisitStatus,
     Release,
     Revision,
@@ -96,6 +97,14 @@ def get_releases_with_target():
         synthetic=False,
     )
     return [with_revision, with_release, with_directory, with_content]
+
+
+def get_origin_without_visits():
+    return [
+        Origin(
+            url="https://example.com/no-visits/",
+        )
+    ]
 
 
 def get_releases_with_empty_target():
@@ -284,6 +293,7 @@ def get_too_big_contents():
 
 
 GRAPHQL_EXTRA_TEST_OBJECTS = {
+    "origin": get_origin_without_visits(),
     "snapshot": get_snapshots_with_multiple_alias() + get_snapshots_with_head_branch(),
     "release": get_releases_with_target() + get_releases_with_empty_target(),
     "revision": get_revisions_with_parents() + get_revisions_with_none_date(),
