@@ -66,3 +66,9 @@ class OriginConnection(BaseConnection):
                 after=self._get_after_arg(), first=self._get_first_arg()
             )
         return ConnectionData(paged_result=paged_result)
+
+    def _get_index_cursor(self, index: int, node: BaseOriginNode):
+        # Origin connection is using a different cursor, hence the override
+        # No item cursor is provided in this case
+        # FIXME: Return the right cursor when enabling index cursors
+        return None

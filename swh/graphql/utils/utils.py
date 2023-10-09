@@ -7,7 +7,7 @@ import base64
 from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
-from swh.graphql.errors import InvalidInputError
+from swh.graphql.errors import InvalidInputError, PaginationError
 
 if TYPE_CHECKING:  # pragma: no cover
     from swh.graphql.resolvers.base_connection import ConnectionData
@@ -56,7 +56,10 @@ def get_local_paginated_data(source: List, first: int, after=0) -> "ConnectionDa
     from swh.graphql.resolvers.base_connection import ConnectionData
 
     # FIXME, handle data errors here
-    after = 0 if after is None else int(after)
+    try:
+        after = 0 if after is None else int(after)
+    except ValueError as e:
+        raise PaginationError("Invalid value for argument 'after'", errors=e)
     end_cursor = after + first
     results = source[after:end_cursor]
     next_page_token = None

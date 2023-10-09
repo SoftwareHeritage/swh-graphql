@@ -117,3 +117,9 @@ class SnapshotBranchConnection(BaseConnection):
     def _get_name_exclude_prefix_arg(self):
         name_exclude_prefix = self.kwargs.get("nameExcludePrefix", None)
         return name_exclude_prefix.encode() if name_exclude_prefix else None
+
+    def _get_index_cursor(self, index: int, node: BaseSnapshotBranchNode):
+        # Snapshot branch is using a different cursor, hence the override
+        # No item cursor is provided in this case
+        # FIXME: Return the right cursor when enabling index cursors
+        return None

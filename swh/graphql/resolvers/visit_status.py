@@ -65,4 +65,6 @@ class VisitStatusConnection(BaseConnection):
 
     def _get_index_cursor(self, index: int, node: BaseVisitStatusNode):
         # Visit status is using a different cursor, hence the override
-        return utils.get_encoded_cursor(utils.get_formatted_date(node.date))
+        # No item cursor is provided in this case
+        # FIXME: Return the right cursor when enabling index cursors
+        return None

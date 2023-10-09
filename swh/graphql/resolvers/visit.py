@@ -74,3 +74,9 @@ class OriginVisitConnection(BaseConnection):
                 order=utils.get_storage_list_order(self.kwargs.get("sort", "ASC")),
             )
         )
+
+    def _get_index_cursor(self, index: int, node: BaseVisitNode):
+        # Origin visit is using a different cursor, hence the override
+        # No item cursor is provided in this case
+        # FIXME: Return the right cursor when enabling index cursors
+        return None

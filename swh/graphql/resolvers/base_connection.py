@@ -143,10 +143,15 @@ class BaseConnection(ABC):
         """
         Get the cursor to the given item index
         """
-        # default implementation which works with swh-storage pagaination
+        # default implementation which works with swh-storage pagination
         # override this function to support other types (eg: SnapshotBranchConnection)
         offset_index = self._get_after_arg() or "0"
-        index_cursor = int(offset_index) + index
+        try:
+            index_cursor = int(offset_index) + index
+        except ValueError:
+            # Trying to create an index cursor of a non supported schema
+            # This error should not happen if _get_index_cursor is properly overridden
+            return None
         return utils.get_encoded_cursor(str(index_cursor))
 
 

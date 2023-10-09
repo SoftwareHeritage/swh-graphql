@@ -12,6 +12,11 @@ def get_origin_nodes(client, first, after=""):
     query_str = """
     query getOrigins($first: Int!, $after: String) {
       origins(first: $first, after: $after) {
+        edges {
+          node {
+            id
+          }
+        }
         nodes {
           id
         }
@@ -31,6 +36,8 @@ def test_pagination(client):
     total_num_origins = len(get_origins() + get_origin_without_visits())
     data, _ = get_origin_nodes(client, first=total_num_origins)
     assert len(data["origins"]["nodes"]) == total_num_origins
+    assert len(data["origins"]["edges"]) == total_num_origins
+    assert [x["node"] for x in data["origins"]["edges"]] == data["origins"]["nodes"]
     assert data["origins"]["pageInfo"] == {"hasNextPage": False, "endCursor": None}
 
 
@@ -43,7 +50,9 @@ def test_first_arg(client):
 def test_invalid_first_arg(client):
     data, errors = get_origin_nodes(client, first=-1)
     assert data["origins"] is None
-    assert (len(errors)) == 2  # one error for origins and anotehr one for pageInfo
+    assert (
+        len(errors)
+    ) == 3  # one error for origins.nodes, second origins.edges and anotehr one for pageInfo
     assert (
         errors[0]["message"]
         == "Pagination error: Value for argument 'first' is invalid; it must be between 0 and 1000"  # noqa: B950
@@ -53,7 +62,7 @@ def test_invalid_first_arg(client):
 def test_too_big_first_arg(client, high_query_cost):
     data, errors = get_origin_nodes(client, 1001)  # max page size is 1000
     assert data["origins"] is None
-    assert (len(errors)) == 2
+    assert (len(errors)) == 3
     assert (
         errors[0]["message"]
         == "Pagination error: Value for argument 'first' is invalid; it must be between 0 and 1000"  # noqa: B950
@@ -72,7 +81,35 @@ def test_after_arg(client):
 def test_invalid_after_arg(client):
     data, errors = get_origin_nodes(client, first=1, after="invalid")
     assert data["origins"] is None
-    assert (len(errors)) == 2
+    assert (len(errors)) == 3
+    assert (
+        errors[0]["message"] == "Pagination error: Invalid value for argument 'after'"
+    )
+
+
+def test_valid_non_int_after_arg_in_local_pagination(client):
+    directory = get_directories()[1]
+    query_str = """
+    query getDirectory($swhid: SWHID!, $entries_first: Int!, $entries_after: String) {
+      directory(swhid: $swhid) {
+        entries(first: $entries_first, after: $entries_after) {
+          nodes {
+            name {
+              text
+            }
+          }
+        }
+      }
+    }
+    """
+    data, errors = utils.get_query_response(
+        client,
+        query_str,
+        swhid=str(directory.swhid()),
+        entries_first=1,
+        entries_after="dGVzdA==",
+    )
+    assert data["directory"]["entries"]["nodes"] is None
     assert (
         errors[0]["message"] == "Pagination error: Invalid value for argument 'after'"
     )
