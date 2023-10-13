@@ -5,6 +5,10 @@
 
 import os
 
+from graphql import GraphQLError, GraphQLSyntaxError
+import pytest
+
+from swh.graphql import errors
 import swh.graphql.gunicorn_config as gunicorn_config
 
 
@@ -34,6 +38,7 @@ def test_post_fork_with_dsn_env(mocker):
         debug=False,
         release=None,
         send_default_pii=True,
+        before_send=gunicorn_config.skip_expected_errors,
     )
 
 
@@ -57,4 +62,43 @@ def test_post_fork_debug(mocker):
         debug=True,
         release=None,
         send_default_pii=True,
+        before_send=gunicorn_config.skip_expected_errors,
     )
+
+
+@pytest.mark.parametrize(
+    ("error, sent_to_sentry"),
+    [
+        (errors.ObjectNotFoundError("test"), False),
+        (errors.PaginationError("test"), False),
+        (errors.InvalidInputError("test"), False),
+        (NameError, True),
+    ],
+)
+def test_skip_expected_errors(error, sent_to_sentry):
+    event = {"test": "test-event"}
+    err = GraphQLError("test error")
+    err.original_error = error
+    hint = {"exc_info": ("info", err, "traceback")}
+    response = gunicorn_config.skip_expected_errors(event, hint)
+    if sent_to_sentry:
+        assert response == event
+    else:
+        assert response is None
+
+
+@pytest.mark.parametrize(
+    ("error, sent_to_sentry"),
+    [
+        (GraphQLSyntaxError(None, None, None), False),  # type: ignore
+        (NameError("test"), True),
+    ],
+)
+def test_skip_base_errors(error, sent_to_sentry):
+    event = {"test": "test-event"}
+    hint = {"exc_info": ("info", error, "traceback")}
+    response = gunicorn_config.skip_expected_errors(event, hint)
+    if sent_to_sentry:
+        assert response == event
+    else:
+        assert response is None

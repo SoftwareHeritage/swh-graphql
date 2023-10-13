@@ -7,11 +7,8 @@ from typing import Union
 
 from ariadne import format_error as original_format_error
 from graphql import GraphQLError, GraphQLSyntaxError
-import sentry_sdk
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-
-from .errors import InvalidInputError, ObjectNotFoundError, PaginationError
 
 
 def format_error(error: Union[GraphQLError, GraphQLSyntaxError], debug: bool = False):
@@ -22,17 +19,8 @@ def format_error(error: Union[GraphQLError, GraphQLSyntaxError], debug: bool = F
     if debug:
         # If debug is enabled, reuse Ariadne's formatting logic with stack trace
         return original_format
-    # Errors raised by ariadne and graphql-core, it is safe to skip query syntax errors
-    expected_base_errors = (GraphQLSyntaxError,)
-    expected_errors = (ObjectNotFoundError, PaginationError, InvalidInputError)
-    if not isinstance(error, expected_base_errors) and not isinstance(
-        error.original_error, expected_errors
-    ):
-        # a crash, send to sentry
-        sentry_sdk.capture_exception(error)
     formatted = error.formatted
     formatted["message"] = error.message
-    # FIXME log the original_format to kibana (with stack trace)
     return formatted
 
 
