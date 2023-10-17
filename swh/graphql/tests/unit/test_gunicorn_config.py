@@ -72,7 +72,8 @@ def test_post_fork_debug(mocker):
         (errors.ObjectNotFoundError("test"), False),
         (errors.PaginationError("test"), False),
         (errors.InvalidInputError("test"), False),
-        (NameError, True),
+        (GraphQLError(None), False),  # type: ignore
+        (NameError, True),  # Unhandled wrapped error
     ],
 )
 def test_skip_expected_errors(error, sent_to_sentry):
@@ -91,6 +92,7 @@ def test_skip_expected_errors(error, sent_to_sentry):
     ("error, sent_to_sentry"),
     [
         (GraphQLSyntaxError(None, None, None), False),  # type: ignore
+        (GraphQLError(None), False),  # type: ignore
         (NameError("test"), True),
     ],
 )

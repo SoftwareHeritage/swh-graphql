@@ -3,7 +3,7 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from graphql import GraphQLSyntaxError
+from graphql import GraphQLError, GraphQLSyntaxError
 from sentry_sdk.integrations.ariadne import AriadneIntegration
 
 from swh.core.sentry import init_sentry
@@ -13,15 +13,28 @@ from swh.graphql.errors import InvalidInputError, ObjectNotFoundError, Paginatio
 def skip_expected_errors(event, hint):
     if "exc_info" in hint:
         _, exc_value, _ = hint["exc_info"]
-        expected_base_errors = (GraphQLSyntaxError,)  # A query syntax error
-        if isinstance(exc_value, expected_base_errors):
-            return None
-        expected_errors = (ObjectNotFoundError, PaginationError, InvalidInputError)
-        if hasattr(exc_value, "original_error") and isinstance(
+        expected_errors = (
+            ObjectNotFoundError,
+            PaginationError,
+            InvalidInputError,
+            GraphQLError,
+        )
+        # GraphQLError is included to avoid an ariadne bug that
+        # raises two errors for a scalar validation
+        if isinstance(exc_value, GraphQLError) and isinstance(
             exc_value.original_error, expected_errors
         ):
             return None
-    # a crash, send to sentry
+        expected_base_errors = (
+            GraphQLSyntaxError,
+            GraphQLError,
+        )  # A query syntax or a validation error
+        if (
+            isinstance(exc_value, expected_base_errors)
+            and exc_value.original_error is None
+        ):
+            return None
+    # a crash, send to sentry as unhandled
     return event
 
 
