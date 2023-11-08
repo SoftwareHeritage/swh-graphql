@@ -1,6 +1,7 @@
 .. _swh-graphql:
 
 .. include:: README.rst
+.. include:: design.rst
 
 .. toctree::
    :maxdepth: 2
