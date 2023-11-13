@@ -26,7 +26,7 @@ class BaseDirectoryEntryNode(BaseNode):
         return mapping[self._node.type]
 
 
-class DirectoryEntryNode(BaseDirectoryEntryNode):
+class DirEntryDirectNode(BaseDirectoryEntryNode):
     """
     Node resolver for a directory entry requested with a
     directory SWHID and a relative path
@@ -37,6 +37,23 @@ class DirectoryEntryNode(BaseDirectoryEntryNode):
         # return DirectoryEntry object instead
         return self.archive.get_directory_entry_by_path(
             directory_id=self.kwargs.get("directorySWHID").object_id,
+            path=self.kwargs.get("path"),
+        )
+
+
+class DirEntryInDirectoryNode(BaseDirectoryEntryNode):
+    """
+    Node resolver for a directory entry requested
+    inside a directory object
+    """
+
+    from .directory import BaseDirectoryNode
+
+    obj: BaseDirectoryNode
+
+    def _get_node_data(self):
+        return self.archive.get_directory_entry_by_path(
+            directory_id=self.obj.swhid.object_id,
             path=self.kwargs.get("path"),
         )
 

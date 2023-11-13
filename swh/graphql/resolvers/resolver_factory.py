@@ -19,7 +19,11 @@ from .content import (
 )
 from .content_data import ContentDataNode
 from .directory import DirectoryNode, RevisionDirectoryNode, TargetDirectoryNode
-from .directory_entry import DirectoryEntryConnection, DirectoryEntryNode
+from .directory_entry import (
+    DirectoryEntryConnection,
+    DirEntryDirectNode,
+    DirEntryInDirectoryNode,
+)
 from .origin import OriginConnection, OriginNode, TargetOriginNode
 from .person import ReleaseAuthorList, RevisionAuthorList, RevisionCommitterList
 from .release import ReleaseNode, TargetReleaseNode
@@ -61,7 +65,8 @@ class NodeObjectFactory:
         "revision-directory": RevisionDirectoryNode,
         "release": ReleaseNode,
         "directory": DirectoryNode,
-        "directory-entry": DirectoryEntryNode,
+        "directory-entry": DirEntryDirectNode,
+        "directory-directoryentry": DirEntryInDirectoryNode,
         "content-by-hashes": ContentbyHashesNode,
         "content-data": ContentDataNode,
         "generic-target": TargetNode,

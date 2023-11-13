@@ -112,6 +112,50 @@ def test_get_directory_entry(client, directory):
         }
 
 
+def get_directory_entry(client, dir_swhid, path):
+    query_str = """
+    query getDirectory($swhid: SWHID!, $path: String!) {
+      directory(swhid: $swhid) {
+        swhid
+        entry(path: $path) {
+          name {
+            text
+          }
+        }
+      }
+    }
+    """
+    return utils.get_query_response(client, query_str, swhid=dir_swhid, path=path)
+
+
+def test_directory_entry_node_in_directory(client):
+    directory = get_directories()[1]
+    path = "file1.ext"
+    data, _ = get_directory_entry(client, dir_swhid=str(directory.swhid()), path=path)
+    assert data["directory"] == {
+        "swhid": str(directory.swhid()),
+        "entry": {"name": {"text": path}},
+    }
+
+
+def test_nested_directory_entry_node_in_directory(client):
+    directory = get_directories_with_nested_path()[0]
+    path = "sub-dir/file1.ext"
+    data, _ = get_directory_entry(client, dir_swhid=str(directory.swhid()), path=path)
+    assert data["directory"] == {
+        "swhid": str(directory.swhid()),
+        "entry": {"name": {"text": path}},
+    }
+
+
+def test_missing_directory_entry_node_in_directory(client):
+    directory = get_directories()[1]
+    path = "sub-dir/invalid.txt"
+    data, err = get_directory_entry(client, dir_swhid=str(directory.swhid()), path=path)
+    assert data == {"directory": {"swhid": str(directory.swhid()), "entry": None}}
+    assert "Object error: Requested object is not available" in err[0]["message"]
+
+
 @pytest.mark.parametrize("directory", get_directories())
 def test_get_directory_entry_connection(client, directory):
     query_str = """

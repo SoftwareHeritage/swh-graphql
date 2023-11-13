@@ -145,7 +145,7 @@ def directory_resolver(
 @query.field("directoryEntry")
 def directory_entry_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
-) -> rs.directory_entry.DirectoryEntryNode:
+) -> rs.directory_entry.DirEntryDirectNode:
     return NodeObjectFactory.create("directory-entry", obj, info, **kw)
 
 
@@ -208,6 +208,13 @@ def origin_search_node_resolver(
     obj: None, info: GraphQLResolveInfo, **kw
 ) -> rs.origin.TargetOriginNode:
     return NodeObjectFactory.create("target-origin", obj, info, **kw)
+
+
+@directory.field("entry")
+def directory_directory_entry_resolver(
+    obj: rs.directory.BaseDirectoryNode, info: GraphQLResolveInfo, **kw
+) -> rs.directory_entry.DirEntryInDirectoryNode:
+    return NodeObjectFactory.create("directory-directoryentry", obj, info, **kw)
 
 
 # Connection resolvers

@@ -936,6 +936,16 @@ type Directory implements SWHNode & Node {
     """
     caseSensitive: Boolean = false
   ): DirectoryEntryConnection @cost(complexity: 2, multipliers: ["first"]) # pagination is local, hence adding a higher value for cost
+
+  """
+  An entry in this or in sub directories
+  """
+  entry(
+    """
+    Relative path to the requested entry
+    """
+    path: String!
+  ): DirectoryEntry @cost(complexity: 2)  # This costs more because the path can be many levels deep
 }
 
 """
