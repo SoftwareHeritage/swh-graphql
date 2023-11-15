@@ -184,6 +184,8 @@ def generic_target_node_resolver(
     if not obj or not obj.type:
         # Target can be None for a branch, return None in that case
         return None
+    # Keys dynamically created are target-snapshot, target-revision
+    # target-release, target-directory and target-content
     return NodeObjectFactory.create(f"target-{obj.type}", obj, info, **kw)
 
 
