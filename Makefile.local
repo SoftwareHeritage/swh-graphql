@@ -1,3 +1,4 @@
+TEST_DIRS := ./swh/graphql/tests/
 # should be provided by the ci build
 TAG=latest
 IMAGE_NAME=softwareheritage/graphql:$(TAG)
