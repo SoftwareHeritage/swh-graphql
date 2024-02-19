@@ -6,7 +6,7 @@
 from typing import Optional
 
 from swh.graphql import server
-from swh.search.interface import MinimalOriginDict, SearchInterface
+from swh.search.interface import OriginDict, SearchInterface
 from swh.storage.interface import PagedResult
 
 
@@ -16,7 +16,7 @@ class Search:
 
     def get_origins(
         self, query: str, after: Optional[str] = None, first: int = 50
-    ) -> PagedResult[MinimalOriginDict]:
+    ) -> PagedResult[OriginDict]:
         return self.search.origin_search(
             url_pattern=query,
             page_token=after,
