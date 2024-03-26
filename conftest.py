@@ -12,8 +12,7 @@ from starlette.testclient import TestClient
 
 from swh.auth.starlette.backends import BearerTokenAuthBackend
 from swh.graphql import server as app_server
-
-from .data import populate_dummy_data, populate_search_data
+from swh.graphql.tests.data import populate_dummy_data, populate_search_data
 
 
 def mock_async(return_value: Any = None, error: Optional[Exception] = None):
@@ -29,7 +28,7 @@ def mock_async(return_value: Any = None, error: Optional[Exception] = None):
 @pytest.fixture(scope="session")
 def test_app():
     os.environ["SWH_CONFIG_FILENAME"] = os.path.join(
-        os.path.dirname(__file__), "../config/test.yml"
+        os.path.dirname(__file__), "swh/graphql/config/test.yml"
     )
     app = app_server.make_app_from_configfile()
     return app
