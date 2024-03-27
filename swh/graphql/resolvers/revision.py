@@ -102,10 +102,11 @@ class LogRevisionConnection(BaseConnection):
 
     def _get_connection_data(self) -> ConnectionData:
         log = self.archive.get_revision_log([self.obj.swhid.object_id])
-        # Storage is returning a list of dicts instead of model objects
-        # Following loop is to reverse that operation
-        # STORAGE-TODO; remove to_dict from storage.revision_log
-        log = [Revision.from_dict(rev) for rev in log]
+        # STORAGE-TODO: remove this conditional once swh-storage fully migrated to
+        # returning revision objects instead of dicts
+        log = [
+            rev if isinstance(rev, Revision) else Revision.from_dict(rev) for rev in log
+        ]
         # FIXME, using dummy(local) pagination, move pagination to backend
         # STORAGE-TODO (pagination)
         return utils.get_local_paginated_data(
