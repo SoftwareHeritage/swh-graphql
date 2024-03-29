@@ -1,4 +1,4 @@
-pytest
+pytest >= 8.1
 pytest-mock
 swh.core[testing]
 types-PyYAML
