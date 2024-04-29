@@ -11,17 +11,30 @@ import pytest
 from swh.graphql import errors
 import swh.graphql.gunicorn_config as gunicorn_config
 
+ariadne_integration = object()  # unique object to check for equality
+
 
 def test_post_fork_default(mocker):
+    mocker.patch(
+        "swh.graphql.gunicorn_config.AriadneIntegration",
+        new=lambda: ariadne_integration,
+    )
     sentry_sdk_init = mocker.patch("sentry_sdk.init")
 
     gunicorn_config.post_fork(None, None)
 
-    sentry_sdk_init.assert_not_called()
+    sentry_sdk_init.assert_called_once_with(
+        dsn=None,
+        environment=None,
+        integrations=[ariadne_integration],
+        debug=False,
+        release=None,
+        send_default_pii=True,
+        before_send=gunicorn_config.skip_expected_errors,
+    )
 
 
 def test_post_fork_with_dsn_env(mocker):
-    ariadne_integration = object()  # unique object to check for equality
     mocker.patch(
         "swh.graphql.gunicorn_config.AriadneIntegration",
         new=lambda: ariadne_integration,
@@ -43,7 +56,6 @@ def test_post_fork_with_dsn_env(mocker):
 
 
 def test_post_fork_debug(mocker):
-    ariadne_integration = object()  # unique object to check for equality
     mocker.patch(
         "swh.graphql.gunicorn_config.AriadneIntegration",
         new=lambda: ariadne_integration,
