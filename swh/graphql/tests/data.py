@@ -18,7 +18,7 @@ from swh.model.model import (
     RevisionType,
     Snapshot,
     SnapshotBranch,
-    TargetType,
+    SnapshotTargetType,
 )
 from swh.model.tests import swh_model_data
 
@@ -204,10 +204,10 @@ def get_snapshots_with_multiple_alias():
             # This branch alias chain breaks without a target
             branches={
                 b"target/alias1": SnapshotBranch(
-                    target_type=TargetType.ALIAS, target=b"target/alias2"
+                    target_type=SnapshotTargetType.ALIAS, target=b"target/alias2"
                 ),
                 b"target/alias2": SnapshotBranch(
-                    target_type=TargetType.ALIAS, target=b"target/alias3"
+                    target_type=SnapshotTargetType.ALIAS, target=b"target/alias3"
                 ),
             },
         ),
@@ -215,13 +215,13 @@ def get_snapshots_with_multiple_alias():
             # This branch alias chain resolves to a release after 2 levels
             branches={
                 b"target/alias1": SnapshotBranch(
-                    target_type=TargetType.ALIAS, target=b"target/alias2"
+                    target_type=SnapshotTargetType.ALIAS, target=b"target/alias2"
                 ),
                 b"target/alias2": SnapshotBranch(
-                    target_type=TargetType.ALIAS, target=b"target/release"
+                    target_type=SnapshotTargetType.ALIAS, target=b"target/release"
                 ),
                 b"target/release": SnapshotBranch(
-                    target_type=TargetType.RELEASE, target=get_releases()[0].id
+                    target_type=SnapshotTargetType.RELEASE, target=get_releases()[0].id
                 ),
             },
         ),
@@ -229,25 +229,25 @@ def get_snapshots_with_multiple_alias():
             # This branch alias chain is going 6 levels deep
             branches={
                 b"target/alias1": SnapshotBranch(
-                    target_type=TargetType.ALIAS, target=b"target/alias2"
+                    target_type=SnapshotTargetType.ALIAS, target=b"target/alias2"
                 ),
                 b"target/alias2": SnapshotBranch(
-                    target_type=TargetType.ALIAS, target=b"target/alias3"
+                    target_type=SnapshotTargetType.ALIAS, target=b"target/alias3"
                 ),
                 b"target/alias3": SnapshotBranch(
-                    target_type=TargetType.ALIAS, target=b"target/alias4"
+                    target_type=SnapshotTargetType.ALIAS, target=b"target/alias4"
                 ),
                 b"target/alias4": SnapshotBranch(
-                    target_type=TargetType.ALIAS, target=b"target/alias5"
+                    target_type=SnapshotTargetType.ALIAS, target=b"target/alias5"
                 ),
                 b"target/alias5": SnapshotBranch(
-                    target_type=TargetType.ALIAS, target=b"target/alias6"
+                    target_type=SnapshotTargetType.ALIAS, target=b"target/alias6"
                 ),
                 b"target/alias6": SnapshotBranch(
-                    target_type=TargetType.ALIAS, target=b"target/release"
+                    target_type=SnapshotTargetType.ALIAS, target=b"target/release"
                 ),
                 b"target/release": SnapshotBranch(
-                    target_type=TargetType.RELEASE, target=get_releases()[0].id
+                    target_type=SnapshotTargetType.RELEASE, target=get_releases()[0].id
                 ),
             },
         ),
@@ -255,10 +255,10 @@ def get_snapshots_with_multiple_alias():
             # This branch alias chain is recursive
             branches={
                 b"target/alias1": SnapshotBranch(
-                    target_type=TargetType.ALIAS, target=b"target/alias2"
+                    target_type=SnapshotTargetType.ALIAS, target=b"target/alias2"
                 ),
                 b"target/alias2": SnapshotBranch(
-                    target_type=TargetType.ALIAS, target=b"target/alias1"
+                    target_type=SnapshotTargetType.ALIAS, target=b"target/alias1"
                 ),
             },
         ),
@@ -271,10 +271,11 @@ def get_snapshots_with_head_branch():
             # This branch alias chain breaks without a target
             branches={
                 b"HEAD": SnapshotBranch(
-                    target_type=TargetType.ALIAS, target=b"target/revision"
+                    target_type=SnapshotTargetType.ALIAS, target=b"target/revision"
                 ),
                 b"target/revision": SnapshotBranch(
-                    target_type=TargetType.REVISION, target=get_revisions()[0].id
+                    target_type=SnapshotTargetType.REVISION,
+                    target=get_revisions()[0].id,
                 ),
             },
         ),
