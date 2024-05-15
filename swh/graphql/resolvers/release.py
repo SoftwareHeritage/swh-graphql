@@ -5,9 +5,9 @@
 
 from typing import Optional, Union
 
-from swh.model.model import CoreSWHID, ObjectType
+from swh.model.model import CoreSWHID
 from swh.model.model import Release as ModelRelease
-from swh.model.model import Sha1Git
+from swh.model.model import ReleaseTargetType, Sha1Git
 
 from .base_node import BaseSWHNode
 
@@ -25,7 +25,7 @@ class BaseReleaseNode(BaseSWHNode):
         assert self._node is not None
         return self._node.target
 
-    def target_type(self) -> ObjectType:
+    def target_type(self) -> ReleaseTargetType:
         assert self._node is not None
         return self._node.target_type
 

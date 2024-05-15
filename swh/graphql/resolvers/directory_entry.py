@@ -5,7 +5,7 @@
 
 from swh.graphql.errors import DataError
 from swh.graphql.utils import utils
-from swh.model.model import ObjectType, Sha1Git
+from swh.model.model import ReleaseTargetType, Sha1Git
 
 from .base_connection import BaseConnection, ConnectionData
 from .base_node import BaseNode
@@ -16,11 +16,11 @@ class BaseDirectoryEntryNode(BaseNode):
         assert self._node is not None
         return self._node.target
 
-    def target_type(self) -> ObjectType:
+    def target_type(self) -> ReleaseTargetType:
         mapping = {
-            "file": ObjectType.CONTENT,
-            "dir": ObjectType.DIRECTORY,
-            "rev": ObjectType.REVISION,
+            "file": ReleaseTargetType.CONTENT,
+            "dir": ReleaseTargetType.DIRECTORY,
+            "rev": ReleaseTargetType.REVISION,
         }
         assert self._node is not None
         return mapping[self._node.type]
