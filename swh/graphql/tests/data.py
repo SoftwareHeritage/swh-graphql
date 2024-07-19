@@ -307,8 +307,8 @@ GRAPHQL_EXTRA_TEST_OBJECTS = {
 
 def populate_dummy_data(storage):
     for object_type, objects in swh_model_data.TEST_OBJECTS.items():
-        method = getattr(storage, object_type + "_add")
+        method = getattr(storage, f"{object_type}_add")
         method(objects)
     for object_type, objects in GRAPHQL_EXTRA_TEST_OBJECTS.items():
-        method = getattr(storage, object_type + "_add")
+        method = getattr(storage, f"{object_type}_add")
         method(objects)
