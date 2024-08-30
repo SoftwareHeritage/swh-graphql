@@ -26,7 +26,7 @@ Schema
 Resolvers
 ---------
 
-| Schema objects are connected to the corresponding objects in `resolvers.reslovers.py <https://gitlab.softwareheritage.org/swh/devel/swh-graphql/-/blob/master/swh/graphql/resolvers/resolvers.py>`_
+| Schema objects are connected to the corresponding objects in `resolvers.resolvers.py <https://gitlab.softwareheritage.org/swh/devel/swh-graphql/-/blob/master/swh/graphql/resolvers/resolvers.py>`_
 | Each query returns a resolver object with its attributes matching to the schema.
 | Every resolver will accept two args. The parent object (called self.obj in the resolver class) and the client/user inputs (self.kwargs in a resolver class)
 | self.obj will be None for a top level (query level entrypoint) resolver.
@@ -225,7 +225,7 @@ Add a new type field inside another type
 
 - Add the type in the schema
 - Add a field along with arguments in the parent type connecting to the newly added type.
-- Add the cost associated. Mulipliers can be used if needed.
+- Add the cost associated. Multipliers can be used if needed.
 - Add the resolver class using the right base class and override the required function/s.
 - Add a backend function (if necessary) to fetch data
 - Connect the route in ``resolvers.resolvers.py``

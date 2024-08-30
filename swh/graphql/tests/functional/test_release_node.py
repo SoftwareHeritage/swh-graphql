@@ -156,7 +156,7 @@ def test_get_release_targets(client, release_with_target):
 
 
 def test_get_release_target_unknown(client):
-    # Clinet can request all the possible options if the target type
+    # Client can request all the possible options if the target type
     # is unknown. The data under the right type will be returned
 
     # The target is of type Revision in this case
