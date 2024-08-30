@@ -88,26 +88,32 @@ def test_get_revision(client, revision):
                 "email": {"text": revision.committer.email.decode()},
             }
         ],
-        "date": {
-            "date": revision.date.to_datetime().isoformat(),
-            "offset": {
-                "text": revision.date.offset_bytes.decode(),
-                "base64": base64.b64encode(revision.date.offset_bytes).decode("ascii"),
-            },
-        }
-        if revision.date
-        else None,
-        "committerDate": {
-            "date": revision.committer_date.to_datetime().isoformat(),
-            "offset": {
-                "text": revision.committer_date.offset_bytes.decode(),
-                "base64": base64.b64encode(revision.committer_date.offset_bytes).decode(
-                    "ascii"
-                ),
-            },
-        }
-        if revision.committer_date
-        else None,
+        "date": (
+            {
+                "date": revision.date.to_datetime().isoformat(),
+                "offset": {
+                    "text": revision.date.offset_bytes.decode(),
+                    "base64": base64.b64encode(revision.date.offset_bytes).decode(
+                        "ascii"
+                    ),
+                },
+            }
+            if revision.date
+            else None
+        ),
+        "committerDate": (
+            {
+                "date": revision.committer_date.to_datetime().isoformat(),
+                "offset": {
+                    "text": revision.committer_date.offset_bytes.decode(),
+                    "base64": base64.b64encode(
+                        revision.committer_date.offset_bytes
+                    ).decode("ascii"),
+                },
+            }
+            if revision.committer_date
+            else None
+        ),
         "type": revision.type.value,
         "directory": {
             "swhid": str(CoreSWHID(object_id=revision.directory, object_type="dir")),

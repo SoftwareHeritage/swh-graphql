@@ -66,24 +66,30 @@ def test_get_release(client, release):
             "base64": base64.b64encode(release.name).decode("ascii"),
         },
         "message": {"text": release.message.decode()},
-        "author": [
+        "author": (
+            [
+                {
+                    "email": {"text": release.author.email.decode()},
+                    "name": {"text": release.author.name.decode()},
+                    "fullname": {"text": release.author.fullname.decode()},
+                }
+            ]
+            if release.author
+            else []
+        ),
+        "date": (
             {
-                "email": {"text": release.author.email.decode()},
-                "name": {"text": release.author.name.decode()},
-                "fullname": {"text": release.author.fullname.decode()},
+                "date": release.date.to_datetime().isoformat(),
+                "offset": {
+                    "text": release.date.offset_bytes.decode(),
+                    "base64": base64.b64encode(release.date.offset_bytes).decode(
+                        "ascii"
+                    ),
+                },
             }
-        ]
-        if release.author
-        else [],
-        "date": {
-            "date": release.date.to_datetime().isoformat(),
-            "offset": {
-                "text": release.date.offset_bytes.decode(),
-                "base64": base64.b64encode(release.date.offset_bytes).decode("ascii"),
-            },
-        }
-        if release.date
-        else None,
+            if release.date
+            else None
+        ),
         "target": {"type": release.target_type.value},
     }
 

@@ -34,9 +34,11 @@ def test_get_visit_status(client, visit, visit_status):
     )
     assert data["visit"]["statuses"]["nodes"][0] == {
         "date": visit_status.date.isoformat(),
-        "snapshot": {"swhid": f"swh:1:snp:{visit_status.snapshot.hex()}"}
-        if visit_status.snapshot is not None
-        else None,
+        "snapshot": (
+            {"swhid": f"swh:1:snp:{visit_status.snapshot.hex()}"}
+            if visit_status.snapshot is not None
+            else None
+        ),
         "status": visit_status.status,
         "type": visit_status.type,
     }

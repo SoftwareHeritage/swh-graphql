@@ -49,9 +49,11 @@ def test_get_visit(client, storage, origin):
                 "date": statuses[-1].date.isoformat(),
                 "type": statuses[-1].type,
                 "status": statuses[-1].status,
-                "snapshot": ({"swhid": f"swh:1:snp:{statuses[-1].snapshot.hex()}"})
-                if statuses[-1].snapshot
-                else None,
+                "snapshot": (
+                    ({"swhid": f"swh:1:snp:{statuses[-1].snapshot.hex()}"})
+                    if statuses[-1].snapshot
+                    else None
+                ),
             },
             "statuses": {"nodes": [{"status": status.status} for status in statuses]},
         }
