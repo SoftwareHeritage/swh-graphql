@@ -1,4 +1,4 @@
-# Copyright (C) 2023  The Software Heritage developers
+# Copyright (C) 2023-2025  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
@@ -28,9 +28,10 @@ def test_post_fork_default(mocker):
         environment=None,
         integrations=[ariadne_integration],
         debug=False,
-        release=None,
+        release="0.0.0",
         send_default_pii=True,
         before_send=gunicorn_config.skip_expected_errors,
+        traces_sample_rate=None,
     )
 
 
@@ -52,6 +53,7 @@ def test_post_fork_with_dsn_env(mocker):
         release=None,
         send_default_pii=True,
         before_send=gunicorn_config.skip_expected_errors,
+        traces_sample_rate=None,
     )
 
 
@@ -75,6 +77,7 @@ def test_post_fork_debug(mocker):
         release=None,
         send_default_pii=True,
         before_send=gunicorn_config.skip_expected_errors,
+        traces_sample_rate=None,
     )
 
 
