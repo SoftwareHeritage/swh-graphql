@@ -52,7 +52,7 @@ def test_invalid_first_arg(client):
     assert data["origins"] is None
     assert (
         len(errors)
-    ) == 3  # one error for origins.nodes, second origins.edges and anotehr one for pageInfo
+    ) == 3  # one error for origins.nodes, second origins.edges and another one for pageInfo
     assert (
         errors[0]["message"]
         == "Pagination error: Value for argument 'first' is invalid; it must be between 0 and 1000"  # noqa: B950
