@@ -1,4 +1,4 @@
-# Copyright (C) 2022 The Software Heritage developers
+# Copyright (C) 2022-2025  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
@@ -16,11 +16,11 @@ from swh.model.model import (
     OriginVisitStatus,
     Release,
     Revision,
-    Sha1,
     Sha1Git,
     Snapshot,
 )
 from swh.model.swhids import ObjectType
+from swh.objstorage.interface import ObjId
 from swh.storage.algos.origin import origin_get_latest_visit_status
 from swh.storage.interface import (
     HashDict,
@@ -188,8 +188,8 @@ class Archive:
     def get_contents(self, hashes: HashDict) -> List[Content]:
         return self.storage.content_find(content=hashes)
 
-    def get_content_data(self, content_sha1: Sha1) -> Optional[bytes]:
-        return self.storage.content_get_data(content=content_sha1)
+    def get_content_data(self, obj_id: ObjId) -> Optional[bytes]:
+        return self.storage.content_get_data(obj_id)
 
     def get_branch_by_name(
         self, snapshot_id: Sha1Git, branch_name: bytes, follow_chain: bool = True

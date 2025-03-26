@@ -1,16 +1,17 @@
+# Copyright (C) 2023-2025  The Software Heritage developers
+# See the AUTHORS file at the top-level directory of this distribution
+# License: GNU General Public License version 3, or any later version
+# See top-level LICENSE file for more information
+
+
 import base64
 
 from . import utils
 from ..data import get_contents, get_too_big_contents
 
 
-def test_content_raw_data(client, mocker):
+def test_content_raw_data(client):
     content = get_contents()[0]
-    # this patch is to skip using obj-storage
-    mocker.patch(
-        "swh.storage.objstorage.ObjStorage.content_get",
-        return_value=content.data,
-    )
     query_str = """
     query getContents($swhid: SWHID!) {
       contentsBySWHID(swhid: $swhid) {
@@ -37,12 +38,8 @@ def test_content_raw_data(client, mocker):
     }
 
 
-def test_content_raw_data_too_long_content(client, mocker):
+def test_content_raw_data_too_long_content(client):
     content = get_too_big_contents()[0]
-    mocker.patch(
-        "swh.storage.objstorage.ObjStorage.content_get",
-        return_value=content.data,
-    )
     query_str = """
     query getContents($swhid: SWHID!) {
       contentsBySWHID(swhid: $swhid) {

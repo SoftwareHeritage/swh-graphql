@@ -1,6 +1,12 @@
+# Copyright (C) 2024-2025  The Software Heritage developers
+# See the AUTHORS file at the top-level directory of this distribution
+# License: GNU General Public License version 3, or any later version
+# See top-level LICENSE file for more information
+
 from typing import Optional
 
 from swh.graphql.server import get_config
+from swh.objstorage.interface import objid_from_dict
 
 from .base_node import BaseNode
 from .content import BaseContentNode
@@ -19,8 +25,10 @@ class ContentDataNode(BaseNode):
     def raw(self) -> Optional[bytes]:
         # Return content data as a binary string
         if self.obj.length <= get_config().get("max_raw_content_size", 10000):
-            content_sha1 = self.obj.hashes["sha1"]
-            return self.archive.get_content_data(content_sha1=content_sha1)
+            assert self.obj._node is not None
+            return self.archive.get_content_data(
+                objid_from_dict(self.obj._node.to_dict())
+            )
         return None
 
     def _get_node_data(self):
