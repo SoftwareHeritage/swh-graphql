@@ -7,6 +7,7 @@ import os
 from typing import Any, Dict, Iterable, List, Optional
 
 from swh.graphql import server
+from swh.model.hashutil import HashDict
 from swh.model.model import (
     Content,
     Directory,
@@ -20,10 +21,8 @@ from swh.model.model import (
     Snapshot,
 )
 from swh.model.swhids import ObjectType
-from swh.objstorage.interface import ObjId
 from swh.storage.algos.origin import origin_get_latest_visit_status
 from swh.storage.interface import (
-    HashDict,
     ListOrder,
     PagedResult,
     PartialBranches,
@@ -188,7 +187,7 @@ class Archive:
     def get_contents(self, hashes: HashDict) -> List[Content]:
         return self.storage.content_find(content=hashes)
 
-    def get_content_data(self, obj_id: ObjId) -> Optional[bytes]:
+    def get_content_data(self, obj_id: HashDict) -> Optional[bytes]:
         return self.storage.content_get_data(obj_id)
 
     def get_branch_by_name(
