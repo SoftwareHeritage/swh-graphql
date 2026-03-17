@@ -1,4 +1,4 @@
-# Copyright (C) 2022  The Software Heritage developers
+# Copyright (C) 2022-2026  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
@@ -67,7 +67,7 @@ def test_invalid_get_visit(client):
       }
     }
     """
-    utils.assert_missing_object(client, query_str, "visit")
+    utils.assert_missing_object(client, query_str, "visit", response_code=400)
 
 
 @pytest.mark.parametrize("sort", ["ASC", "DESC"])

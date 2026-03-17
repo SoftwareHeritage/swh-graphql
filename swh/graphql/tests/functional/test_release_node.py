@@ -1,4 +1,4 @@
-# Copyright (C) 2022  The Software Heritage developers
+# Copyright (C) 2022-2026  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
@@ -102,7 +102,9 @@ def test_get_release_with_invalid_swhid(client):
       }
     }
     """
-    errors = utils.get_error_response(client, query_str, swhid="swh:1:rel:invalid")
+    errors = utils.get_error_response(
+        client, query_str, swhid="swh:1:rel:invalid", response_code=400
+    )
     # API will throw an error in case of an invalid SWHID
     assert len(errors) == 1
     assert "Input error: Invalid SWHID" in errors[0]["message"]
@@ -214,6 +216,7 @@ def test_get_release_with_unknown_swhid(client):
         query_str,
         obj_type="release",
         swhid=f"swh:1:rel:{unknown_sha1}",
+        response_code=400,
     )
 
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2022  The Software Heritage developers
+# Copyright (C) 2022-2026  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
@@ -23,7 +23,9 @@ def test_invalid_swhid(client):
       }
     }
     """
-    errors = utils.get_error_response(client, query_str, swhid="swh:1:dir:invalid")
+    errors = utils.get_error_response(
+        client, query_str, swhid="swh:1:dir:invalid", response_code=400
+    )
     # API will throw an error in case of an invalid SWHID
     assert len(errors) == 1
     assert "Input error: Invalid SWHID" in errors[0]["message"]
@@ -47,7 +49,9 @@ def test_missing_swhid(client, swhid):
       }
     }
     """
-    data, _ = utils.get_query_response(client, query_str, swhid=swhid)
+    data, _ = utils.get_query_response(
+        client, query_str, swhid=swhid, response_code=400
+    )
     # API will return None in case of a valid, non existing SWHID
     assert data == {"resolveSWHID": None}
 

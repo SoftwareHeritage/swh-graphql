@@ -1,4 +1,4 @@
-# Copyright (C) 2022  The Software Heritage developers
+# Copyright (C) 2022-2026  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
@@ -46,6 +46,7 @@ def test_get_snapshot_missing_swhid(client):
         query_str,
         obj_type="snapshot",
         swhid="swh:1:snp:0949d7a8c96347dba09be8d79085b8207f345412",
+        response_code=400,
     )
 
 
@@ -57,6 +58,8 @@ def test_get_snapshot_invalid_swhid(client):
       }
     }
     """
-    errors = utils.get_error_response(client, query_str, swhid="swh:1:snp:invalid")
+    errors = utils.get_error_response(
+        client, query_str, swhid="swh:1:snp:invalid", response_code=400
+    )
     assert len(errors) == 1
     assert "Input error: Invalid SWHID" in errors[0]["message"]

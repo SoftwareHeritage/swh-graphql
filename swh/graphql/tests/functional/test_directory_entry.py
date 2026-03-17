@@ -1,4 +1,4 @@
-# Copyright (C) 2022  The Software Heritage developers
+# Copyright (C) 2022-2026  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
@@ -48,6 +48,7 @@ def test_get_directory_entry_missing_path(client):
         "directoryEntry",
         swhid=str(directory.swhid()),
         path=path,
+        response_code=400,
     )
 
 
@@ -112,7 +113,7 @@ def test_get_directory_entry(client, directory):
         }
 
 
-def get_directory_entry(client, dir_swhid, path):
+def get_directory_entry(client, dir_swhid, path, response_code=200):
     query_str = """
     query getDirectory($swhid: SWHID!, $path: String!) {
       directory(swhid: $swhid) {
@@ -125,7 +126,9 @@ def get_directory_entry(client, dir_swhid, path):
       }
     }
     """
-    return utils.get_query_response(client, query_str, swhid=dir_swhid, path=path)
+    return utils.get_query_response(
+        client, query_str, swhid=dir_swhid, path=path, response_code=response_code
+    )
 
 
 def test_directory_entry_node_in_directory(client):
@@ -151,7 +154,9 @@ def test_nested_directory_entry_node_in_directory(client):
 def test_missing_directory_entry_node_in_directory(client):
     directory = get_directories()[1]
     path = "sub-dir/invalid.txt"
-    data, err = get_directory_entry(client, dir_swhid=str(directory.swhid()), path=path)
+    data, err = get_directory_entry(
+        client, dir_swhid=str(directory.swhid()), path=path, response_code=400
+    )
     assert data == {"directory": {"swhid": str(directory.swhid()), "entry": None}}
     assert "Object error: Requested object is not available" in err[0]["message"]
 

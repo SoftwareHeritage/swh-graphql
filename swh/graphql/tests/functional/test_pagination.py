@@ -1,4 +1,4 @@
-# Copyright (C) 2022  The Software Heritage developers
+# Copyright (C) 2022-2026  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
@@ -8,7 +8,7 @@ from ..data import get_directories, get_origin_without_visits, get_origins
 
 
 # Using Origin object to run functional tests for pagination
-def get_origin_nodes(client, first, after=""):
+def get_origin_nodes(client, first, after="", response_code=200):
     query_str = """
     query getOrigins($first: Int!, $after: String) {
       origins(first: $first, after: $after) {
@@ -27,7 +27,9 @@ def get_origin_nodes(client, first, after=""):
       }
     }
     """
-    return utils.get_query_response(client, query_str, first=first, after=after)
+    return utils.get_query_response(
+        client, query_str, first=first, after=after, response_code=response_code
+    )
 
 
 def test_pagination(client):
@@ -48,7 +50,7 @@ def test_first_arg(client):
 
 
 def test_invalid_first_arg(client):
-    data, errors = get_origin_nodes(client, first=-1)
+    data, errors = get_origin_nodes(client, first=-1, response_code=400)
     assert data["origins"] is None
     assert (
         len(errors)
@@ -60,7 +62,9 @@ def test_invalid_first_arg(client):
 
 
 def test_too_big_first_arg(client, high_query_cost):
-    data, errors = get_origin_nodes(client, 1001)  # max page size is 1000
+    data, errors = get_origin_nodes(
+        client, 1001, response_code=400
+    )  # max page size is 1000
     assert data["origins"] is None
     assert (len(errors)) == 3
     assert (
@@ -79,7 +83,7 @@ def test_after_arg(client):
 
 
 def test_invalid_after_arg(client):
-    data, errors = get_origin_nodes(client, first=1, after="invalid")
+    data, errors = get_origin_nodes(client, first=1, after="invalid", response_code=400)
     assert data["origins"] is None
     assert (len(errors)) == 3
     assert (
@@ -108,6 +112,7 @@ def test_valid_non_int_after_arg_in_local_pagination(client):
         swhid=str(directory.swhid()),
         entries_first=1,
         entries_after="dGVzdA==",
+        response_code=400,
     )
     assert data["directory"]["entries"]["nodes"] is None
     assert (

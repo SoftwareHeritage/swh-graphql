@@ -1,4 +1,4 @@
-# Copyright (C) 2022  The Software Heritage developers
+# Copyright (C) 2022-2026  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
@@ -92,7 +92,9 @@ def test_get_contents_with_invalid_swhid(client):
       }
     }
     """
-    errors = utils.get_error_response(client, query_str, swhid="invalid")
+    errors = utils.get_error_response(
+        client, query_str, swhid="invalid", response_code=400
+    )
     # API will throw an error in case of an invalid SWHID
     assert len(errors) == 1
     assert "Input error: Invalid SWHID" in errors[0]["message"]
@@ -198,6 +200,7 @@ def test_get_content_with_invalid_hashes(client):
         sha1="invalid",  # Only one hash is invalid
         sha1_git=content.sha1_git.hex(),
         sha256=content.sha256.hex(),
+        response_code=400,
     )
     # API will throw an error in case of an invalid content hash
     assert len(errors) == 1
@@ -216,6 +219,7 @@ def test_get_content_with_no_hashes(client):
     errors = utils.get_error_response(
         client,
         query_str,
+        response_code=400,
     )
     assert len(errors) == 1
     assert (
