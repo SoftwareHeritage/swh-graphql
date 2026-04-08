@@ -17,7 +17,7 @@ def test_invalid_get(client):
       }
     }
     """
-    utils.assert_missing_object(client, query_str, "origin", response_code=400)
+    utils.assert_missing_object(client, query_str, "origin")
 
 
 @pytest.mark.parametrize("origin", get_origins())

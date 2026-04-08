@@ -49,9 +49,7 @@ def test_missing_swhid(client, swhid):
       }
     }
     """
-    data, _ = utils.get_query_response(
-        client, query_str, swhid=swhid, response_code=400
-    )
+    data, _ = utils.get_query_response(client, query_str, swhid=swhid)
     # API will return None in case of a valid, non existing SWHID
     assert data == {"resolveSWHID": None}
 

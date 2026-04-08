@@ -216,7 +216,6 @@ def test_get_release_with_unknown_swhid(client):
         query_str,
         obj_type="release",
         swhid=f"swh:1:rel:{unknown_sha1}",
-        response_code=400,
     )
 
 

@@ -229,7 +229,6 @@ def test_get_revision_with_unknown_swhid(client):
         query_str,
         obj_type="revision",
         swhid=f"swh:1:rev:{unknown_sha1}",
-        response_code=400,
     )
 
 

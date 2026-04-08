@@ -200,7 +200,6 @@ def test_get_content_with_invalid_hashes(client):
         sha1="invalid",  # Only one hash is invalid
         sha1_git=content.sha1_git.hex(),
         sha256=content.sha256.hex(),
-        response_code=400,
     )
     # API will throw an error in case of an invalid content hash
     assert len(errors) == 1
@@ -219,7 +218,6 @@ def test_get_content_with_no_hashes(client):
     errors = utils.get_error_response(
         client,
         query_str,
-        response_code=400,
     )
     assert len(errors) == 1
     assert (

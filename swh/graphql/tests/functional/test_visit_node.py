@@ -67,7 +67,7 @@ def test_invalid_get_visit(client):
       }
     }
     """
-    utils.assert_missing_object(client, query_str, "visit", response_code=400)
+    utils.assert_missing_object(client, query_str, "visit")
 
 
 @pytest.mark.parametrize("sort", ["ASC", "DESC"])

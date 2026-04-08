@@ -31,10 +31,7 @@ def test_get_directory_with_invalid_swhid(client):
     }
     """
     errors = utils.get_error_response(
-        client,
-        query_str,
-        swhid="swh:1:dir:invalid",
-        response_code=400,
+        client, query_str, swhid="swh:1:dir:invalid", response_code=400
     )
     # API will throw an error in case of an invalid SWHID
     assert len(errors) == 1
@@ -103,5 +100,4 @@ def test_get_directory_with_unknown_swhid(client):
         query_str,
         obj_type="directory",
         swhid=f"swh:1:dir:{unknown_sha1}",
-        response_code=400,
     )

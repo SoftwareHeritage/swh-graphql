@@ -46,7 +46,6 @@ def test_get_snapshot_missing_swhid(client):
         query_str,
         obj_type="snapshot",
         swhid="swh:1:snp:0949d7a8c96347dba09be8d79085b8207f345412",
-        response_code=400,
     )
 
 
