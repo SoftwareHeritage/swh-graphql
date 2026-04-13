@@ -1,9 +1,11 @@
-# Copyright (C) 2022  The Software Heritage developers
+# Copyright (C) 2022-2026  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from typing import Optional, Union
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional, Union
 
 from swh.model.model import CoreSWHID
 from swh.model.model import Release as ModelRelease
@@ -51,7 +53,8 @@ class TargetReleaseNode(BaseReleaseNode):
     Node resolver for a release requested as a target
     """
 
-    from .target import BranchTargetNode, TargetNode
+    if TYPE_CHECKING:
+        from .target import BranchTargetNode, TargetNode
 
     _can_be_null = True
     obj: Union[TargetNode, BranchTargetNode]
