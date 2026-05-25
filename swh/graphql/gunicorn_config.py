@@ -1,4 +1,4 @@
-# Copyright (C) 2023  The Software Heritage developers
+# Copyright (C) 2023-2026  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
@@ -42,9 +42,9 @@ def post_fork(server, worker):
     init_sentry(
         sentry_dsn=None,  # set through SWH_SENTRY_DSN environment variable
         integrations=[AriadneIntegration()],
+        send_default_pii=True,
         extra_kwargs={
             # required to include GraphQL requests and responses data in sentry reports
-            "send_default_pii": True,
             "before_send": skip_expected_errors,
         },
     )
