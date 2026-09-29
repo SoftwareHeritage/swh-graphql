@@ -1,4 +1,7 @@
-ariadne >= 1.0.1
+ariadne == 1.1.0
+# ariadne 1.1.0 is not yet compatible with graphql-core >= 3.3.0
+# https://github.com/mirumee/ariadne/issues/1336
+graphql-core < 3.3.0
 uvicorn
 starlette >= 1.0.0
 httpx
