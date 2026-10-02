@@ -2,8 +2,10 @@ Software Heritage GraphQL API
 =============================
 
 This repository holds the development of Software Heritage GraphQL API.
+
 The service is available at https://archive.softwareheritage.org/graphql/
-A staging version of this service is available at https://graphql.staging.swh.network
+
+A staging version of this service is available at https://webapp.staging.swh.network/graphql/
 
 Running locally
 ---------------
